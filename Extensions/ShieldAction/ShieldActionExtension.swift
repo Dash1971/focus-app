@@ -14,17 +14,14 @@ final class ShieldActionExtension: ShieldActionDelegate {
     }
 
     private func respond(to action: ShieldAction, completionHandler: @escaping (ShieldActionResponse) -> Void) {
-        switch action {
-        case .primaryButtonPressed:
-            if #available(iOS 18.0, *) {
+        if action == .primaryButtonPressed {
+            if #available(iOS 26.5, *) {
                 completionHandler(.openParentalControlsApp)
             } else {
                 completionHandler(.defer)
             }
-        case .secondaryButtonPressed:
-            completionHandler(.close)
-        @unknown default:
-            completionHandler(.close)
+            return
         }
+        completionHandler(.close)
     }
 }

@@ -55,7 +55,7 @@ final class AppModel: ObservableObject {
     func authorize() async {
         do {
             try await blocker.requestAuthorization()
-            try? await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound])
+            _ = try? await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound])
         } catch {
             lastError = error.localizedDescription
         }

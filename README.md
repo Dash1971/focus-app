@@ -30,7 +30,7 @@ The current build includes:
 
 ## Requirements
 
-- A Mac with full Xcode and an iOS 18 SDK
+- A Mac with full Xcode 26 or later and a current iOS SDK
 - An Apple Developer Program membership
 - A physical iPhone running iOS 18 or later
 - Family Controls development capability for local testing
@@ -44,7 +44,9 @@ Focus is local-first. The MVP has no account, analytics, advertising, or server.
 
 ## Status
 
-MVP source is implemented. Static Swift syntax, property-list, privacy-manifest, project-structure, and repository checks pass. A signed device build remains necessary because Apple's Screen Time frameworks cannot be meaningfully tested in a command-line-only environment or solely in the simulator.
+MVP source is implemented. Debug and Release physical-iPhone builds succeed with Xcode 26.5 and the iOS 26.5 SDK, and the unsigned archive contains the app plus all three embedded Screen Time extensions. Property-list, privacy-manifest, bundle-validation, archive-structure, and repository checks pass.
+
+Signing, Family Controls distribution approval, and testing on a physical iPhone remain necessary before TestFlight distribution. Apple's Screen Time behavior cannot be meaningfully validated solely in the simulator.
 
 ## License
 

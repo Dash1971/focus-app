@@ -62,3 +62,4 @@ Install directly from Xcode before uploading to TestFlight:
 - Emergency unlocks deliberately disable the active recurring schedule; the user must re-enable it afterward.
 - Interval phase changes are reliable while the app is active. Notifications fire when it is backgrounded, but fully autonomous multi-phase background progression is planned for the next iteration.
 - Apple's system owns the shield UI. Focus controls the permitted text, colors, icon, and actions.
+- On iOS 26.5 and later, the shield's challenge button can open Focus directly. On iOS 18 through 26.4, Apple does not expose that action, so the user must open Focus manually to complete the challenge.

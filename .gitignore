@@ -1,5 +1,6 @@
 # Xcode
 DerivedData/
+.derived-*/
 build/
 *.xcuserstate
 xcuserdata/
