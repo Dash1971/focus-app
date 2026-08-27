@@ -1,0 +1,795 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		04B60603CAAB2B71B73F292E /* FamilyControls.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DA788C2ADF62DB9FA55D15A8 /* FamilyControls.framework */; };
+		06611F4FA4B5077E7B679A1C /* SharedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FF8BBDDF7BC6204387BAB48 /* SharedStore.swift */; };
+		0F3C049516AA9B5DDA3D665C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B714452B8249AF0A4190711 /* Foundation.framework */; };
+		1104AE3345AA63AD81D99F9C /* ManagedSettings.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 472369B0A994055DE835CCCF /* ManagedSettings.framework */; };
+		13E96F459048FFC9EC68CEA9 /* SharedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FF8BBDDF7BC6204387BAB48 /* SharedStore.swift */; };
+		17C28DFF0A8C064F470D987A /* ShieldConfigurationExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = F6F9EC98FB2E4A7241A2F0EC /* ShieldConfigurationExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, CodeSignOnCopy, ); }; };
+		180C33950F534A099A4FD42E /* TimerViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 354F42F338E2895FDC58288F /* TimerViews.swift */; };
+		2A840734777C5D538E943D06 /* TimerEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BAF300F0ABB4F4B7688ACFE /* TimerEngine.swift */; };
+		2B4BC2C511DAE527EB6F5539 /* FamilyControls.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A8DE3743E70A4B637EB5438 /* FamilyControls.framework */; };
+		2BD0D1625859720B0D3B84CD /* ManagedSettings.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DFA50A9E12392E3534F5C8F /* ManagedSettings.framework */; };
+		33138160C0D343854D494F16 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B714452B8249AF0A4190711 /* Foundation.framework */; };
+		338AE5C8B86653EBC41311B8 /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AE75249C2C6A4FDF8FE643B3 /* UserNotifications.framework */; };
+		34251EDE5EFE417CB1C317BB /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C8DF67776B22AA65F7A4D7D /* UIKit.framework */; };
+		459E4127C681C72C55D4AB6B /* ShieldActionExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 6E66BDEAF2371C85887F4C85 /* ShieldActionExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, CodeSignOnCopy, ); }; };
+		46B2DFA46C76E58E1334F80D /* ShieldActionExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D718CA094CFB973DB92ECE /* ShieldActionExtension.swift */; };
+		4CB67C549508C8CC73F88677 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 132CFD9DE9F4628251561D1D /* Assets.xcassets */; };
+		5051BA7CE953637806C9FA76 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCDAB2192912ED8ADF9FB60 /* AppModel.swift */; };
+		56929A7F4E3E54355FE47A1C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B714452B8249AF0A4190711 /* Foundation.framework */; };
+		57F2B5BF817E3080A54A4704 /* ShieldConfigurationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDA4F0A7D0E52AF81F7451DC /* ShieldConfigurationExtension.swift */; };
+		5C5D8C52D9422ACE1B128A8E /* ManagedSettingsUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 703E1FA97B918CAC10A58723 /* ManagedSettingsUI.framework */; };
+		5DBD11EA365FD4230412A8C8 /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E12B1BD673D94F4B840EB88 /* DeviceActivity.framework */; };
+		66CFE1A09B1FF3C7281656F7 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 972E89E28FFEDF92BD1CA4D8 /* Models.swift */; };
+		811DCC6E0E5BD34ABD7B9377 /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6347D376A11A7B99EFF3F811 /* DeviceActivity.framework */; };
+		8BFE6E9EB16DB8CB9E2651FE /* ManagedSettings.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 35E2D1AC8406F846F2966F0E /* ManagedSettings.framework */; };
+		8BFF831B00FAAA040BC951E2 /* SharedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FF8BBDDF7BC6204387BAB48 /* SharedStore.swift */; };
+		A45E0D8CFA50C79D8F2762DE /* FamilyControls.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29C4173914F392CFABFFF6CE /* FamilyControls.framework */; };
+		A7851A0F10DCA579A2266BA1 /* BlockingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E4E0A20C89C6B4BF9944BE9 /* BlockingController.swift */; };
+		B3CB62E31573C48FBCEBC44A /* DeviceActivityMonitorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844A2A8E2D7A3F5585AD5519 /* DeviceActivityMonitorExtension.swift */; };
+		B3DF960468F2C6CA37AD50D1 /* FocusViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = A91322F7F08A69D91CCEABA5 /* FocusViews.swift */; };
+		B5513890240AB464ED6BCA06 /* SchedulesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 819FEB940243003E3FD26FDD /* SchedulesView.swift */; };
+		B56FC2D30B56B7FACDE9B4F6 /* DeviceActivityMonitorExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = F6EBA94764BAD54B435E728F /* DeviceActivityMonitorExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, CodeSignOnCopy, ); }; };
+		BB31EF0E5EA39D7086C50278 /* FocusApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B49972D52C81E7145C425F /* FocusApp.swift */; };
+		C0FC44FFF94DC104664BE016 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 972E89E28FFEDF92BD1CA4D8 /* Models.swift */; };
+		C1EC9E1CAD14F1F2A6676FF7 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 4EEBD384305BFB768CF81B27 /* PrivacyInfo.xcprivacy */; };
+		C3229AE0CECDEA7C6B9723BF /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4EB1B613A6A15427E636CD9B /* DeviceActivity.framework */; };
+		DA1C313D7E783681F0ABB06B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B714452B8249AF0A4190711 /* Foundation.framework */; };
+		DEFB69B129C47BB278AF001B /* ManagedSettings.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2824A7E5A696B65145B849B3 /* ManagedSettings.framework */; };
+		E7FEFCBB224D3F1F0D0779BE /* ProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E88009C1A8BB4A4F724F18F2 /* ProgressView.swift */; };
+		EADC59E9C5CBD41EA4B7EFEE /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 913040FCE9061F9FFA1406FE /* RootView.swift */; };
+		F6DE1A0357D134B5B2547BAF /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 972E89E28FFEDF92BD1CA4D8 /* Models.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		1A1B554DF4DE3F8FCC0F8FC8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 327DEAD0A99CE1C99B081B8E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D195A3C3FC19A4DC452CE689;
+			remoteInfo = ShieldConfigurationExtension;
+		};
+		8D82967D30CC992B0D0F7852 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 327DEAD0A99CE1C99B081B8E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 918CD14F4ACA7838D9F9D8CB;
+			remoteInfo = DeviceActivityMonitorExtension;
+		};
+		F8F65D715151CEB81CB1B52B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 327DEAD0A99CE1C99B081B8E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = EAB58B2F2DE8ED28510F6090;
+			remoteInfo = ShieldActionExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		27EED0809A52965A8E3FE411 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				B56FC2D30B56B7FACDE9B4F6 /* DeviceActivityMonitorExtension.appex in Embed App Extensions */,
+				17C28DFF0A8C064F470D987A /* ShieldConfigurationExtension.appex in Embed App Extensions */,
+				459E4127C681C72C55D4AB6B /* ShieldActionExtension.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		132CFD9DE9F4628251561D1D /* Assets.xcassets */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = FocusApp/Resources/Assets.xcassets; sourceTree = "<group>"; };
+		1B714452B8249AF0A4190711 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		2824A7E5A696B65145B849B3 /* ManagedSettings.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ManagedSettings.framework; path = System/Library/Frameworks/ManagedSettings.framework; sourceTree = "<group>"; };
+		29C4173914F392CFABFFF6CE /* FamilyControls.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FamilyControls.framework; path = System/Library/Frameworks/FamilyControls.framework; sourceTree = "<group>"; };
+		2CCDAB2192912ED8ADF9FB60 /* AppModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AppModel.swift; path = FocusApp/App/AppModel.swift; sourceTree = "<group>"; };
+		354F42F338E2895FDC58288F /* TimerViews.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TimerViews.swift; path = FocusApp/Features/TimerViews.swift; sourceTree = "<group>"; };
+		35E2D1AC8406F846F2966F0E /* ManagedSettings.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ManagedSettings.framework; path = System/Library/Frameworks/ManagedSettings.framework; sourceTree = "<group>"; };
+		3A8DE3743E70A4B637EB5438 /* FamilyControls.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FamilyControls.framework; path = System/Library/Frameworks/FamilyControls.framework; sourceTree = "<group>"; };
+		3E12B1BD673D94F4B840EB88 /* DeviceActivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DeviceActivity.framework; path = System/Library/Frameworks/DeviceActivity.framework; sourceTree = "<group>"; };
+		472369B0A994055DE835CCCF /* ManagedSettings.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ManagedSettings.framework; path = System/Library/Frameworks/ManagedSettings.framework; sourceTree = "<group>"; };
+		4EB1B613A6A15427E636CD9B /* DeviceActivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DeviceActivity.framework; path = System/Library/Frameworks/DeviceActivity.framework; sourceTree = "<group>"; };
+		4EEBD384305BFB768CF81B27 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = FocusApp/Resources/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		6347D376A11A7B99EFF3F811 /* DeviceActivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DeviceActivity.framework; path = System/Library/Frameworks/DeviceActivity.framework; sourceTree = "<group>"; };
+		63B49972D52C81E7145C425F /* FocusApp.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FocusApp.swift; path = FocusApp/App/FocusApp.swift; sourceTree = "<group>"; };
+		6E66BDEAF2371C85887F4C85 /* ShieldActionExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ShieldActionExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		703E1FA97B918CAC10A58723 /* ManagedSettingsUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ManagedSettingsUI.framework; path = System/Library/Frameworks/ManagedSettingsUI.framework; sourceTree = "<group>"; };
+		7C8DF67776B22AA65F7A4D7D /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = "<group>"; };
+		7E4E0A20C89C6B4BF9944BE9 /* BlockingController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BlockingController.swift; path = FocusApp/Core/BlockingController.swift; sourceTree = "<group>"; };
+		819FEB940243003E3FD26FDD /* SchedulesView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SchedulesView.swift; path = FocusApp/Features/SchedulesView.swift; sourceTree = "<group>"; };
+		844A2A8E2D7A3F5585AD5519 /* DeviceActivityMonitorExtension.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DeviceActivityMonitorExtension.swift; path = Extensions/DeviceActivityMonitor/DeviceActivityMonitorExtension.swift; sourceTree = "<group>"; };
+		8BAF300F0ABB4F4B7688ACFE /* TimerEngine.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TimerEngine.swift; path = FocusApp/Core/TimerEngine.swift; sourceTree = "<group>"; };
+		8FF8BBDDF7BC6204387BAB48 /* SharedStore.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SharedStore.swift; path = FocusApp/Core/SharedStore.swift; sourceTree = "<group>"; };
+		913040FCE9061F9FFA1406FE /* RootView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RootView.swift; path = FocusApp/Features/RootView.swift; sourceTree = "<group>"; };
+		95D718CA094CFB973DB92ECE /* ShieldActionExtension.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ShieldActionExtension.swift; path = Extensions/ShieldAction/ShieldActionExtension.swift; sourceTree = "<group>"; };
+		972E89E28FFEDF92BD1CA4D8 /* Models.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Models.swift; path = FocusApp/Core/Models.swift; sourceTree = "<group>"; };
+		9DFA50A9E12392E3534F5C8F /* ManagedSettings.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ManagedSettings.framework; path = System/Library/Frameworks/ManagedSettings.framework; sourceTree = "<group>"; };
+		A91322F7F08A69D91CCEABA5 /* FocusViews.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FocusViews.swift; path = FocusApp/Features/FocusViews.swift; sourceTree = "<group>"; };
+		AE75249C2C6A4FDF8FE643B3 /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = "<group>"; };
+		DA788C2ADF62DB9FA55D15A8 /* FamilyControls.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FamilyControls.framework; path = System/Library/Frameworks/FamilyControls.framework; sourceTree = "<group>"; };
+		E88009C1A8BB4A4F724F18F2 /* ProgressView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ProgressView.swift; path = FocusApp/Features/ProgressView.swift; sourceTree = "<group>"; };
+		F543A192DAEA4AFB6DA9BCF5 /* FocusApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FocusApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F6EBA94764BAD54B435E728F /* DeviceActivityMonitorExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = DeviceActivityMonitorExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		F6F9EC98FB2E4A7241A2F0EC /* ShieldConfigurationExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ShieldConfigurationExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		FDA4F0A7D0E52AF81F7451DC /* ShieldConfigurationExtension.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ShieldConfigurationExtension.swift; path = Extensions/ShieldConfiguration/ShieldConfigurationExtension.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		55E48E243E42E447343ADDD1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0F3C049516AA9B5DDA3D665C /* Foundation.framework in Frameworks */,
+				1104AE3345AA63AD81D99F9C /* ManagedSettings.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		606DFBEE6641B0D06C811DDA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DA1C313D7E783681F0ABB06B /* Foundation.framework in Frameworks */,
+				811DCC6E0E5BD34ABD7B9377 /* DeviceActivity.framework in Frameworks */,
+				2BD0D1625859720B0D3B84CD /* ManagedSettings.framework in Frameworks */,
+				A45E0D8CFA50C79D8F2762DE /* FamilyControls.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		971B2656AF23DC49F08D4A36 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				33138160C0D343854D494F16 /* Foundation.framework in Frameworks */,
+				04B60603CAAB2B71B73F292E /* FamilyControls.framework in Frameworks */,
+				8BFE6E9EB16DB8CB9E2651FE /* ManagedSettings.framework in Frameworks */,
+				C3229AE0CECDEA7C6B9723BF /* DeviceActivity.framework in Frameworks */,
+				338AE5C8B86653EBC41311B8 /* UserNotifications.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9A08C6094BD100001B9F9F91 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				56929A7F4E3E54355FE47A1C /* Foundation.framework in Frameworks */,
+				DEFB69B129C47BB278AF001B /* ManagedSettings.framework in Frameworks */,
+				5C5D8C52D9422ACE1B128A8E /* ManagedSettingsUI.framework in Frameworks */,
+				2B4BC2C511DAE527EB6F5539 /* FamilyControls.framework in Frameworks */,
+				5DBD11EA365FD4230412A8C8 /* DeviceActivity.framework in Frameworks */,
+				34251EDE5EFE417CB1C317BB /* UIKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		206EAA3E024AEBF7654B62A0 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				618D37D36BECA1043FD376E5 /* iOS */,
+				DA788C2ADF62DB9FA55D15A8 /* FamilyControls.framework */,
+				35E2D1AC8406F846F2966F0E /* ManagedSettings.framework */,
+				4EB1B613A6A15427E636CD9B /* DeviceActivity.framework */,
+				AE75249C2C6A4FDF8FE643B3 /* UserNotifications.framework */,
+				6347D376A11A7B99EFF3F811 /* DeviceActivity.framework */,
+				9DFA50A9E12392E3534F5C8F /* ManagedSettings.framework */,
+				29C4173914F392CFABFFF6CE /* FamilyControls.framework */,
+				2824A7E5A696B65145B849B3 /* ManagedSettings.framework */,
+				703E1FA97B918CAC10A58723 /* ManagedSettingsUI.framework */,
+				3A8DE3743E70A4B637EB5438 /* FamilyControls.framework */,
+				3E12B1BD673D94F4B840EB88 /* DeviceActivity.framework */,
+				7C8DF67776B22AA65F7A4D7D /* UIKit.framework */,
+				472369B0A994055DE835CCCF /* ManagedSettings.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		5DCAFBD8E758E11542821C8A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F543A192DAEA4AFB6DA9BCF5 /* FocusApp.app */,
+				F6EBA94764BAD54B435E728F /* DeviceActivityMonitorExtension.appex */,
+				F6F9EC98FB2E4A7241A2F0EC /* ShieldConfigurationExtension.appex */,
+				6E66BDEAF2371C85887F4C85 /* ShieldActionExtension.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		618D37D36BECA1043FD376E5 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				1B714452B8249AF0A4190711 /* Foundation.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		978D7C28AB3E93D61A9DFDCF = {
+			isa = PBXGroup;
+			children = (
+				5DCAFBD8E758E11542821C8A /* Products */,
+				206EAA3E024AEBF7654B62A0 /* Frameworks */,
+				2CCDAB2192912ED8ADF9FB60 /* AppModel.swift */,
+				63B49972D52C81E7145C425F /* FocusApp.swift */,
+				7E4E0A20C89C6B4BF9944BE9 /* BlockingController.swift */,
+				972E89E28FFEDF92BD1CA4D8 /* Models.swift */,
+				8FF8BBDDF7BC6204387BAB48 /* SharedStore.swift */,
+				8BAF300F0ABB4F4B7688ACFE /* TimerEngine.swift */,
+				A91322F7F08A69D91CCEABA5 /* FocusViews.swift */,
+				E88009C1A8BB4A4F724F18F2 /* ProgressView.swift */,
+				913040FCE9061F9FFA1406FE /* RootView.swift */,
+				819FEB940243003E3FD26FDD /* SchedulesView.swift */,
+				354F42F338E2895FDC58288F /* TimerViews.swift */,
+				132CFD9DE9F4628251561D1D /* Assets.xcassets */,
+				4EEBD384305BFB768CF81B27 /* PrivacyInfo.xcprivacy */,
+				844A2A8E2D7A3F5585AD5519 /* DeviceActivityMonitorExtension.swift */,
+				FDA4F0A7D0E52AF81F7451DC /* ShieldConfigurationExtension.swift */,
+				95D718CA094CFB973DB92ECE /* ShieldActionExtension.swift */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		2E61EAEF2BEA6F8B1C14A9AF /* FocusApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7B893453B408AE7E96644172 /* Build configuration list for PBXNativeTarget "FocusApp" */;
+			buildPhases = (
+				8109C6728C6133C829465E6A /* Sources */,
+				971B2656AF23DC49F08D4A36 /* Frameworks */,
+				65E8ADD2871E4DD7453FF6EE /* Resources */,
+				27EED0809A52965A8E3FE411 /* Embed App Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				76D07CC5DA021D94FFE46A2A /* PBXTargetDependency */,
+				C71F89BCAD07766343844667 /* PBXTargetDependency */,
+				80136DC8BAAF5FA801810C0D /* PBXTargetDependency */,
+			);
+			name = FocusApp;
+			productName = Focus;
+			productReference = F543A192DAEA4AFB6DA9BCF5 /* FocusApp.app */;
+			productType = "com.apple.product-type.application";
+		};
+		918CD14F4ACA7838D9F9D8CB /* DeviceActivityMonitorExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 96E7DDBB88DFE12FCB10A506 /* Build configuration list for PBXNativeTarget "DeviceActivityMonitorExtension" */;
+			buildPhases = (
+				F7BF66675EA64888C688D7EA /* Sources */,
+				606DFBEE6641B0D06C811DDA /* Frameworks */,
+				6631EB03C2249C3F8C7F5615 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DeviceActivityMonitorExtension;
+			productName = DeviceActivityMonitorExtension;
+			productReference = F6EBA94764BAD54B435E728F /* DeviceActivityMonitorExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		D195A3C3FC19A4DC452CE689 /* ShieldConfigurationExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C925B12F6E5E092799A899AE /* Build configuration list for PBXNativeTarget "ShieldConfigurationExtension" */;
+			buildPhases = (
+				5FF5492B06FC3C4E3E45B7AA /* Sources */,
+				9A08C6094BD100001B9F9F91 /* Frameworks */,
+				5509ACC6A016CBE5494D000B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ShieldConfigurationExtension;
+			productName = ShieldConfigurationExtension;
+			productReference = F6F9EC98FB2E4A7241A2F0EC /* ShieldConfigurationExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		EAB58B2F2DE8ED28510F6090 /* ShieldActionExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0A244FD17F88BD1AB3B5E8C6 /* Build configuration list for PBXNativeTarget "ShieldActionExtension" */;
+			buildPhases = (
+				D2922E44818748A815C79D61 /* Sources */,
+				55E48E243E42E447343ADDD1 /* Frameworks */,
+				D990EBA336422BA1F80D7091 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ShieldActionExtension;
+			productName = ShieldActionExtension;
+			productReference = 6E66BDEAF2371C85887F4C85 /* ShieldActionExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		327DEAD0A99CE1C99B081B8E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 2600;
+				LastUpgradeCheck = 2600;
+			};
+			buildConfigurationList = F737E0D9AEAAEBEAC56FE1DA /* Build configuration list for PBXProject "FocusApp" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 978D7C28AB3E93D61A9DFDCF;
+			minimizedProjectReferenceProxies = 0;
+			preferredProjectObjectVersion = 100;
+			productRefGroup = 5DCAFBD8E758E11542821C8A /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				2E61EAEF2BEA6F8B1C14A9AF /* FocusApp */,
+				918CD14F4ACA7838D9F9D8CB /* DeviceActivityMonitorExtension */,
+				D195A3C3FC19A4DC452CE689 /* ShieldConfigurationExtension */,
+				EAB58B2F2DE8ED28510F6090 /* ShieldActionExtension */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		5509ACC6A016CBE5494D000B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		65E8ADD2871E4DD7453FF6EE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4CB67C549508C8CC73F88677 /* Assets.xcassets in Resources */,
+				C1EC9E1CAD14F1F2A6676FF7 /* PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6631EB03C2249C3F8C7F5615 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D990EBA336422BA1F80D7091 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		5FF5492B06FC3C4E3E45B7AA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				66CFE1A09B1FF3C7281656F7 /* Models.swift in Sources */,
+				8BFF831B00FAAA040BC951E2 /* SharedStore.swift in Sources */,
+				57F2B5BF817E3080A54A4704 /* ShieldConfigurationExtension.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8109C6728C6133C829465E6A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5051BA7CE953637806C9FA76 /* AppModel.swift in Sources */,
+				BB31EF0E5EA39D7086C50278 /* FocusApp.swift in Sources */,
+				A7851A0F10DCA579A2266BA1 /* BlockingController.swift in Sources */,
+				C0FC44FFF94DC104664BE016 /* Models.swift in Sources */,
+				06611F4FA4B5077E7B679A1C /* SharedStore.swift in Sources */,
+				2A840734777C5D538E943D06 /* TimerEngine.swift in Sources */,
+				B3DF960468F2C6CA37AD50D1 /* FocusViews.swift in Sources */,
+				E7FEFCBB224D3F1F0D0779BE /* ProgressView.swift in Sources */,
+				EADC59E9C5CBD41EA4B7EFEE /* RootView.swift in Sources */,
+				B5513890240AB464ED6BCA06 /* SchedulesView.swift in Sources */,
+				180C33950F534A099A4FD42E /* TimerViews.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D2922E44818748A815C79D61 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				46B2DFA46C76E58E1334F80D /* ShieldActionExtension.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F7BF66675EA64888C688D7EA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F6DE1A0357D134B5B2547BAF /* Models.swift in Sources */,
+				13E96F459048FFC9EC68CEA9 /* SharedStore.swift in Sources */,
+				B3CB62E31573C48FBCEBC44A /* DeviceActivityMonitorExtension.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		76D07CC5DA021D94FFE46A2A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = DeviceActivityMonitorExtension;
+			target = 918CD14F4ACA7838D9F9D8CB /* DeviceActivityMonitorExtension */;
+			targetProxy = 8D82967D30CC992B0D0F7852 /* PBXContainerItemProxy */;
+		};
+		80136DC8BAAF5FA801810C0D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = ShieldActionExtension;
+			target = EAB58B2F2DE8ED28510F6090 /* ShieldActionExtension */;
+			targetProxy = F8F65D715151CEB81CB1B52B /* PBXContainerItemProxy */;
+		};
+		C71F89BCAD07766343844667 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = ShieldConfigurationExtension;
+			target = D195A3C3FC19A4DC452CE689 /* ShieldConfigurationExtension */;
+			targetProxy = 1A1B554DF4DE3F8FCC0F8FC8 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		01083737C7568EFDAFC44B43 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = Extensions/ShieldConfiguration/ShieldConfiguration.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Extensions/ShieldConfiguration/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dash1971.focusapp.shieldconfiguration;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		39D50F15556B3EE98D39079A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = FocusApp/FocusApp.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Focus;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dash1971.focusapp;
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		6111601EC129EA1BC1172A5F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		79E98B58E3E80919091F147A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = Extensions/ShieldAction/ShieldAction.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Extensions/ShieldAction/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dash1971.focusapp.shieldaction;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		7A42CD52F442EC6A3DAC8BD4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = Extensions/ShieldConfiguration/ShieldConfiguration.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Extensions/ShieldConfiguration/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dash1971.focusapp.shieldconfiguration;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		A45ADD169FEDDEC9FCB3C18E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		A50259982EDDD4531AE5187C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = Extensions/ShieldAction/ShieldAction.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Extensions/ShieldAction/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dash1971.focusapp.shieldaction;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		BEF8C9AEDBB6CBC0B6A913A1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = Extensions/DeviceActivityMonitor/DeviceActivityMonitor.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Extensions/DeviceActivityMonitor/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dash1971.focusapp.deviceactivity;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		CE467BD5153F0504FFB59742 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = Extensions/DeviceActivityMonitor/DeviceActivityMonitor.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Extensions/DeviceActivityMonitor/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dash1971.focusapp.deviceactivity;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		E2C001B1DC6A729A836C0FA8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = FocusApp/FocusApp.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Focus;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dash1971.focusapp;
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		0A244FD17F88BD1AB3B5E8C6 /* Build configuration list for PBXNativeTarget "ShieldActionExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A50259982EDDD4531AE5187C /* Release */,
+				79E98B58E3E80919091F147A /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7B893453B408AE7E96644172 /* Build configuration list for PBXNativeTarget "FocusApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				39D50F15556B3EE98D39079A /* Release */,
+				E2C001B1DC6A729A836C0FA8 /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		96E7DDBB88DFE12FCB10A506 /* Build configuration list for PBXNativeTarget "DeviceActivityMonitorExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BEF8C9AEDBB6CBC0B6A913A1 /* Release */,
+				CE467BD5153F0504FFB59742 /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C925B12F6E5E092799A899AE /* Build configuration list for PBXNativeTarget "ShieldConfigurationExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				01083737C7568EFDAFC44B43 /* Release */,
+				7A42CD52F442EC6A3DAC8BD4 /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F737E0D9AEAAEBEAC56FE1DA /* Build configuration list for PBXProject "FocusApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A45ADD169FEDDEC9FCB3C18E /* Debug */,
+				6111601EC129EA1BC1172A5F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 327DEAD0A99CE1C99B081B8E /* Project object */;
+}
