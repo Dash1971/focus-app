@@ -1,7 +1,7 @@
 import SwiftUI
 
 @main
-struct FocusApp: App {
+struct LockInApp: App {
     @StateObject private var model = AppModel()
 
     var body: some Scene {

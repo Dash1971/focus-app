@@ -12,6 +12,9 @@ struct CountdownTimerView: View {
             if !timer.isRunning {
                 Stepper("\(timer.durationSeconds / 60) minutes", value: $timer.durationSeconds, in: 60...14_400, step: 60)
                     .padding(.horizontal)
+                Picker("Sound", selection: $timer.sound) {
+                    ForEach(TimerSound.allCases) { sound in Text(sound.title).tag(sound) }
+                }.padding(.horizontal)
             }
             HStack {
                 Button(timer.isRunning ? "Pause" : "Start") {
@@ -51,6 +54,9 @@ struct IntervalTimerView: View {
                     Stepper("Rest: \(timer.configuration.restSeconds)s", value: $timer.configuration.restSeconds, in: 5...1800, step: 5)
                     Stepper("Rounds: \(timer.configuration.rounds)", value: $timer.configuration.rounds, in: 1...100)
                     Toggle("Automatically start next phase", isOn: $timer.configuration.autoAdvance)
+                    Picker("Sound", selection: $timer.configuration.sound) {
+                        ForEach(TimerSound.allCases) { sound in Text(sound.title).tag(sound) }
+                    }
                 }
             }
             Section {

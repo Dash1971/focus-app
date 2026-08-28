@@ -1,4 +1,4 @@
-# Focus App
+# LockIn 🔒
 
 An iPhone app for discipline, focused work, and intentional screen-time control.
 
@@ -9,23 +9,26 @@ An iPhone app for discipline, focused work, and intentional screen-time control.
 The current build includes:
 
 - Screen Time authorization and Apple's privacy-preserving app/category picker
-- Immediate focus sessions that shield selected apps and websites
+- Timed and end-time focus sessions with their own app selections
 - Recurring blocking schedules, including overnight schedules and weekday selection
 - Custom shield copy with the block's end time
 - Optional verified math challenges
-- Optional honor-based exercise, reading, cleaning, and custom challenges
+- Optional honor-based exercise, weighted exercise, reading, cleaning, and custom challenges
+- Verified math, question, and small-puzzle challenges
 - Confirmed emergency unlocks
-- Countdown timer with completion notification
+- Countdown timer with selectable completion sounds
 - Work/rest interval timer with rounds and automatic advancement
-- Daily focus time, completed sessions, challenges, and emergency-unlock history
+- Daily and weekly focus time, completed sessions, challenges, selected distractions, and emergency-unlock history
+- Home Screen and Lock Screen widgets with focus status, progress, and Focus/Timer quick actions
 - Shared state across the app and its Screen Time extensions
 
 ## Project structure
 
 - `FocusApp/` — SwiftUI application, shared models, persistence, and blocking engine
+- `Extensions/LockInWidgets/` — Home Screen and Lock Screen widgets
 - `Extensions/DeviceActivityMonitor/` — activates and clears scheduled shields
 - `Extensions/ShieldConfiguration/` — customizes the system blocking screen
-- `Extensions/ShieldAction/` — routes unlock requests back to Focus
+- `Extensions/ShieldAction/` — routes unlock requests back to LockIn
 - `scripts/generate_xcodeproj.rb` — reproducibly generates the Xcode project
 
 ## Requirements
@@ -40,7 +43,7 @@ See [TESTFLIGHT.md](TESTFLIGHT.md) for signing, entitlement, device-test, and up
 
 ## Privacy
 
-Focus is local-first. The MVP has no account, analytics, advertising, or server. App selections are represented by Apple's opaque Screen Time tokens, and app state is stored in the app's private shared container.
+LockIn is local-first. The MVP has no account, analytics, advertising, or server. App selections are represented by Apple's opaque Screen Time tokens, and app state is stored in the app's private shared container.
 
 ## Status
 

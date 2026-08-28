@@ -1,12 +1,14 @@
 import Foundation
 import Combine
 import UserNotifications
+import AudioToolbox
 
 @MainActor
 final class CountdownTimerModel: ObservableObject {
     @Published var durationSeconds = 20 * 60
     @Published private(set) var remainingSeconds = 20 * 60
     @Published private(set) var isRunning = false
+    @Published var sound: TimerSound = .bell
 
     private var endDate: Date?
     private var ticker: Timer?
@@ -15,7 +17,7 @@ final class CountdownTimerModel: ObservableObject {
         remainingSeconds = max(1, durationSeconds)
         endDate = Date().addingTimeInterval(TimeInterval(remainingSeconds))
         isRunning = true
-        scheduleNotification(seconds: remainingSeconds, id: "normal.timer", title: "Timer complete")
+        scheduleNotification(seconds: remainingSeconds, id: "normal.timer", title: "Timer complete", sound: sound)
         tick()
     }
 
@@ -48,6 +50,7 @@ final class CountdownTimerModel: ObservableObject {
             ticker = nil
             self.endDate = nil
             isRunning = false
+            play(sound)
         }
     }
 }
@@ -97,7 +100,7 @@ final class IntervalTimerModel: ObservableObject {
         remainingSeconds = max(1, seconds)
         endDate = Date().addingTimeInterval(TimeInterval(remainingSeconds))
         isRunning = true
-        scheduleNotification(seconds: remainingSeconds, id: "interval.timer", title: "\(phase.rawValue) complete")
+        scheduleNotification(seconds: remainingSeconds, id: "interval.timer", title: "\(phase.rawValue) complete", sound: configuration.sound)
         ticker?.invalidate()
         ticker = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: true) { [weak self] _ in
             Task { @MainActor in self?.tick() }
@@ -112,6 +115,7 @@ final class IntervalTimerModel: ObservableObject {
             ticker = nil
             self.endDate = nil
             isRunning = false
+            play(configuration.sound)
             if configuration.autoAdvance { advance() }
         }
     }
@@ -123,10 +127,15 @@ final class IntervalTimerModel: ObservableObject {
     }
 }
 
-private func scheduleNotification(seconds: Int, id: String, title: String) {
+private func scheduleNotification(seconds: Int, id: String, title: String, sound: TimerSound) {
     let content = UNMutableNotificationContent()
     content.title = title
-    content.sound = .default
+    content.sound = sound == .silent ? nil : .default
     let trigger = UNTimeIntervalNotificationTrigger(timeInterval: TimeInterval(max(1, seconds)), repeats: false)
     UNUserNotificationCenter.current().add(.init(identifier: id, content: content, trigger: trigger))
+}
+
+private func play(_ sound: TimerSound) {
+    guard sound.systemSoundID != 0 else { return }
+    AudioServicesPlaySystemSound(sound.systemSoundID)
 }

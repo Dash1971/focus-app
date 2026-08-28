@@ -1,4 +1,5 @@
 import SwiftUI
+import FamilyControls
 
 struct SchedulesView: View {
     @EnvironmentObject private var model: AppModel
@@ -43,6 +44,7 @@ struct ScheduleEditor: View {
     @EnvironmentObject private var model: AppModel
     @Environment(\.dismiss) private var dismiss
     @State var schedule: BlockSchedule
+    @State private var showingAppPicker = false
 
     var body: some View {
         NavigationStack {
@@ -71,6 +73,12 @@ struct ScheduleEditor: View {
                         }
                     }
                 }
+                Section("Apps to block") {
+                    Button(schedule.selection.isEmpty ? "Choose apps for this schedule" : "Change app selection") { showingAppPicker = true }
+                    if schedule.selection.isEmpty {
+                        Text("Uses the main Block Apps selection if left empty.").font(.footnote).foregroundStyle(.secondary)
+                    }
+                }
                 ChallengeEditor(challenge: $schedule.challenge)
             }
             .navigationTitle("Block Schedule")
@@ -82,7 +90,12 @@ struct ScheduleEditor: View {
                 }
             }
         }
+        .familyActivityPicker(isPresented: $showingAppPicker, selection: $schedule.selection)
     }
+}
+
+private extension FamilyActivitySelection {
+    var isEmpty: Bool { applicationTokens.isEmpty && categoryTokens.isEmpty && webDomainTokens.isEmpty }
 }
 
 private func date(minutes: Int) -> Date {

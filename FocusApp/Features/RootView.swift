@@ -12,7 +12,7 @@ struct RootView: View {
             NavigationStack { ProgressViewScreen() }
                 .tabItem { Label("Progress", systemImage: "chart.bar.fill") }
         }
-        .alert("Focus App", isPresented: Binding(
+        .alert("LockIn", isPresented: Binding(
             get: { model.lastError != nil },
             set: { if !$0 { model.lastError = nil } }
         )) {
@@ -26,6 +26,8 @@ struct RootView: View {
 struct HomeView: View {
     @EnvironmentObject private var model: AppModel
     @State private var showingAppPicker = false
+    @State private var openingFocus = false
+    @State private var openingTimer = false
 
     var body: some View {
         ScrollView {
@@ -64,11 +66,18 @@ struct HomeView: View {
             }
             .padding()
         }
-        .navigationTitle("Focus")
+        .navigationTitle("LockIn")
         .familyActivityPicker(isPresented: $showingAppPicker, selection: Binding(
             get: { model.selection },
             set: { model.updateSelection($0) }
         ))
+        .navigationDestination(isPresented: $openingFocus) { StartFocusView() }
+        .navigationDestination(isPresented: $openingTimer) { CountdownTimerView() }
+        .onOpenURL { url in
+            guard url.scheme == "lockin" else { return }
+            if url.host == "focus" { openingFocus = true }
+            if url.host == "timer" { openingTimer = true }
+        }
     }
 }
 

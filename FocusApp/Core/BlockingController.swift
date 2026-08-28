@@ -59,7 +59,8 @@ final class BlockingController: ObservableObject {
         let minute = calendar.component(.hour, from: .now) * 60 + calendar.component(.minute, from: .now)
         let crossesMidnight = schedule.endMinutes <= schedule.startMinutes
         let activeTime = crossesMidnight ? (minute >= schedule.startMinutes || minute < schedule.endMinutes) : (minute >= schedule.startMinutes && minute < schedule.endMinutes)
-        if schedule.weekdays.contains(weekday), activeTime {
+        let applicableWeekday = crossesMidnight && minute < schedule.endMinutes ? (weekday == 1 ? 7 : weekday - 1) : weekday
+        if schedule.weekdays.contains(applicableWeekday), activeTime {
             apply(selection: selection, to: ManagedSettingsStore(named: .init(AppConstants.managedStorePrefix + schedule.id.uuidString)))
         }
     }

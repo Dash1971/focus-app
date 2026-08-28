@@ -10,7 +10,8 @@ final class DeviceActivityMonitorExtension: DeviceActivityMonitor {
 
         if activity.rawValue == AppConstants.focusActivity {
             let store = ManagedSettingsStore(named: .init(AppConstants.managedStorePrefix + "session"))
-            apply(snapshot.selection, to: store)
+            let chosen = snapshot.activeSession?.selection
+            apply(chosen?.isEmpty == false ? chosen! : snapshot.selection, to: store)
             return
         }
 
@@ -21,7 +22,7 @@ final class DeviceActivityMonitorExtension: DeviceActivityMonitor {
         let weekday = Calendar.current.component(.weekday, from: .now)
         guard schedule.weekdays.contains(weekday) else { return }
         let store = ManagedSettingsStore(named: .init(AppConstants.managedStorePrefix + id.uuidString))
-        apply(snapshot.selection, to: store)
+        apply(schedule.selection.isEmpty ? snapshot.selection : schedule.selection, to: store)
     }
 
     override func intervalDidEnd(for activity: DeviceActivityName) {
@@ -56,4 +57,8 @@ final class DeviceActivityMonitorExtension: DeviceActivityMonitor {
         store.shield.applicationCategories = selection.categoryTokens.isEmpty ? nil : .specific(selection.categoryTokens)
         store.shield.webDomains = selection.webDomainTokens.isEmpty ? nil : selection.webDomainTokens
     }
+}
+
+private extension FamilyActivitySelection {
+    var isEmpty: Bool { applicationTokens.isEmpty && categoryTokens.isEmpty && webDomainTokens.isEmpty }
 }

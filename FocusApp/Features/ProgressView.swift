@@ -8,6 +8,16 @@ struct ProgressViewScreen: View {
             Section("Today") {
                 LabeledContent("Focus time", value: "\(model.focusMinutesToday) minutes")
                 LabeledContent("Sessions completed", value: "\(model.sessionsToday)")
+                LabeledContent("Selected distractions", value: "\(model.selectedItemCount)")
+            }
+            Section("This week") {
+                LabeledContent("Focus time", value: "\(model.focusMinutesThisWeek) minutes")
+                LabeledContent("Sessions completed", value: "\(model.sessionsThisWeek)")
+            }
+            Section("Saved custom challenges") {
+                if model.customChallenges.isEmpty { Text("Save a custom challenge while configuring a block.").foregroundStyle(.secondary) }
+                ForEach(Array(model.customChallenges.enumerated()), id: \.offset) { _, challenge in Text(challenge.customText) }
+                .onDelete(perform: model.deleteCustomChallenges)
             }
             Section("All time") {
                 LabeledContent("Challenges completed", value: "\(model.challengesCompleted)")

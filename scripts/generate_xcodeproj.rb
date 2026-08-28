@@ -19,8 +19,8 @@ def configure(target, bundle_id:, plist: nil, entitlements: nil)
     settings['TARGETED_DEVICE_FAMILY'] = '1'
     settings['SWIFT_VERSION'] = '5.0'
     settings['CODE_SIGN_STYLE'] = 'Automatic'
-    settings['CURRENT_PROJECT_VERSION'] = '1'
-    settings['MARKETING_VERSION'] = '0.1.0'
+    settings['CURRENT_PROJECT_VERSION'] = '2'
+    settings['MARKETING_VERSION'] = '0.2.0'
     settings['CODE_SIGN_ENTITLEMENTS'] = entitlements if entitlements
     if plist
       settings['GENERATE_INFOPLIST_FILE'] = 'NO'
@@ -54,10 +54,11 @@ models = 'FocusApp/Core/Models.swift'
 shared_store = 'FocusApp/Core/SharedStore.swift'
 
 app = project.new_target(:application, 'FocusApp', :ios, '18.0')
-app.product_name = 'Focus'
-configure(app, bundle_id: 'com.dash1971.focusapp', entitlements: 'FocusApp/FocusApp.entitlements')
+app.product_name = 'LockIn'
+configure(app, bundle_id: 'com.dash1971.focusapp', plist: 'FocusApp/Resources/Info.plist', entitlements: 'FocusApp/FocusApp.entitlements')
 app.build_configurations.each do |config|
-  config.build_settings['INFOPLIST_KEY_CFBundleDisplayName'] = 'Focus'
+  config.build_settings['PRODUCT_NAME'] = 'LockIn'
+  config.build_settings['INFOPLIST_KEY_CFBundleDisplayName'] = 'LockIn'
   config.build_settings['INFOPLIST_KEY_LSApplicationCategoryType'] = 'public.app-category.productivity'
   config.build_settings['INFOPLIST_KEY_UIApplicationSceneManifest_Generation'] = 'YES'
   config.build_settings['INFOPLIST_KEY_UILaunchScreen_Generation'] = 'YES'
@@ -69,7 +70,7 @@ end
 app_sources = Dir.glob(File.join(root, 'FocusApp/**/*.swift')).map { |p| p.delete_prefix("#{root}/") }.sort
 add_sources(project, app, app_sources)
 add_resources(project, app, ['FocusApp/Resources/Assets.xcassets', 'FocusApp/Resources/PrivacyInfo.xcprivacy'])
-%w[FamilyControls.framework ManagedSettings.framework DeviceActivity.framework UserNotifications.framework].each { |f| add_framework(project, app, f) }
+%w[FamilyControls.framework ManagedSettings.framework DeviceActivity.framework UserNotifications.framework AudioToolbox.framework].each { |f| add_framework(project, app, f) }
 
 extensions = [
   {
@@ -116,6 +117,24 @@ extensions.each do |spec|
   build_file = embed_phase.add_file_reference(target.product_reference, true)
   build_file.settings = { 'ATTRIBUTES' => %w[RemoveHeadersOnCopy CodeSignOnCopy] }
 end
+
+widget = project.new_target(:app_extension, 'LockInWidgetsExtension', :ios, '18.0')
+configure(
+  widget,
+  bundle_id: 'com.dash1971.focusapp.widgets',
+  plist: 'Extensions/LockInWidgets/Info.plist',
+  entitlements: 'Extensions/LockInWidgets/LockInWidgets.entitlements'
+)
+widget.build_configurations.each do |config|
+  config.build_settings['SKIP_INSTALL'] = 'YES'
+  config.build_settings['APPLICATION_EXTENSION_API_ONLY'] = 'YES'
+  config.build_settings['PRODUCT_NAME'] = 'LockInWidgets'
+end
+add_sources(project, widget, [models, shared_store, 'Extensions/LockInWidgets/LockInWidgets.swift'])
+%w[WidgetKit.framework SwiftUI.framework FamilyControls.framework DeviceActivity.framework].each { |f| add_framework(project, widget, f) }
+app.add_dependency(widget)
+widget_build_file = embed_phase.add_file_reference(widget.product_reference, true)
+widget_build_file.settings = { 'ATTRIBUTES' => %w[RemoveHeadersOnCopy CodeSignOnCopy] }
 
 project.build_configurations.each do |config|
   config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '18.0'
