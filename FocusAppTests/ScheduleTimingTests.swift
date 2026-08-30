@@ -37,6 +37,22 @@ final class ScheduleTimingTests: XCTestCase {
         XCTAssertEqual(ScheduleTiming.activeEndDate(startMinutes: 22 * 60, endMinutes: 7 * 60, at: fridayNight, calendar: calendar), expected)
     }
 
+    func testOneTimeIntervalComponentsPreserveDatesAcrossMidnight() {
+        let start = date(2026, 9, 4, 23, 30)
+        let end = date(2026, 9, 5, 1, 30)
+        let components = ScheduleTiming.oneTimeIntervalComponents(start: start, end: end, calendar: calendar)
+
+        XCTAssertEqual(calendar.date(from: components.start), start)
+        XCTAssertEqual(calendar.date(from: components.end), end)
+    }
+
+    func testOvernightEndDateAfterMidnightRemainsOnCurrentDay() {
+        let saturdayMorning = date(2026, 9, 5, 1, 0)
+        let expected = date(2026, 9, 5, 7, 0)
+
+        XCTAssertEqual(ScheduleTiming.activeEndDate(startMinutes: 22 * 60, endMinutes: 7 * 60, at: saturdayMorning, calendar: calendar), expected)
+    }
+
     private func date(_ year: Int, _ month: Int, _ day: Int, _ hour: Int, _ minute: Int) -> Date {
         calendar.date(from: DateComponents(year: year, month: month, day: day, hour: hour, minute: minute))!
     }

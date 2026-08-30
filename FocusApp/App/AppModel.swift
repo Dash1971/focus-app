@@ -56,14 +56,30 @@ final class AppModel: ObservableObject {
         selection.applicationTokens.count + selection.categoryTokens.count + selection.webDomainTokens.count
     }
 
-    var activeScheduleNow: BlockSchedule? {
+    func activeSchedule(at date: Date) -> BlockSchedule? {
         return schedules.first { schedule in
             schedule.enabled && ScheduleTiming.isActive(
                 startMinutes: schedule.startMinutes,
                 endMinutes: schedule.endMinutes,
-                weekdays: schedule.weekdays
+                weekdays: schedule.weekdays,
+                at: date
             )
         }
+    }
+
+    func refreshFromSharedStore() {
+        completionTimer?.invalidate()
+        completionTimer = nil
+
+        let snapshot = shared.load()
+        selection = snapshot.selection
+        activeSession = snapshot.activeSession
+        schedules = snapshot.schedules
+        records = snapshot.records
+        challengesCompleted = snapshot.challengesCompleted
+        emergencyUnlocks = snapshot.emergencyUnlocks
+        customChallenges = snapshot.customChallenges
+        reconcileSession()
     }
 
     func authorize() async {
@@ -225,14 +241,16 @@ final class AppModel: ObservableObject {
             blocker.clearFocus()
             return
         }
-        records.append(.init(
-            id: session.id,
-            startedAt: session.startedAt,
-            endedAt: .now,
-            plannedMinutes: session.plannedMinutes,
-            completed: completed,
-            emergencyUnlock: emergency
-        ))
+        if !records.contains(where: { $0.id == session.id }) {
+            records.append(.init(
+                id: session.id,
+                startedAt: session.startedAt,
+                endedAt: .now,
+                plannedMinutes: session.plannedMinutes,
+                completed: completed,
+                emergencyUnlock: emergency
+            ))
+        }
         activeSession = nil
         blocker.clearFocus()
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["focus.session"])

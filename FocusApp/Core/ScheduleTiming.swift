@@ -1,6 +1,24 @@
 import Foundation
 
 enum ScheduleTiming {
+    static func oneTimeIntervalComponents(
+        start: Date,
+        end: Date,
+        calendar: Calendar = .current
+    ) -> (start: DateComponents, end: DateComponents) {
+        var startComponents = calendar.dateComponents(
+            [.year, .month, .day, .hour, .minute, .second],
+            from: start
+        )
+        var endComponents = calendar.dateComponents(
+            [.year, .month, .day, .hour, .minute, .second],
+            from: end
+        )
+        startComponents.calendar = calendar
+        endComponents.calendar = calendar
+        return (startComponents, endComponents)
+    }
+
     static func isActive(
         startMinutes: Int,
         endMinutes: Int,

@@ -26,9 +26,10 @@ final class BlockingController: ObservableObject {
         let now = Date()
         let end = now.addingTimeInterval(TimeInterval(safeMinutes * 60))
         let calendar = Calendar.current
+        let interval = ScheduleTiming.oneTimeIntervalComponents(start: now, end: end, calendar: calendar)
         let schedule = DeviceActivitySchedule(
-            intervalStart: calendar.dateComponents([.hour, .minute, .second], from: now),
-            intervalEnd: calendar.dateComponents([.hour, .minute, .second], from: end),
+            intervalStart: interval.start,
+            intervalEnd: interval.end,
             repeats: false
         )
         center.stopMonitoring([.focusSession])

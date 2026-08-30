@@ -10,8 +10,11 @@ final class DeviceActivityMonitorExtension: DeviceActivityMonitor {
 
         if activity.rawValue == AppConstants.focusActivity {
             let store = ManagedSettingsStore(named: .init(AppConstants.managedStorePrefix + "session"))
-            let chosen = snapshot.activeSession?.selection
-            apply(chosen?.isEmpty == false ? chosen! : snapshot.selection, to: store)
+            if let chosen = snapshot.activeSession?.selection, !chosen.isEmpty {
+                apply(chosen, to: store)
+            } else {
+                apply(snapshot.selection, to: store)
+            }
             return
         }
 

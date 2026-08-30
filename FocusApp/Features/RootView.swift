@@ -32,18 +32,20 @@ struct HomeView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 18) {
-                if let session = model.activeSession {
-                    ActiveSessionCard(session: session)
-                } else if let schedule = model.activeScheduleNow {
-                    ActiveScheduleCard(schedule: schedule)
-                } else {
-                    NavigationLink { StartFocusView() } label: {
-                        Label("START FOCUS", systemImage: "scope")
-                            .font(.title3.bold())
-                            .frame(maxWidth: .infinity)
-                            .padding()
+                TimelineView(.periodic(from: .now, by: 15)) { context in
+                    if let session = model.activeSession {
+                        ActiveSessionCard(session: session)
+                    } else if let schedule = model.activeSchedule(at: context.date) {
+                        ActiveScheduleCard(schedule: schedule)
+                    } else {
+                        NavigationLink { StartFocusView() } label: {
+                            Label("START FOCUS", systemImage: "scope")
+                                .font(.title3.bold())
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                        }
+                        .buttonStyle(.borderedProminent)
                     }
-                    .buttonStyle(.borderedProminent)
                 }
 
                 HStack(spacing: 12) {
