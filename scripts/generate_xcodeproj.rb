@@ -19,8 +19,8 @@ def configure(target, bundle_id:, plist: nil, entitlements: nil)
     settings['TARGETED_DEVICE_FAMILY'] = '1'
     settings['SWIFT_VERSION'] = '5.0'
     settings['CODE_SIGN_STYLE'] = 'Automatic'
-    settings['CURRENT_PROJECT_VERSION'] = '2'
-    settings['MARKETING_VERSION'] = '0.2.0'
+    settings['CURRENT_PROJECT_VERSION'] = '3'
+    settings['MARKETING_VERSION'] = '0.2.1'
     settings['CODE_SIGN_ENTITLEMENTS'] = entitlements if entitlements
     if plist
       settings['GENERATE_INFOPLIST_FILE'] = 'NO'
@@ -52,6 +52,7 @@ end
 
 models = 'FocusApp/Core/Models.swift'
 shared_store = 'FocusApp/Core/SharedStore.swift'
+schedule_timing = 'FocusApp/Core/ScheduleTiming.swift'
 
 app = project.new_target(:application, 'FocusApp', :ios, '18.0')
 app.product_name = 'LockIn'
@@ -70,21 +71,21 @@ end
 app_sources = Dir.glob(File.join(root, 'FocusApp/**/*.swift')).map { |p| p.delete_prefix("#{root}/") }.sort
 add_sources(project, app, app_sources)
 add_resources(project, app, ['FocusApp/Resources/Assets.xcassets', 'FocusApp/Resources/PrivacyInfo.xcprivacy'])
-%w[FamilyControls.framework ManagedSettings.framework DeviceActivity.framework UserNotifications.framework AudioToolbox.framework].each { |f| add_framework(project, app, f) }
+%w[FamilyControls.framework ManagedSettings.framework DeviceActivity.framework UserNotifications.framework AudioToolbox.framework WidgetKit.framework].each { |f| add_framework(project, app, f) }
 
 extensions = [
   {
     name: 'DeviceActivityMonitorExtension',
     directory: 'Extensions/DeviceActivityMonitor',
     bundle: 'com.dash1971.focusapp.deviceactivity',
-    sources: [models, shared_store, 'Extensions/DeviceActivityMonitor/DeviceActivityMonitorExtension.swift'],
+    sources: [models, shared_store, schedule_timing, 'Extensions/DeviceActivityMonitor/DeviceActivityMonitorExtension.swift'],
     frameworks: %w[DeviceActivity.framework ManagedSettings.framework FamilyControls.framework]
   },
   {
     name: 'ShieldConfigurationExtension',
     directory: 'Extensions/ShieldConfiguration',
     bundle: 'com.dash1971.focusapp.shieldconfiguration',
-    sources: [models, shared_store, 'Extensions/ShieldConfiguration/ShieldConfigurationExtension.swift'],
+    sources: [models, shared_store, schedule_timing, 'Extensions/ShieldConfiguration/ShieldConfigurationExtension.swift'],
     frameworks: %w[ManagedSettings.framework ManagedSettingsUI.framework FamilyControls.framework DeviceActivity.framework UIKit.framework]
   },
   {
@@ -130,11 +131,22 @@ widget.build_configurations.each do |config|
   config.build_settings['APPLICATION_EXTENSION_API_ONLY'] = 'YES'
   config.build_settings['PRODUCT_NAME'] = 'LockInWidgets'
 end
-add_sources(project, widget, [models, shared_store, 'Extensions/LockInWidgets/LockInWidgets.swift'])
+add_sources(project, widget, [models, shared_store, schedule_timing, 'Extensions/LockInWidgets/LockInWidgets.swift'])
 %w[WidgetKit.framework SwiftUI.framework FamilyControls.framework DeviceActivity.framework].each { |f| add_framework(project, widget, f) }
 app.add_dependency(widget)
 widget_build_file = embed_phase.add_file_reference(widget.product_reference, true)
 widget_build_file.settings = { 'ATTRIBUTES' => %w[RemoveHeadersOnCopy CodeSignOnCopy] }
+
+tests = project.new_target(:unit_test_bundle, 'FocusAppTests', :ios, '18.0')
+configure(tests, bundle_id: 'com.dash1971.focusapp.tests')
+tests.build_configurations.each do |config|
+  config.build_settings['TEST_HOST'] = '$(BUILT_PRODUCTS_DIR)/LockIn.app/LockIn'
+  config.build_settings['BUNDLE_LOADER'] = '$(TEST_HOST)'
+end
+test_sources = Dir.glob(File.join(root, 'FocusAppTests/**/*.swift')).map { |p| p.delete_prefix("#{root}/") }.sort
+add_sources(project, tests, test_sources)
+add_framework(project, tests, 'XCTest.framework')
+tests.add_dependency(app)
 
 project.build_configurations.each do |config|
   config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '18.0'
@@ -145,6 +157,8 @@ project.recreate_user_schemes
 project.save
 shared_schemes = File.join(project_path, 'xcshareddata', 'xcschemes')
 FileUtils.mkdir_p(shared_schemes)
-focus_scheme = Dir.glob(File.join(project_path, 'xcuserdata', '*', 'xcschemes', 'FocusApp.xcscheme')).first
-FileUtils.cp(focus_scheme, shared_schemes) if focus_scheme
+%w[FocusApp FocusAppTests].each do |name|
+  scheme = Dir.glob(File.join(project_path, 'xcuserdata', '*', 'xcschemes', "#{name}.xcscheme")).first
+  FileUtils.cp(scheme, shared_schemes) if scheme
+end
 puts "Generated #{project_path}"

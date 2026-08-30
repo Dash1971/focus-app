@@ -48,17 +48,12 @@ final class ShieldConfigurationExtension: ShieldConfigurationDataSource {
     }
 
     private func activeSchedule(in schedules: [BlockSchedule]) -> BlockSchedule? {
-        let calendar = Calendar.current
-        let weekday = calendar.component(.weekday, from: .now)
-        let minute = calendar.component(.hour, from: .now) * 60 + calendar.component(.minute, from: .now)
         return schedules.first { schedule in
-            guard schedule.enabled else { return false }
-            if schedule.endMinutes > schedule.startMinutes {
-                return schedule.weekdays.contains(weekday) && minute >= schedule.startMinutes && minute < schedule.endMinutes
-            }
-            if minute >= schedule.startMinutes { return schedule.weekdays.contains(weekday) }
-            let previousWeekday = weekday == 1 ? 7 : weekday - 1
-            return minute < schedule.endMinutes && schedule.weekdays.contains(previousWeekday)
+            schedule.enabled && ScheduleTiming.isActive(
+                startMinutes: schedule.startMinutes,
+                endMinutes: schedule.endMinutes,
+                weekdays: schedule.weekdays
+            )
         }
     }
 }

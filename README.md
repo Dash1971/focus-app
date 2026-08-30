@@ -47,7 +47,9 @@ LockIn is local-first. The MVP has no account, analytics, advertising, or server
 
 ## Status
 
-MVP source is implemented. Debug and Release physical-iPhone builds succeed with Xcode 26.5 and the iOS 26.5 SDK, and the unsigned archive contains the app plus all three embedded Screen Time extensions. Property-list, privacy-manifest, bundle-validation, archive-structure, and repository checks pass.
+MVP source is implemented. Debug and Release physical-iPhone builds succeed with Xcode 26.5 and the iOS 26.5 SDK, and the unsigned archive contains the app plus all four embedded extensions. Property-list, privacy-manifest, bundle-validation, archive-structure, and repository checks pass.
+
+Version 0.2.1 adds safer schedule editing, correct overnight end-time handling, challenge validation, resumable countdown timers that survive in-app navigation, immediate widget refreshes, independent notification authorization, and unit coverage for schedule boundaries.
 
 Signing, Family Controls distribution approval, and testing on a physical iPhone remain necessary before TestFlight distribution. Apple's Screen Time behavior cannot be meaningfully validated solely in the simulator.
 

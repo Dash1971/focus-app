@@ -1,7 +1,15 @@
 import SwiftUI
 
 struct CountdownTimerView: View {
-    @StateObject private var timer = CountdownTimerModel()
+    @EnvironmentObject private var model: AppModel
+
+    var body: some View {
+        CountdownTimerContent(timer: model.countdownTimer)
+    }
+}
+
+private struct CountdownTimerContent: View {
+    @ObservedObject var timer: CountdownTimerModel
 
     var body: some View {
         VStack(spacing: 24) {
@@ -9,7 +17,7 @@ struct CountdownTimerView: View {
             Text(durationString(timer.remainingSeconds))
                 .font(.system(size: 64, weight: .medium, design: .rounded))
                 .monospacedDigit()
-            if !timer.isRunning {
+            if !timer.isRunning && !timer.isPaused {
                 Stepper("\(timer.durationSeconds / 60) minutes", value: $timer.durationSeconds, in: 60...14_400, step: 60)
                     .padding(.horizontal)
                 Picker("Sound", selection: $timer.sound) {
@@ -17,7 +25,7 @@ struct CountdownTimerView: View {
                 }.padding(.horizontal)
             }
             HStack {
-                Button(timer.isRunning ? "Pause" : "Start") {
+                Button(timer.isRunning ? "Pause" : (timer.isPaused ? "Resume" : "Start")) {
                     timer.isRunning ? timer.pause() : timer.start()
                 }
                 .buttonStyle(.borderedProminent)
@@ -30,7 +38,15 @@ struct CountdownTimerView: View {
 }
 
 struct IntervalTimerView: View {
-    @StateObject private var timer = IntervalTimerModel()
+    @EnvironmentObject private var model: AppModel
+
+    var body: some View {
+        IntervalTimerContent(timer: model.intervalTimer)
+    }
+}
+
+private struct IntervalTimerContent: View {
+    @ObservedObject var timer: IntervalTimerModel
 
     var body: some View {
         Form {

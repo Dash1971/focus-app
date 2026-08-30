@@ -2,6 +2,7 @@ import Foundation
 import Combine
 import FamilyControls
 import UserNotifications
+import WidgetKit
 
 @MainActor
 final class AppModel: ObservableObject {
@@ -17,6 +18,8 @@ final class AppModel: ObservableObject {
     let blocker = BlockingController.shared
     private let shared = SharedStore.shared
     private var completionTimer: Timer?
+    let countdownTimer = CountdownTimerModel()
+    let intervalTimer = IntervalTimerModel()
 
     init() {
         let snapshot = shared.load()
@@ -54,24 +57,19 @@ final class AppModel: ObservableObject {
     }
 
     var activeScheduleNow: BlockSchedule? {
-        let calendar = Calendar.current
-        let weekday = calendar.component(.weekday, from: .now)
-        let minute = calendar.component(.hour, from: .now) * 60 + calendar.component(.minute, from: .now)
         return schedules.first { schedule in
-            guard schedule.enabled else { return false }
-            if schedule.endMinutes > schedule.startMinutes {
-                return schedule.weekdays.contains(weekday) && minute >= schedule.startMinutes && minute < schedule.endMinutes
-            }
-            if minute >= schedule.startMinutes { return schedule.weekdays.contains(weekday) }
-            let previousWeekday = weekday == 1 ? 7 : weekday - 1
-            return minute < schedule.endMinutes && schedule.weekdays.contains(previousWeekday)
+            schedule.enabled && ScheduleTiming.isActive(
+                startMinutes: schedule.startMinutes,
+                endMinutes: schedule.endMinutes,
+                weekdays: schedule.weekdays
+            )
         }
     }
 
     func authorize() async {
+        _ = try? await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound])
         do {
             try await blocker.requestAuthorization()
-            _ = try? await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound])
         } catch {
             lastError = error.localizedDescription
         }
@@ -87,6 +85,10 @@ final class AppModel: ObservableObject {
         let chosen = chosenSelection ?? selection
         guard !chosen.applicationTokens.isEmpty || !chosen.categoryTokens.isEmpty || !chosen.webDomainTokens.isEmpty else {
             lastError = "Choose at least one app, category, or website first."
+            return
+        }
+        if let validationMessage = challenge.validationMessage {
+            lastError = validationMessage
             return
         }
         do {
@@ -141,20 +143,43 @@ final class AppModel: ObservableObject {
         saveSchedule(disabled)
     }
 
-    func saveSchedule(_ schedule: BlockSchedule) {
+    @discardableResult
+    func saveSchedule(_ schedule: BlockSchedule) -> Bool {
+        guard !schedule.enabled || schedule.startMinutes != schedule.endMinutes else {
+            lastError = "Choose different start and end times."
+            return false
+        }
+        if schedule.enabled, let validationMessage = schedule.challenge.validationMessage {
+            lastError = validationMessage
+            return false
+        }
+        let existing = schedules.first(where: { $0.id == schedule.id })
+        guard existing != nil || schedules.count < 15 else {
+            lastError = "LockIn supports up to 15 schedules in this version."
+            return false
+        }
+        let chosen = schedule.selection.isEmpty ? selection : schedule.selection
+        guard !schedule.enabled || !chosen.isEmpty else {
+            lastError = "Choose at least one app, category, or website before enabling this schedule."
+            return false
+        }
+        do {
+            try blocker.install(schedule, selection: chosen)
+        } catch {
+            if let existing {
+                let previousSelection = existing.selection.isEmpty ? selection : existing.selection
+                try? blocker.install(existing, selection: previousSelection)
+            }
+            lastError = error.localizedDescription
+            return false
+        }
         if let index = schedules.firstIndex(where: { $0.id == schedule.id }) {
             schedules[index] = schedule
         } else {
-            guard schedules.count < 15 else {
-                lastError = "LockIn supports up to 15 schedules in this version."
-                return
-            }
             schedules.append(schedule)
         }
         persist()
-        let chosen = schedule.selection.isEmpty ? selection : schedule.selection
-        do { try blocker.install(schedule, selection: chosen) }
-        catch { lastError = error.localizedDescription }
+        return true
     }
 
     func deleteSchedules(at offsets: IndexSet) {
@@ -234,6 +259,7 @@ final class AppModel: ObservableObject {
             emergencyUnlocks: emergencyUnlocks,
             customChallenges: customChallenges
         ))
+        WidgetCenter.shared.reloadAllTimelines()
     }
 }
 

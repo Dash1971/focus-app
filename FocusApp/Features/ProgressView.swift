@@ -36,7 +36,7 @@ struct ProgressViewScreen: View {
                                 .font(.caption).foregroundStyle(.secondary)
                         }
                         Spacer()
-                        Text("\(record.plannedMinutes)m")
+                        Text("\(record.displayedMinutes)m")
                     }
                 }
             }

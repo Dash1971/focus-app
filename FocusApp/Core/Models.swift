@@ -72,6 +72,19 @@ struct Challenge: Codable, Equatable {
         case .custom: customText.isEmpty ? "Complete your custom challenge" : customText
         }
     }
+
+    var validationMessage: String? {
+        switch kind {
+        case .question where customText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty:
+            "Enter the question users must answer."
+        case .question where expectedAnswer.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty:
+            "Enter the correct answer for this challenge."
+        case .custom where customText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty:
+            "Describe the custom challenge."
+        default:
+            nil
+        }
+    }
 }
 
 struct FocusSessionRecord: Codable, Identifiable, Equatable {
@@ -81,6 +94,10 @@ struct FocusSessionRecord: Codable, Identifiable, Equatable {
     let plannedMinutes: Int
     let completed: Bool
     let emergencyUnlock: Bool
+
+    var displayedMinutes: Int {
+        completed ? plannedMinutes : max(0, Int(endedAt.timeIntervalSince(startedAt) / 60))
+    }
 }
 
 struct ActiveFocusSession: Codable, Equatable {
@@ -136,7 +153,7 @@ struct BlockSchedule: Codable, Identifiable, Equatable {
         Calendar.current.startOfDay(for: .now).addingTimeInterval(TimeInterval(startMinutes * 60))
     }
     var endDate: Date {
-        Calendar.current.startOfDay(for: .now).addingTimeInterval(TimeInterval(endMinutes * 60))
+        ScheduleTiming.activeEndDate(startMinutes: startMinutes, endMinutes: endMinutes)
     }
 }
 

@@ -5,18 +5,28 @@ import AudioToolbox
 
 @MainActor
 final class CountdownTimerModel: ObservableObject {
-    @Published var durationSeconds = 20 * 60
+    @Published var durationSeconds = 20 * 60 {
+        didSet {
+            if !isRunning && !isPaused {
+                remainingSeconds = max(1, durationSeconds)
+            }
+        }
+    }
     @Published private(set) var remainingSeconds = 20 * 60
     @Published private(set) var isRunning = false
+    @Published private(set) var isPaused = false
     @Published var sound: TimerSound = .bell
 
     private var endDate: Date?
     private var ticker: Timer?
 
     func start() {
-        remainingSeconds = max(1, durationSeconds)
+        if !isPaused || remainingSeconds == 0 {
+            remainingSeconds = max(1, durationSeconds)
+        }
         endDate = Date().addingTimeInterval(TimeInterval(remainingSeconds))
         isRunning = true
+        isPaused = false
         scheduleNotification(seconds: remainingSeconds, id: "normal.timer", title: "Timer complete", sound: sound)
         tick()
     }
@@ -27,11 +37,13 @@ final class CountdownTimerModel: ObservableObject {
         ticker = nil
         endDate = nil
         isRunning = false
+        isPaused = remainingSeconds > 0
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["normal.timer"])
     }
 
     func reset() {
         pause()
+        isPaused = false
         remainingSeconds = durationSeconds
     }
 
@@ -50,6 +62,7 @@ final class CountdownTimerModel: ObservableObject {
             ticker = nil
             self.endDate = nil
             isRunning = false
+            isPaused = false
             play(sound)
         }
     }

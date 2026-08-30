@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "F83A07F1354E807B014878A0"
-               BuildableName = "FocusApp.app"
-               BlueprintName = "FocusApp"
+               BlueprintIdentifier = "FCD36C2A5825FC5F97DA3116"
+               BuildableName = "FocusAppTests.xctest"
+               BlueprintName = "FocusAppTests"
                ReferencedContainer = "container:FocusApp.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -27,16 +27,17 @@
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "F83A07F1354E807B014878A0"
-            BuildableName = "FocusApp.app"
-            BlueprintName = "FocusApp"
-            ReferencedContainer = "container:FocusApp.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "FCD36C2A5825FC5F97DA3116"
+               BuildableName = "FocusAppTests.xctest"
+               BlueprintName = "FocusAppTests"
+               ReferencedContainer = "container:FocusApp.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
@@ -49,16 +50,6 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "F83A07F1354E807B014878A0"
-            BuildableName = "FocusApp.app"
-            BlueprintName = "FocusApp"
-            ReferencedContainer = "container:FocusApp.xcodeproj">
-         </BuildableReference>
-      </BuildableProductRunnable>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -66,16 +57,6 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "F83A07F1354E807B014878A0"
-            BuildableName = "FocusApp.app"
-            BlueprintName = "FocusApp"
-            ReferencedContainer = "container:FocusApp.xcodeproj">
-         </BuildableReference>
-      </BuildableProductRunnable>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

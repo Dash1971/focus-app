@@ -47,21 +47,24 @@ final class BlockingController: ObservableObject {
         let start = DateComponents(hour: schedule.startMinutes / 60, minute: schedule.startMinutes % 60)
         let end = DateComponents(hour: schedule.endMinutes / 60, minute: schedule.endMinutes % 60)
         let activity = DeviceActivityName.schedule(schedule.id)
+        let scheduleStore = ManagedSettingsStore(named: .init(AppConstants.managedStorePrefix + schedule.id.uuidString))
         center.stopMonitoring([activity])
+        // Editing an active schedule must remove its old shield before evaluating
+        // the replacement. Otherwise a newly inactive schedule can stay blocked.
+        scheduleStore.clearAllSettings()
         guard schedule.enabled else {
-            ManagedSettingsStore(named: .init(AppConstants.managedStorePrefix + schedule.id.uuidString)).clearAllSettings()
             return
         }
         try center.startMonitoring(activity, during: DeviceActivitySchedule(intervalStart: start, intervalEnd: end, repeats: true))
 
         // If the schedule is active now, apply it without waiting for the next callback.
-        let weekday = calendar.component(.weekday, from: .now)
-        let minute = calendar.component(.hour, from: .now) * 60 + calendar.component(.minute, from: .now)
-        let crossesMidnight = schedule.endMinutes <= schedule.startMinutes
-        let activeTime = crossesMidnight ? (minute >= schedule.startMinutes || minute < schedule.endMinutes) : (minute >= schedule.startMinutes && minute < schedule.endMinutes)
-        let applicableWeekday = crossesMidnight && minute < schedule.endMinutes ? (weekday == 1 ? 7 : weekday - 1) : weekday
-        if schedule.weekdays.contains(applicableWeekday), activeTime {
-            apply(selection: selection, to: ManagedSettingsStore(named: .init(AppConstants.managedStorePrefix + schedule.id.uuidString)))
+        if ScheduleTiming.isActive(
+            startMinutes: schedule.startMinutes,
+            endMinutes: schedule.endMinutes,
+            weekdays: schedule.weekdays,
+            calendar: calendar
+        ) {
+            apply(selection: selection, to: scheduleStore)
         }
     }
 

@@ -19,9 +19,15 @@ final class DeviceActivityMonitorExtension: DeviceActivityMonitor {
               let id = UUID(uuidString: String(activity.rawValue.dropFirst(AppConstants.schedulePrefix.count))),
               let schedule = snapshot.schedules.first(where: { $0.id == id && $0.enabled }) else { return }
 
-        let weekday = Calendar.current.component(.weekday, from: .now)
-        guard schedule.weekdays.contains(weekday) else { return }
         let store = ManagedSettingsStore(named: .init(AppConstants.managedStorePrefix + id.uuidString))
+        guard ScheduleTiming.isActive(
+            startMinutes: schedule.startMinutes,
+            endMinutes: schedule.endMinutes,
+            weekdays: schedule.weekdays
+        ) else {
+            store.clearAllSettings()
+            return
+        }
         apply(schedule.selection.isEmpty ? snapshot.selection : schedule.selection, to: store)
     }
 

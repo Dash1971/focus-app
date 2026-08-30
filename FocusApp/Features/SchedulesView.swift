@@ -59,6 +59,11 @@ struct ScheduleEditor: View {
                         get: { date(minutes: schedule.endMinutes) },
                         set: { schedule.endMinutes = minutes(date: $0) }
                     ), displayedComponents: .hourAndMinute)
+                    if schedule.startMinutes == schedule.endMinutes {
+                        Text("Start and end times must be different.")
+                            .font(.footnote)
+                            .foregroundStyle(.red)
+                    }
                     Toggle("Enabled", isOn: $schedule.enabled)
                 }
                 Section("Days") {
@@ -85,8 +90,14 @@ struct ScheduleEditor: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") { model.saveSchedule(schedule); dismiss() }
-                        .disabled(schedule.name.trimmingCharacters(in: .whitespaces).isEmpty || schedule.weekdays.isEmpty)
+                    Button("Save") {
+                        if model.saveSchedule(schedule) { dismiss() }
+                    }
+                        .disabled(
+                            schedule.name.trimmingCharacters(in: .whitespaces).isEmpty ||
+                            schedule.weekdays.isEmpty ||
+                            (schedule.enabled && schedule.startMinutes == schedule.endMinutes)
+                        )
                 }
             }
         }
