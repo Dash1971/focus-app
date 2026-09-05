@@ -19,8 +19,8 @@ def configure(target, bundle_id:, plist: nil, entitlements: nil)
     settings['TARGETED_DEVICE_FAMILY'] = '1'
     settings['SWIFT_VERSION'] = '5.0'
     settings['CODE_SIGN_STYLE'] = 'Automatic'
-    settings['CURRENT_PROJECT_VERSION'] = '3'
-    settings['MARKETING_VERSION'] = '0.2.1'
+    settings['CURRENT_PROJECT_VERSION'] = '4'
+    settings['MARKETING_VERSION'] = '0.3.0'
     settings['CODE_SIGN_ENTITLEMENTS'] = entitlements if entitlements
     if plist
       settings['GENERATE_INFOPLIST_FILE'] = 'NO'
@@ -52,7 +52,8 @@ end
 
 models = 'FocusApp/Core/Models.swift'
 shared_store = 'FocusApp/Core/SharedStore.swift'
-schedule_timing = 'FocusApp/Core/ScheduleTiming.swift'
+time_policy = 'FocusApp/Core/TimePolicy.swift'
+shield_policy = 'FocusApp/Core/ShieldPolicy.swift'
 
 app = project.new_target(:application, 'FocusApp', :ios, '18.0')
 app.product_name = 'LockIn'
@@ -78,14 +79,14 @@ extensions = [
     name: 'DeviceActivityMonitorExtension',
     directory: 'Extensions/DeviceActivityMonitor',
     bundle: 'com.dash1971.focusapp.deviceactivity',
-    sources: [models, shared_store, schedule_timing, 'Extensions/DeviceActivityMonitor/DeviceActivityMonitorExtension.swift'],
+    sources: [models, shared_store, time_policy, shield_policy, 'Extensions/DeviceActivityMonitor/DeviceActivityMonitorExtension.swift'],
     frameworks: %w[DeviceActivity.framework ManagedSettings.framework FamilyControls.framework]
   },
   {
     name: 'ShieldConfigurationExtension',
     directory: 'Extensions/ShieldConfiguration',
     bundle: 'com.dash1971.focusapp.shieldconfiguration',
-    sources: [models, shared_store, schedule_timing, 'Extensions/ShieldConfiguration/ShieldConfigurationExtension.swift'],
+    sources: ['Extensions/ShieldConfiguration/ShieldConfigurationExtension.swift'],
     frameworks: %w[ManagedSettings.framework ManagedSettingsUI.framework FamilyControls.framework DeviceActivity.framework UIKit.framework]
   },
   {
@@ -131,7 +132,7 @@ widget.build_configurations.each do |config|
   config.build_settings['APPLICATION_EXTENSION_API_ONLY'] = 'YES'
   config.build_settings['PRODUCT_NAME'] = 'LockInWidgets'
 end
-add_sources(project, widget, [models, shared_store, schedule_timing, 'Extensions/LockInWidgets/LockInWidgets.swift'])
+add_sources(project, widget, [models, shared_store, time_policy, 'Extensions/LockInWidgets/LockInWidgets.swift'])
 %w[WidgetKit.framework SwiftUI.framework FamilyControls.framework DeviceActivity.framework].each { |f| add_framework(project, widget, f) }
 app.add_dependency(widget)
 widget_build_file = embed_phase.add_file_reference(widget.product_reference, true)
