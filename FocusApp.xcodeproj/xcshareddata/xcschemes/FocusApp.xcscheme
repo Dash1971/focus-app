@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "F83A07F1354E807B014878A0"
+               BlueprintIdentifier = "DF8241716A98A451CCBD4245"
                BuildableName = "FocusApp.app"
                BlueprintName = "FocusApp"
                ReferencedContainer = "container:FocusApp.xcodeproj">
@@ -30,7 +30,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "F83A07F1354E807B014878A0"
+            BlueprintIdentifier = "DF8241716A98A451CCBD4245"
             BuildableName = "FocusApp.app"
             BlueprintName = "FocusApp"
             ReferencedContainer = "container:FocusApp.xcodeproj">
@@ -53,7 +53,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "F83A07F1354E807B014878A0"
+            BlueprintIdentifier = "DF8241716A98A451CCBD4245"
             BuildableName = "FocusApp.app"
             BlueprintName = "FocusApp"
             ReferencedContainer = "container:FocusApp.xcodeproj">
@@ -70,7 +70,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "F83A07F1354E807B014878A0"
+            BlueprintIdentifier = "DF8241716A98A451CCBD4245"
             BuildableName = "FocusApp.app"
             BlueprintName = "FocusApp"
             ReferencedContainer = "container:FocusApp.xcodeproj">

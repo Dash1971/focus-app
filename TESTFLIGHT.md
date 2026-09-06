@@ -33,20 +33,30 @@ gem install --user-install xcodeproj --no-document
 ruby scripts/generate_xcodeproj.rb
 ```
 
-## 3. Physical-device smoke test
+## 3. Physical-device acceptance matrix (required before release)
 
-Install directly from Xcode before uploading to TestFlight:
+Use a harmless app. Test the oldest supported iOS version and the current release. Record device, OS, grant duration, expected/actual relock times, and pass/fail in the PR.
 
-1. Accept Screen Time authorization.
-2. Select one harmless test app.
-3. Start a one-minute focus session and confirm the selected app is shielded.
-4. Confirm the shield displays the end time.
-5. Confirm the block clears after one minute while LockIn is not foregrounded.
-6. Test a math-challenge unlock.
-7. Test an emergency unlock and verify it appears in Progress.
-8. Create a schedule beginning two minutes in the future and verify automatic activation and clearing.
-9. Test an overnight schedule separately.
-10. Run both timers with the phone locked and verify notifications.
+- [ ] Grant and deny/revoke Screen Time authorization; Home must not imply protection without permission.
+- [ ] Select an app: it shields immediately and remains shielded across app closure and overnight with no focus session or schedule.
+- [ ] Test every preset: 30 seconds, 1, 5, 10, 15, 25 and 30 minutes; test custom 1 and 1,440 minutes.
+- [ ] For each duration, leave LockIn, keep the unlocked app foregrounded, and measure actual automatic relock time.
+- [ ] Repeat short-grant tests after force-quitting LockIn, with screen locked, in Low Power Mode, and after reboot. A grant must not remain available indefinitely; investigate any delay.
+- [ ] Repeat across midnight, time-zone changes and manual clock changes. Reopening LockIn should expire inconsistent or elapsed grants.
+- [ ] Set each wait duration; no access before the wait AND final Unlock tap. Dismissing, switching targets or leaving LockIn cancels the wait.
+- [ ] Confirm failed monitor registration leaves shields in place; use an injected failure/debugger if needed.
+- [ ] Lock again early, then request a new grant. Old callbacks must not remove shields or cancel a still-valid new grant.
+- [ ] Test individual apps, websites, categories and overlapping selections; other selected items remain shielded during a grant.
+- [ ] Change selection during a grant: the grant ends, the replacement shields apply, and no stale callback restores the old selection.
+- [ ] Upgrade an installed 0.2.1 build with an active session and enabled/disabled schedules. Confirm selection migration, new continuous blocking and removal of old named shields.
+- [ ] Create/edit/delete a colored important calendar event. Navigate months and verify dashboard and Calendar agree after relaunch.
+- [ ] Create/rename/delete habits; toggle today and past days in every period, hide history, relaunch, and verify saved preferences. Future completions must be disabled.
+- [ ] Create/edit/delete notes with multiline and non-Latin text; verify Save, Cancel and relaunch persistence.
+- [ ] Check year progress on January 1, December 31 and a leap year; it must appear above the Home calendar.
+- [ ] Check widgets before/during/after access, old widget/deep links, neutral theme and new launcher icon.
+- [ ] Check small/large iPhones, large Dynamic Type, VoiceOver and long names; verify all controls remain usable.
+
+Device Activity callbacks are system-scheduled and can be delayed. A successful build or simulator test does not certify the requested real-time blocking behavior.
 
 ## 4. TestFlight upload
 
@@ -57,10 +67,8 @@ Install directly from Xcode before uploading to TestFlight:
 5. Distribute through **App Store Connect → Upload**.
 6. Add the build to an internal TestFlight group.
 
-## Known MVP boundaries
+## Release status
 
-- Exercise, reading, cleaning, and custom challenges are honesty-confirmed. Math, question, and puzzle challenges are automatically verified.
-- Emergency unlocks deliberately disable the active recurring schedule; the user must re-enable it afterward.
-- Interval phase changes are reliable while the app is active. Notifications fire when it is backgrounded, but fully autonomous multi-phase background progression is planned for the next iteration.
-- Apple's system owns the shield UI. LockIn controls the permitted text, colors, icon, and actions.
-- On iOS 26.5 and later, the shield's challenge button can open LockIn directly. On iOS 18 through 26.4, Apple does not expose that action, so the user must open LockIn manually to complete the challenge.
+This redesign needs the acceptance matrix above before release. The PR documents automated validation separately. No App Store upload, distribution signing or device test is implied by opening the PR.
+
+The default shield is persistent while individual Screen Time authorization remains enabled. Users can revoke authorization, uninstall the app, or deliberately remove selections. On every supported iOS version, close the shield and open LockIn manually to request access.

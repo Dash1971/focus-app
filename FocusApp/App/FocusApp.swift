@@ -9,12 +9,11 @@ struct LockInApp: App {
         WindowGroup {
             RootView()
                 .environmentObject(model)
-                .tint(.indigo)
-                .task { await model.authorize() }
+                .preferredColorScheme(.dark)
+                .tint(.white)
                 .onChange(of: scenePhase) { _, phase in
-                    if phase == .active {
-                        model.refreshFromSharedStore()
-                    }
+                    if phase == .active { model.refreshFromSharedStore() }
+                    else { model.cancelWait() }
                 }
         }
     }

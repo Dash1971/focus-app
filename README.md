@@ -1,58 +1,50 @@
-# LockIn 🔒
+# LockIn
 
-An iPhone app for discipline, focused work, and intentional screen-time control.
+A local-first iPhone app for keeping distractions locked and organizing everyday life.
 
-> Control your phone instead of letting your phone control you.
+**Locked by default → temporary access → locked again.**
 
-## MVP
+## Version 0.3 redesign
 
-The current build includes:
+- Selected apps, categories and websites stay shielded continuously while Screen Time authorization remains enabled.
+- Temporary access to one selected app, website or category after a configurable 10, 20, 30, 45 or 60 second wait. Leaving the app or dismissing the unlock screen cancels the wait.
+- A wheel picker offers 30 seconds, 1, 5, 10, 15, 25 and 30 minutes, plus custom 1–1,440 minutes. One temporary grant at a time; other selected items remain blocked.
+- A permanent dark theme with black, charcoal and gray surfaces and the supplied lock-and-arms icon.
+- Monthly calendar on Home and its own tab, with named, colored events and important dates.
+- Habits with day, week, month and year views, period navigation, editable past completions, and an option to hide daily history.
+- Simple local notes with explicit Save, edit and delete actions.
+- A date-driven current-year progress bar above the Home calendar (2026 → 2027 during 2026, rolling forward each January).
+- No focus sessions, schedules, challenges or app-usage analytics. Widgets follow the new model.
 
-- Screen Time authorization and Apple's privacy-preserving app/category picker
-- Timed and end-time focus sessions with their own app selections
-- Recurring blocking schedules, including overnight schedules and weekday selection
-- Custom shield copy with the block's end time
-- Optional verified math challenges
-- Optional honor-based exercise, weighted exercise, reading, cleaning, and custom challenges
-- Verified math, question, and small-puzzle challenges
-- Confirmed emergency unlocks
-- Countdown timer with selectable completion sounds
-- Work/rest interval timer with rounds and automatic advancement
-- Daily and weekly focus time, completed sessions, challenges, selected distractions, and emergency-unlock history
-- Home Screen and Lock Screen widgets with focus status, progress, and Focus/Timer quick actions
-- Shared state across the app and its Screen Time extensions
+## Blocking semantics and limits
 
-## Project structure
+A category grants access to the category as a whole. An app or website also selected individually still needs its own unlock. Individually unlocked apps/websites are excluded from category shielding while their grant is active. The selection can be edited deliberately; removing an item makes it available.
 
-- `FocusApp/` — SwiftUI application, shared models, persistence, and blocking engine
-- `Extensions/LockInWidgets/` — Home Screen and Lock Screen widgets
-- `Extensions/DeviceActivityMonitor/` — activates and clears scheduled shields
-- `Extensions/ShieldConfiguration/` — customizes the system blocking screen
-- `Extensions/ShieldAction/` — routes unlock requests back to LockIn
-- `scripts/generate_xcodeproj.rb` — reproducibly generates the Xcode project
+Managed Settings holds the default shields. Before granting temporary access, LockIn registers a **one-time internal Device Activity interval starting at the relock deadline**, lasting 16 minutes. The monitor restores shields at `intervalDidStart`; `intervalDidEnd` is a backup. This avoids registering a sub-15-minute interval for short unlocks. These are implementation timers, not user blocking schedules. Foreground expiration and reopen reconciliation also restore shields.
 
-## Requirements
+**Device Activity is controlled by iOS, not a real-time timer guarantee.** Short unlocks, force-quit, reboot, locked-screen and clock/time-zone behavior require the physical-device tests in [TESTFLIGHT.md](TESTFLIGHT.md). Clock/reboot detection takes effect when the app or monitor next runs. Permission revocation or uninstalling LockIn can disable protection; this is individual Screen Time authorization, not tamper-proof device management. Widgets show saved intent, not proof of current system enforcement.
 
-- A Mac with full Xcode 26 or later and a current iOS SDK
-- An Apple Developer Program membership
-- A physical iPhone running iOS 18 or later
-- Family Controls development capability for local testing
-- Family Controls distribution approval for TestFlight
+All supported iOS versions use a shield Close action with instructions to open LockIn manually. This avoids advertising an Open action that cannot work on older iOS versions.
 
-See [TESTFLIGHT.md](TESTFLIGHT.md) for signing, entitlement, device-test, and upload steps.
+## Upgrade from 0.2.1
+
+On first launch, preserve the global selection plus selections from the former active session and enabled schedules. Apply permanent shields before clearing old named stores and stopping old monitoring. Retain the old defaults snapshot as a rollback copy, but do not display or continue its challenges, schedules or analytics. Existing users should review their blocked selection because formerly scheduled items now stay blocked continuously.
+
+## Project and validation
+
+- `FocusApp/`: SwiftUI application, policies and persistence.
+- `Extensions/`: relock monitor, shield appearance/actions, and widgets.
+- `FocusAppTests/`: date, deadline, persistence and migration regressions.
+- `Package.swift`: Foundation-only tests runnable with `swift test` without an iOS SDK.
+- `.github/workflows/ios.yml`: core tests, unsigned iPhone build and simulator tests.
+- `docs/AUDIT.md`: audit findings, design choices and review risks.
+
+Requires iOS 18+, full Xcode 26+ for app builds, App Group signing, and Apple's Family Controls capability. Physical-device Screen Time testing and distribution approval are required before TestFlight. See [TESTFLIGHT.md](TESTFLIGHT.md).
+
+Regenerate the project with `ruby scripts/generate_xcodeproj.rb` after installing the `xcodeproj` gem. Run `swift scripts/generate_app_icon.swift` from the repository root to package the original artwork into the opaque 1024×1024 PNG asset.
 
 ## Privacy
 
-LockIn is local-first. The MVP has no account, analytics, advertising, or server. App selections are represented by Apple's opaque Screen Time tokens, and app state is stored in the app's private shared container.
-
-## Status
-
-MVP source is implemented. Debug and Release physical-iPhone builds succeed with Xcode 26.5 and the iOS 26.5 SDK, and the unsigned archive contains the app plus all four embedded extensions. Property-list, privacy-manifest, bundle-validation, archive-structure, and repository checks pass.
-
-Version 0.2.1 adds safer schedule editing, correct overnight end-time handling, challenge validation, resumable countdown timers that survive in-app navigation, immediate widget refreshes, independent notification authorization, and unit coverage for schedule boundaries.
-
-Signing, Family Controls distribution approval, and testing on a physical iPhone remain necessary before TestFlight distribution. Apple's Screen Time behavior cannot be meaningfully validated solely in the simulator.
-
-## License
+No accounts, servers, analytics, advertising or network dependencies. Screen Time tokens and temporary grants live in the shared App Group container. A file lock and atomic writes serialize app/monitor transactions. Notes, habits and calendar events live separately in the app's Application Support directory. Events are local civil dates; no Calendar permission or external calendar sync is used. Unreadable saved data produces an error rather than silently replacing it with empty state.
 
 MIT License. See [LICENSE](LICENSE).

@@ -1,111 +1,104 @@
 import SwiftUI
+import FamilyControls
 
 struct RootView: View {
     @EnvironmentObject private var model: AppModel
+    @State private var tab = 0
 
     var body: some View {
-        TabView {
-            NavigationStack { HomeView() }
-                .tabItem { Label("Home", systemImage: "house.fill") }
-            NavigationStack { SchedulesView() }
-                .tabItem { Label("Schedules", systemImage: "calendar") }
-            NavigationStack { ProgressViewScreen() }
-                .tabItem { Label("Progress", systemImage: "chart.bar.fill") }
+        TabView(selection: $tab) {
+            NavigationStack { HomeView() }.tabItem { Label("Home", systemImage: "house") }.tag(0)
+            NavigationStack { CalendarView() }.tabItem { Label("Calendar", systemImage: "calendar") }.tag(1)
+            NavigationStack { HabitsView() }.tabItem { Label("Habits", systemImage: "checkmark.circle") }.tag(2)
+            NavigationStack { NotesView() }.tabItem { Label("Notes", systemImage: "note.text") }.tag(3)
         }
-        .alert("LockIn", isPresented: Binding(
-            get: { model.lastError != nil },
-            set: { if !$0 { model.lastError = nil } }
-        )) {
+        .onOpenURL { url in if url.scheme == "lockin" { tab = 0 } }
+        .alert("LockIn", isPresented: Binding(get: { model.lastError != nil }, set: { if !$0 { model.lastError = nil } })) {
             Button("OK") { model.lastError = nil }
-        } message: {
-            Text(model.lastError ?? "")
-        }
+        } message: { Text(model.lastError ?? "") }
     }
 }
 
 struct HomeView: View {
     @EnvironmentObject private var model: AppModel
     @State private var showingAppPicker = false
-    @State private var openingFocus = false
-    @State private var openingTimer = false
+    @State private var showingUnlock = false
+    @State private var draftSelection = FamilyActivitySelection()
+    @State private var confirmingSelection = false
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 18) {
-                TimelineView(.periodic(from: .now, by: 15)) { context in
-                    if let session = model.activeSession {
-                        ActiveSessionCard(session: session)
-                    } else if let schedule = model.activeSchedule(at: context.date) {
-                        ActiveScheduleCard(schedule: schedule)
+            VStack(alignment: .leading, spacing: 24) {
+                VStack(alignment: .leading, spacing: 16) {
+                    Label("LOCKED BY DEFAULT", systemImage: "lock.fill").font(.caption.weight(.semibold)).foregroundStyle(.secondary)
+                    Text(statusTitle).font(.largeTitle.bold())
+                    Text("Keep distractions closed. Take temporary access when you need it.").foregroundStyle(.secondary)
+                    if !model.storageReady {
+                        Button("Retry shared storage") { model.refreshFromSharedStore() }
+                    } else if !model.authorized {
+                        Button("Allow Screen Time access") { Task { await model.authorize() } }.buttonStyle(.bordered)
+                        Text("Blocking needs Screen Time permission.").font(.footnote).foregroundStyle(.secondary)
                     } else {
-                        NavigationLink { StartFocusView() } label: {
-                            Label("START FOCUS", systemImage: "scope")
-                                .font(.title3.bold())
-                                .frame(maxWidth: .infinity)
-                                .padding()
+                        if let grant = model.blocking.grant {
+                            Text("Temporary access ends in")
+                            Text(grant.deadline.endsAt, style: .timer).font(.title.monospacedDigit())
+                            Button("Lock again now") { model.lockNow() }.buttonStyle(.bordered)
+                        } else if !model.blocking.selection.isEmpty {
+                            Button("Temporary unlock") { showingUnlock = true }.buttonStyle(.bordered)
                         }
-                        .buttonStyle(.borderedProminent)
+                        Button("Choose blocked apps") { draftSelection = model.blocking.selection; showingAppPicker = true }
+                        Picker("Wait before unlock", selection: Binding(get: { model.blocking.waitSeconds }, set: model.setWait)) {
+                            ForEach(TimePolicy.waitDurations, id: \.self) { Text("\($0) seconds").tag($0) }
+                        }.pickerStyle(.menu)
                     }
-                }
-
-                HStack(spacing: 12) {
-                    NavigationLink { CountdownTimerView() } label: { ActionTile(title: "TIMER", icon: "timer") }
-                    NavigationLink { IntervalTimerView() } label: { ActionTile(title: "INTERVAL", icon: "repeat") }
-                }
-
-                Button { showingAppPicker = true } label: {
-                    Label("BLOCK APPS", systemImage: "hand.raised.fill")
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding()
-                        .background(.indigo.opacity(0.1), in: RoundedRectangle(cornerRadius: 16))
-                }
-
-                HStack {
-                    StatTile(value: "\(model.focusMinutesToday)m", label: "Focus today")
-                    StatTile(value: "\(model.sessionsToday)", label: "Sessions")
-                    StatTile(value: "\(model.challengesCompleted)", label: "Challenges")
-                }
-            }
-            .padding()
+                }.card()
+                VStack(alignment: .leading, spacing: 16) {
+                    YearProgressView()
+                    CalendarMonthView(compact: true)
+                }.card()
+                HStack(spacing: 16) {
+                    NavigationLink { HabitsView() } label: { Label("Habits", systemImage: "checkmark.circle").frame(maxWidth: .infinity) }
+                    NavigationLink { NotesView() } label: { Label("Notes", systemImage: "note.text").frame(maxWidth: .infinity) }
+                }.buttonStyle(.bordered)
+            }.padding()
         }
+        .background(Color.black)
         .navigationTitle("LockIn")
-        .familyActivityPicker(isPresented: $showingAppPicker, selection: Binding(
-            get: { model.selection },
-            set: { model.updateSelection($0) }
-        ))
-        .navigationDestination(isPresented: $openingFocus) { StartFocusView() }
-        .navigationDestination(isPresented: $openingTimer) { CountdownTimerView() }
-        .onOpenURL { url in
-            guard url.scheme == "lockin" else { return }
-            if url.host == "focus" { openingFocus = true }
-            if url.host == "timer" { openingTimer = true }
+        .familyActivityPicker(isPresented: $showingAppPicker, selection: $draftSelection)
+        .onChange(of: showingAppPicker) { _, showing in if !showing { confirmingSelection = true } }
+        .confirmationDialog("Apply this blocked selection?", isPresented: $confirmingSelection, titleVisibility: .visible) {
+            Button("Apply selection") { model.updateSelection(draftSelection) }
+            Button("Cancel", role: .cancel) {}
+        } message: { Text("Selected items stay blocked all day. Removing items makes them available. Any temporary access will end.") }
+        .sheet(isPresented: $showingUnlock) { UnlockView().environmentObject(model) }
+    }
+
+    private var statusTitle: String {
+        if !model.storageReady { return "Storage unavailable" }
+        if !model.authorized { return "Set up protection" }
+        if model.blocking.selection.isEmpty { return "Choose your distractions" }
+        return model.blocking.grant == nil ? "Distractions locked" : "Temporary access"
+    }
+}
+
+struct YearProgressView: View {
+    var body: some View {
+        TimelineView(.periodic(from: .now, by: 60)) { context in
+            let year = Calendar.current.component(.year, from: context.date)
+            let progress = TimePolicy.yearProgress(at: context.date)
+            VStack(alignment: .leading, spacing: 10) {
+                HStack {
+                    Text("\(String(year)) → \(String(year + 1))").font(.headline)
+                    Spacer()
+                    Text(progress, format: .percent.precision(.fractionLength(0))).monospacedDigit().foregroundStyle(.secondary)
+                }
+                ProgressView(value: progress).tint(.white)
+                    .accessibilityLabel("Year progress")
+            }
         }
     }
 }
 
-private struct ActionTile: View {
-    let title: String
-    let icon: String
-    var body: some View {
-        VStack(spacing: 10) {
-            Image(systemName: icon).font(.title)
-            Text(title).font(.headline)
-        }
-        .frame(maxWidth: .infinity, minHeight: 100)
-        .background(.secondary.opacity(0.1), in: RoundedRectangle(cornerRadius: 16))
-    }
-}
-
-private struct StatTile: View {
-    let value: String
-    let label: String
-    var body: some View {
-        VStack(spacing: 4) {
-            Text(value).font(.title3.bold())
-            Text(label).font(.caption).foregroundStyle(.secondary)
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 14)
-        .background(.secondary.opacity(0.08), in: RoundedRectangle(cornerRadius: 14))
-    }
+extension View {
+    func card() -> some View { padding(20).frame(maxWidth: .infinity, alignment: .leading).background(Color(white: 0.09), in: RoundedRectangle(cornerRadius: 20)) }
 }

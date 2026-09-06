@@ -14,14 +14,8 @@ final class ShieldActionExtension: ShieldActionDelegate {
     }
 
     private func respond(to action: ShieldAction, completionHandler: @escaping (ShieldActionResponse) -> Void) {
-        if action == .primaryButtonPressed {
-            if #available(iOS 26.5, *) {
-                completionHandler(.openParentalControlsApp)
-            } else {
-                completionHandler(.defer)
-            }
-            return
-        }
+        // Closing works on every supported iOS version. The shield explains
+        // that temporary access is requested by opening LockIn manually.
         completionHandler(.close)
     }
 }

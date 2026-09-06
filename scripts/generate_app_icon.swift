@@ -1,31 +1,23 @@
-import AppKit
+#!/usr/bin/env swift
+// Package the tester-supplied artwork without redrawing or changing its design.
+import Foundation
+import CoreGraphics
+import ImageIO
+import UniformTypeIdentifiers
 
-// AppKit renders at the Mac's 2x backing scale, producing Apple's required 1024 px asset.
-let size = NSSize(width: 512, height: 512)
-let image = NSImage(size: size)
-image.lockFocus()
-
-let background = NSGradient(colors: [
-    NSColor(calibratedRed: 0.08, green: 0.08, blue: 0.12, alpha: 1),
-    NSColor(calibratedRed: 0.20, green: 0.12, blue: 0.45, alpha: 1)
-])!
-background.draw(in: NSRect(origin: .zero, size: size), angle: -55)
-
-let paragraph = NSMutableParagraphStyle()
-paragraph.alignment = .center
-let attributes: [NSAttributedString.Key: Any] = [
-    .font: NSFont.systemFont(ofSize: 305),
-    .paragraphStyle: paragraph
-]
-let emoji = NSAttributedString(string: "🔒", attributes: attributes)
-emoji.draw(in: NSRect(x: 0, y: 85, width: 512, height: 350))
-image.unlockFocus()
-
-guard let tiff = image.tiffRepresentation,
-      let bitmap = NSBitmapImageRep(data: tiff),
-      let png = bitmap.representation(using: .png, properties: [:]) else {
-    fatalError("Could not render app icon")
+let root = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
+let source = root.appendingPathComponent("Design/AppIcon-source.jpg")
+let output = root.appendingPathComponent("FocusApp/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon.png")
+guard let input = CGImageSourceCreateWithURL(source as CFURL, nil),
+      let image = CGImageSourceCreateImageAtIndex(input, 0, nil),
+      let context = CGContext(data: nil, width: 1024, height: 1024, bitsPerComponent: 8, bytesPerRow: 0,
+                              space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue) else {
+    fatalError("Run this script from the repository root with Design/AppIcon-source.jpg present")
 }
-let output = URL(fileURLWithPath: CommandLine.arguments.dropFirst().first ?? "AppIcon.png")
-try png.write(to: output)
-print(output.path)
+context.interpolationQuality = .high
+context.draw(image, in: CGRect(x: 0, y: 0, width: 1024, height: 1024))
+guard let result = context.makeImage(),
+      let destination = CGImageDestinationCreateWithURL(output as CFURL, UTType.png.identifier as CFString, 1, nil) else { fatalError("Cannot create icon") }
+CGImageDestinationAddImage(destination, result, nil)
+guard CGImageDestinationFinalize(destination) else { fatalError("Cannot write icon") }
+print("Wrote \(output.path)")
