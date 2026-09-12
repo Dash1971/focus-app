@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "BB1467FAE37B6FA3691EED3F"
+               BlueprintIdentifier = "D23B8C286A81D887224C155B"
                BuildableName = "FocusAppTests.xctest"
                BlueprintName = "FocusAppTests"
                ReferencedContainer = "container:FocusApp.xcodeproj">
@@ -32,7 +32,7 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "BB1467FAE37B6FA3691EED3F"
+               BlueprintIdentifier = "D23B8C286A81D887224C155B"
                BuildableName = "FocusAppTests.xctest"
                BlueprintName = "FocusAppTests"
                ReferencedContainer = "container:FocusApp.xcodeproj">

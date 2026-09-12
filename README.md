@@ -4,16 +4,28 @@ A local-first iPhone app for keeping distractions locked and organizing everyday
 
 **Locked by default → temporary access → locked again.**
 
-## Version 0.3 redesign
+## Version 0.4 next build
+
+- Six directly accessible sections: Restrictions, Calendar, Habits, Notes, Timer and Mini Games.
+- A focused Restrictions screen with blocked-item and unlock-delay configuration moved behind its settings button.
+- Calendar-only event management with a fixed 2026 → 2027 progress bar and an independent real-date today marker.
+- Card-based daily, weekly, monthly and yearly habit grids with individually editable day cells.
+- Persistent countdown and stopwatch state, wheel-based custom countdown entry, six presets and a distraction-free fullscreen clock.
+- One-time and weekday-repeat alarms backed by iOS local notifications, including sound, supported vibration and a Stop action when the app is not open.
+- A data-driven Mini Games library beginning with the playable Flappy Bird Push-Up screen.
+
+Notification permission is required for countdowns and alarms to alert while LockIn is not active. Delivery, sound and vibration remain subject to iOS notification, Focus and device-sound settings.
+
+## Version 0.3 blocking redesign
 
 - Selected apps, categories and websites stay shielded continuously while Screen Time authorization remains enabled.
 - Temporary access to one selected app, website or category after a configurable 10, 20, 30, 45 or 60 second wait. Leaving the app or dismissing the unlock screen cancels the wait.
 - A wheel picker offers 30 seconds, 1, 5, 10, 15, 25 and 30 minutes, plus custom 1–1,440 minutes. One temporary grant at a time; other selected items remain blocked.
 - A permanent dark theme with black, charcoal and gray surfaces and the supplied lock-and-arms icon.
-- Monthly calendar on Home and its own tab, with named, colored events and important dates.
-- Habits with day, week, month and year views, period navigation, editable past completions, and an option to hide daily history.
+- Monthly calendar with named, colored events and important dates.
+- Habits with day, week, month and year views, period navigation and editable past completions.
 - Simple local notes with explicit Save, edit and delete actions.
-- A date-driven current-year progress bar above the Home calendar (2026 → 2027 during 2026, rolling forward each January).
+- A date-driven 2026 → 2027 progress bar above the Calendar.
 - No focus sessions, schedules, challenges or app-usage analytics. Widgets follow the new model.
 
 ## Blocking semantics and limits

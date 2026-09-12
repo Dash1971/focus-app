@@ -52,6 +52,12 @@ final class TimePolicyTests: XCTestCase {
         XCTAssertEqual(TimePolicy.yearProgress(at: date(2024, 7, 2), calendar: calendar), 0.5, accuracy: 0.000001)
         XCTAssertGreaterThan(TimePolicy.yearProgress(at: date(2026, 12, 31, 23), calendar: calendar), 0.999)
     }
+    func testFixed2026To2027ProgressClampsOutsideInterval() {
+        XCTAssertEqual(TimePolicy.yearProgress(from: 2026, at: date(2025, 12, 31), calendar: calendar), 0)
+        XCTAssertEqual(TimePolicy.yearProgress(from: 2026, at: date(2026, 1, 1), calendar: calendar), 0)
+        XCTAssertEqual(TimePolicy.yearProgress(from: 2026, at: date(2027, 1, 1), calendar: calendar), 1)
+        XCTAssertEqual(TimePolicy.yearProgress(from: 2026, at: date(2028, 1, 1), calendar: calendar), 1)
+    }
     func testMonthAndHabitPeriodsHaveCorrectBoundaries() {
         XCTAssertEqual(TimePolicy.monthDays(containing: date(2024, 2, 20), calendar: calendar).count, 29)
         XCTAssertEqual(TimePolicy.monthDays(containing: date(2026, 2, 20), calendar: calendar).count, 28)
