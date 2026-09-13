@@ -33,6 +33,13 @@ enum TimePolicy {
         return min(1, max(0, date.timeIntervalSince(interval.start) / interval.duration))
     }
 
+    static func yearProgress(from startYear: Int, at date: Date, calendar: Calendar = .current) -> Double {
+        guard let start = calendar.date(from: DateComponents(year: startYear, month: 1, day: 1)),
+              let end = calendar.date(from: DateComponents(year: startYear + 1, month: 1, day: 1)),
+              end > start else { return 0 }
+        return min(1, max(0, date.timeIntervalSince(start) / end.timeIntervalSince(start)))
+    }
+
     static func dayKey(_ date: Date, calendar: Calendar = .current) -> String {
         let parts = calendar.dateComponents([.year, .month, .day], from: date)
         return String(format: "%04d-%02d-%02d", parts.year!, parts.month!, parts.day!)

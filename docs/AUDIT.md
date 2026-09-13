@@ -22,13 +22,14 @@ Audit baseline: `main` at the commit recorded in this PR's base. This review cov
 2. Wheel duration selection with all requested presets and custom whole minutes up to 24 hours.
 3. Remove challenge models and screens, including honor-based completion and emergency bypass analytics.
 4. Permanent dark mode and neutral UI, retaining muted event colors solely for calendar meaning.
-5. Dedicated monthly calendar with month navigation, colored named events, important-date outlines, date selection and event editing/deletion; also on Home.
-6. Editable habits with day/week/month/year views, past-period navigation, correction of historic completions and configurable daily-history visibility. Future dates cannot be completed.
+5. Dedicated monthly calendar with month navigation, colored named events, important-date outlines, date selection and event editing/deletion. The real-date today marker is independent from the selected date.
+6. Editable card-based habits with daily, weekly, month and yearly grids, past-period navigation and correction of historic completions. Future dates cannot be completed.
 7. Simple notes with create/edit/delete and explicit Save.
-8. Current-year progress above the dashboard calendar. Interprets “2026 → 2027” as the fraction of 2026 elapsed, not a two-year interval; rolls forward each January.
+8. Fixed 2026 → 2027 progress above the dedicated Calendar, clamped before and after that year.
 9. Remove usage analytics everywhere, including widgets. Habit completion counts are the user's own habit history, not LockIn usage analytics.
 10. Remove all user scheduling, including the former monitor callbacks. Internal one-shot relock intervals are implementation details.
 11. Package the exact supplied JPEG artwork as an opaque 1024px PNG icon; source retained for reproducibility. The supplied 447px artwork is upscaled and may benefit from a higher-resolution original later.
+12. Persistent countdown and stopwatch clocks, fullscreen controls, one-time/repeating local-notification alarms, and a data-driven Mini Games library with Flappy Bird Push-Up.
 
 ## Review decisions
 
@@ -45,6 +46,7 @@ Audit baseline: `main` at the commit recorded in this PR's base. This review cov
 - Force quit, reboot, authorization revocation, uninstall, device clock/time-zone changes, low-power mode and locked-device data access require the physical matrix. Deadline validation rejects inconsistent clocks on the next execution; it cannot run while iOS withholds execution.
 - A relock callback unable to read the shared file logs an error and leaves settings alone. It cannot reconstruct a missing protected selection safely. Device tests should include locked-screen data protection and upgrades. No claim of fail-closed behavior in every OS/storage failure.
 - Screen Time entitlement behavior cannot be certified by simulator tests or an unsigned build. Widget timeline state is not an authorization/enforcement check.
+- Background countdown/alarm delivery uses local notifications and requires notification permission. Timing, sound and vibration remain subject to iOS notification, Focus and device-sound policy and require physical-device acceptance.
 - Manual visual QA on a small and large iPhone, VoiceOver, large Dynamic Type, and long event/habit/note names remains required. No simulator screenshots are claimed from the local command-line-only environment.
 - The file lock prevents races among this version's processes. An older already-running extension during installation does not participate; open the updated app after upgrade and test that legacy shields are cleared.
 

@@ -37,7 +37,7 @@ ruby scripts/generate_xcodeproj.rb
 
 Use a harmless app. Test the oldest supported iOS version and the current release. Record device, OS, grant duration, expected/actual relock times, and pass/fail in the PR.
 
-- [ ] Grant and deny/revoke Screen Time authorization; Home must not imply protection without permission.
+- [ ] Grant and deny/revoke Screen Time authorization; Restrictions must not imply protection without permission.
 - [ ] Select an app: it shields immediately and remains shielded across app closure and overnight with no focus session or schedule.
 - [ ] Test every preset: 30 seconds, 1, 5, 10, 15, 25 and 30 minutes; test custom 1 and 1,440 minutes.
 - [ ] For each duration, leave LockIn, keep the unlocked app foregrounded, and measure actual automatic relock time.
@@ -49,10 +49,14 @@ Use a harmless app. Test the oldest supported iOS version and the current releas
 - [ ] Test individual apps, websites, categories and overlapping selections; other selected items remain shielded during a grant.
 - [ ] Change selection during a grant: the grant ends, the replacement shields apply, and no stale callback restores the old selection.
 - [ ] Upgrade an installed 0.2.1 build with an active session and enabled/disabled schedules. Confirm selection migration, new continuous blocking and removal of old named shields.
-- [ ] Create/edit/delete a colored important calendar event. Navigate months and verify dashboard and Calendar agree after relaunch.
-- [ ] Create/rename/delete habits; toggle today and past days in every period, hide history, relaunch, and verify saved preferences. Future completions must be disabled.
+- [ ] Create/edit/delete a colored important calendar event. Navigate months and verify only the actual current date receives the today marker; selecting another month must not mark its first day as today.
+- [ ] Create/rename/delete habits; toggle today and past cells in Daily, Weekly, Month and Yearly grids, relaunch, and verify saved preferences. Future completions must be disabled.
 - [ ] Create/edit/delete notes with multiline and non-Latin text; verify Save, Cancel and relaunch persistence.
-- [ ] Check year progress on January 1, December 31 and a leap year; it must appear above the Home calendar.
+- [ ] Check the 2026 → 2027 progress on January 1 and December 31; it must appear above the dedicated Calendar and clamp outside 2026.
+- [ ] Start, pause, resume and reset each countdown preset and a custom wheel duration. Switch sections and use fullscreen; elapsed time must remain deadline-based and the completion alert must fire at 00:00.
+- [ ] Start, pause, resume and reset the stopwatch. Switch sections, background/foreground the app and use fullscreen; elapsed time must remain accurate.
+- [ ] Create, edit, disable, re-enable and delete one-time and repeating alarms. Verify each weekday choice, foreground Stop, background notification Stop, sound and supported vibration with the device locked and the app force-quit.
+- [ ] Open Mini Games from main navigation, play/restart Flappy Bird Push-Up, return with Back, and verify every main section remains directly reachable on small and large iPhones.
 - [ ] Check widgets before/during/after access, old widget/deep links, neutral theme and new launcher icon.
 - [ ] Check small/large iPhones, large Dynamic Type, VoiceOver and long names; verify all controls remain usable.
 
