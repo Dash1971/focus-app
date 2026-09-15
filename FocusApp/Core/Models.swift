@@ -4,6 +4,7 @@ import FamilyControls
 enum AppConstants {
     static let appGroup = "group.com.dash1971.focusapp"
     static let managedStore = "lockin.permanent"
+    static let recoveryActivity = "lockin.recovery"
     static let relockPrefix = "relock."
     static let dailyActivityReport = "lockin.daily-activity"
 }
@@ -58,6 +59,12 @@ struct BlockingState: Codable {
         waitSeconds = try values.decodeIfPresent(Int.self, forKey: .waitSeconds) ?? 10
         unlockRecords = try values.decodeIfPresent([UnlockRecord].self, forKey: .unlockRecords) ?? []
         legacyStoreNames = try values.decodeIfPresent([String].self, forKey: .legacyStoreNames) ?? []
+    }
+
+    var hasTemporaryAccess: Bool { grant.map { !$0.selection.isEmpty && $0.deadline.isActive() } ?? false }
+
+    func canEditSettings(authorized: Bool) -> Bool {
+        RestrictionAccessPolicy.canEdit(hasSelection: !selection.isEmpty, authorized: authorized, activeGrant: hasTemporaryAccess)
     }
 
     mutating func finishGrant(at date: Date = .now) {

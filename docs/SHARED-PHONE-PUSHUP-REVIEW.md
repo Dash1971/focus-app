@@ -31,3 +31,38 @@ The PR's CI runs pure game/date/time tests, simulator storage/stat regressions, 
 - [DeviceActivityFilter](https://developer.apple.com/documentation/deviceactivity/deviceactivityfilter) supports current-user reports and application/category/domain filtering.
 - [Filter initializer](https://developer.apple.com/documentation/deviceactivity/deviceactivityfilter/init(segment:users:devices:applications:categories:webdomains:)) explains that omitting the three token filters requests all device activity.
 - [Segment totalActivityDuration](https://developer.apple.com/documentation/deviceactivity/deviceactivitydata/activitysegment/totalactivityduration) is the system's screen-on duration for the segment.
+
+## Additional requirements added during this PR
+
+### Native app blocking and access policy
+
+The source already called Managed Settings; there was no evidence of a fake overlay replacing the native API. The tester's specific failure has **not** been reproduced on a physical device here. This patch addresses concrete gaps instead of claiming an unverified root cause:
+
+- Persist and apply the native application/category/domain shield plan directly when the initial selection is activated. The same policy runs in the monitor extension. Unselected grants do not clear unrelated shields.
+- Explicitly activate the named store and refresh expired Screen Time tokens on iOS 26.5+, both on foreground reconciliation and extension recovery. A failed refresh does not erase saved selections; it ends temporary access, attempts full saved shields, and surfaces/logs the failure. Older supported iOS versions cannot use the 26.5 refresh API. Tokens voided by revoked authorization may need user repair; revocation cannot be prevented under individual authorization.
+- Add an internal daily recovery monitor, which restores saved shields when iOS invokes it. It is not a user blocking schedule or an exact background timer guarantee. Reopening with a missing relock monitor cancels the grant immediately. Blocked-state file and lock use after-first-unlock data protection on iOS to support a monitor invocation while the screen is locked.
+- Existing selected apps and restrictions survive app restart; permanent shields are never cleared merely because the app closes. Reboot and OS-delayed callbacks require the physical checks below; the app cannot force iOS to launch an extension before its first device unlock.
+- Settings access requires **an active grant containing selected items**, not an elapsed wait or a retained UI flag. Recheck under the shared transaction lock when saving the app selection or waiting time. A picker left open past expiry cannot save; applying a new selection ends the grant and reapplies full restrictions.
+- Temporary Unlock starts its countdown on presentation. It then automatically shows multi-selection and the scrolling duration picker. None means zero wait/no countdown. It does not create a grant and cannot open settings by itself.
+- Preserve exactly 30 sec; 1, 5, 10, 15, 25, 30, 45 min; 1 hour; 2 hours. No Custom and no duration above two hours. Selection is limited to previously blocked items; one grant may cover multiple chosen items.
+
+### Nose-controlled Flappy Bird
+
+Replace the eye tracker with the nose contour's vertical center. Face bounds only convert the landmark coordinates; eyes and head center do not drive the bird. Explicitly rotate/mirror capture buffers and preview together and feed upright buffers to Vision. Use automatic exposure and white balance with no grayscale/dimming. Serial configuration/frame/shutdown and request identities prevent a delayed camera permission response from starting capture after leaving the game.
+
+A time-based 60ms smoothing filter reduces jitter without the old heavy lag; brief loss is tolerated, sustained nose loss pauses play. Speed, gap size and spawn interval change continuously over active play time. The displayed level rises every 20 seconds through level 50; all difficulty values cap at that point and the game continues. Existing pipes retain their spawned gap dimensions. Backgrounding pauses gameplay and stops capture.
+
+### Required physical end-to-end test (not executed here)
+
+Use a signed build with approved Family Controls and matching App Group entitlements, and record iOS version/build and actual results:
+
+1. Allow Screen Time, choose a harmless app, and confirm **Activate Restrictions**. Open that other app and verify the system shield appears.
+2. Close/reopen LockIn, then restart the phone and unlock it once. Verify the chosen app is still protected. Verify permission revocation is reported rather than falsely presented as enforced protection.
+3. While no grant is active, open settings. Verify both app-list edits and waiting-time edits are blocked. Let a wait finish but cancel without selecting/granting access; settings must stay locked.
+4. Request Temporary Unlock. Verify immediate countdown with no extra Start/Wait button. At zero, select apps and a preset duration, grant access, and open the selected app successfully. Unselected restricted apps remain shielded.
+5. During this grant, settings become editable. Let it expire while settings/the app picker is still open and verify changes are rejected and the app is shielded again.
+6. Set None during an active grant. Lock again; settings must lock again too. A new unlock request skips the countdown but still requires selection and an actual grant before settings become editable.
+7. Test every preset with LockIn backgrounded, including 30 seconds, then test early relock, reboot, locked screen, denied/revoked authorization, and missing monitoring. Record the measured relock times; a simulator cannot validate these OS effects.
+8. For Flappy Bird, verify portrait nose movement controls the bird responsively at normal lighting, nose loss pauses the game, background/resume works, score increments, and level 50 continues indefinitely without increasing difficulty.
+
+Reference: [ManagedSettingsStore](https://developer.apple.com/documentation/managedsettings/managedsettingsstore), [isActive](https://developer.apple.com/documentation/managedsettings/managedsettingsstore/isactive), [token refresh](https://developer.apple.com/documentation/managedsettings/managedsettingsstore/refresh(_:)-65mti), [DeviceActivityCenter callback timing](https://developer.apple.com/documentation/deviceactivity/deviceactivitycenter), and [Vision nose landmarks](https://developer.apple.com/documentation/vision/vnfacelandmarks2d/nose).

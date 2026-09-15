@@ -190,10 +190,7 @@ struct RestrictionsView: View {
             UnlockView().environmentObject(model)
         }
         .sheet(isPresented: $showingSettings) {
-            RestrictionsSettingsFlow(
-                requiresWait: model.authorized && !model.blocking.selection.isEmpty,
-                waitSeconds: model.blocking.waitSeconds
-            )
+            RestrictionsSettingsFlow()
             .environmentObject(model)
         }
         .onAppear { model.refreshFromSharedStore() }
@@ -239,75 +236,31 @@ private struct LockInPrimaryButtonStyle: ButtonStyle {
 }
 
 private struct RestrictionsSettingsFlow: View {
+    @EnvironmentObject private var model: AppModel
     @Environment(\.dismiss) private var dismiss
-    @State private var accessGranted: Bool
-    let requiresWait: Bool
-    let waitSeconds: Int
-
-    init(requiresWait: Bool, waitSeconds: Int) {
-        self.requiresWait = requiresWait
-        self.waitSeconds = waitSeconds
-        _accessGranted = State(initialValue: !requiresWait)
-    }
+    @State private var showingUnlock = false
 
     var body: some View {
         NavigationStack {
-            if accessGranted {
-                RestrictionsSettingsView()
-            } else {
-                SettingsWaitView(seconds: waitSeconds) { accessGranted = true }
-                    .navigationTitle("Settings locked")
-                    .navigationBarTitleDisplayMode(.inline)
+            Group {
+                if model.canEditRestrictions {
+                    RestrictionsSettingsView()
+                } else if !model.authorized {
+                    Button("Allow Screen Time access") { Task { await model.authorize() } }
+                } else {
+                    VStack(spacing: 20) {
+                        Text("Settings are locked").font(.title2)
+                        Text("Complete Temporary Unlock and have active access before changing blocked apps or the waiting time.")
+                            .foregroundStyle(.secondary).multilineTextAlignment(.center)
+                        Button("Temporary Unlock") { showingUnlock = true }.buttonStyle(.bordered).disabled(!model.storageReady)
+                    }.padding(24)
+                }
             }
+            .navigationTitle("Restrictions settings")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Done") { dismiss() } } }
         }
-        .toolbar {
-            ToolbarItem(placement: .cancellationAction) {
-                Button("Done") { dismiss() }
-            }
-        }
-    }
-}
-
-private struct SettingsWaitView: View {
-    @Environment(\.dismiss) private var dismiss
-    @State private var startedUptime: TimeInterval?
-    @State private var remaining: Int
-    let seconds: Int
-    let completed: () -> Void
-    private let ticks = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
-
-    init(seconds: Int, completed: @escaping () -> Void) {
-        self.seconds = seconds
-        self.completed = completed
-        _remaining = State(initialValue: seconds)
-    }
-
-    var body: some View {
-        VStack(spacing: 16) {
-            Spacer()
-            Text("\(remaining)")
-                .font(.system(size: 84, weight: .ultraLight, design: .rounded))
-                .monospacedDigit()
-            Text("Changing restrictions will be available when the wait ends.")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-            Spacer()
-            Button("Cancel") { dismiss() }
-                .buttonStyle(.bordered)
-        }
-        .padding(24)
-        .background(Color.black)
-        .onAppear {
-            startedUptime = ProcessInfo.processInfo.systemUptime
-            remaining = seconds
-        }
-        .onReceive(ticks) { _ in
-            guard let startedUptime else { return }
-            let value = max(0, Int(ceil(Double(seconds) - (ProcessInfo.processInfo.systemUptime - startedUptime))))
-            remaining = value
-            if value == 0 { completed() }
-        }
+        .sheet(isPresented: $showingUnlock) { UnlockView().environmentObject(model) }
     }
 }
 
@@ -336,7 +289,7 @@ private struct RestrictionsSettingsView: View {
                     set: model.setWait
                 )) {
                     ForEach(TimePolicy.waitDurations, id: \.self) { seconds in
-                        Text("\(seconds) seconds").tag(seconds)
+                        Text(seconds == 0 ? "None" : "\(seconds) seconds").tag(seconds)
                     }
                 }
                 .pickerStyle(.wheel)
@@ -347,14 +300,17 @@ private struct RestrictionsSettingsView: View {
         .navigationBarTitleDisplayMode(.inline)
         .familyActivityPicker(isPresented: $showingAppPicker, selection: $draftSelection)
         .onChange(of: showingAppPicker) { _, showing in
-            if !showing { confirmingSelection = true }
+            if !showing && model.canEditRestrictions { confirmingSelection = true }
+        }
+        .onChange(of: model.canEditRestrictions) { _, allowed in
+            if !allowed { showingAppPicker = false; confirmingSelection = false }
         }
         .confirmationDialog(
             "Apply this blocked selection?",
             isPresented: $confirmingSelection,
             titleVisibility: .visible
         ) {
-            Button("Apply selection") { model.updateSelection(draftSelection) }
+            Button(model.blocking.selection.isEmpty ? "Activate Restrictions" : "Apply selection") { model.updateSelection(draftSelection) }
             Button("Cancel", role: .cancel) {}
         } message: {
             Text("Removing selected items makes them available and ends any temporary access.")

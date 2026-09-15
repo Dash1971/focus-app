@@ -34,7 +34,7 @@ enum TimePolicy {
     }
 
     static let unlockDurations = [30, 60, 300, 600, 900, 1500, 1800, 2700, 3600, 7200]
-    static let waitDurations = [10, 20, 30, 45, 60]
+    static let waitDurations = [0, 10, 20, 30, 45, 60]
     static func validDuration(_ seconds: Int) -> Bool { unlockDurations.contains(seconds) }
 
     static func yearProgress(at date: Date, calendar: Calendar = .current) -> Double {

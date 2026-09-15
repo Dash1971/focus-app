@@ -15,8 +15,7 @@ final class AppModel: ObservableObject {
 
     private let blocker = BlockingController()
     private let lifeStore = LifeStore(url: FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0].appendingPathComponent("life.v1.json"))
-    private var waitStarted: TimeInterval?
-    private var waitRequired = 10
+    private var unlockWait = UnlockWait()
     private var ticker: Timer?
 
     init() {
@@ -44,31 +43,30 @@ final class AppModel: ObservableObject {
         updateBlocking { try blocker.updateSelection(value) }
     }
 
+    var canEditRestrictions: Bool { storageReady && blocking.canEditSettings(authorized: authorized) }
+
     func setWait(_ seconds: Int) {
-        guard TimePolicy.waitDurations.contains(seconds) else { return }
         cancelWait()
-        updateBlocking { try SharedStore.shared.transaction { $0.waitSeconds = seconds } }
+        updateBlocking { try blocker.updateWait(seconds) }
     }
 
     func startWait() {
-        guard storageReady, authorized else { return }
-        waitRequired = TimePolicy.waitDurations.contains(blocking.waitSeconds) ? blocking.waitSeconds : 10
-        waitStarted = ProcessInfo.processInfo.systemUptime
-        waitRemaining = waitRequired
+        guard storageReady, authorized, !blocking.selection.isEmpty, !blocking.hasTemporaryAccess else { return }
+        unlockWait.start(seconds: blocking.waitSeconds)
+        waitRemaining = unlockWait.remaining()
     }
 
-    func cancelWait() { waitStarted = nil; waitRemaining = nil }
+    func cancelWait() { unlockWait.cancel(); waitRemaining = nil }
 
     @discardableResult
     func unlock(_ selection: FamilyActivitySelection, seconds: Int) -> Bool {
-        guard storageReady, let start = waitStarted,
-              ProcessInfo.processInfo.systemUptime - start >= Double(waitRequired) else { return false }
+        guard storageReady, unlockWait.completed() else { return false }
         cancelWait()
         do {
             blocking = try blocker.unlock(selection, seconds: seconds)
             WidgetCenter.shared.reloadAllTimelines()
             return true
-        } catch { lastError = error.localizedDescription; return false }
+        } catch { refreshFromSharedStore(); lastError = error.localizedDescription; return false }
     }
 
     func lockNow() { cancelWait(); updateBlocking { try blocker.lockNow() } }
@@ -80,9 +78,7 @@ final class AppModel: ObservableObject {
     }
 
     private func tick() {
-        if let start = waitStarted {
-            waitRemaining = max(0, Int(ceil(Double(waitRequired) - (ProcessInfo.processInfo.systemUptime - start))))
-        }
+        waitRemaining = unlockWait.remaining()
         if blocking.grant?.deadline.isActive() == false { refreshFromSharedStore(); WidgetCenter.shared.reloadAllTimelines() }
     }
 

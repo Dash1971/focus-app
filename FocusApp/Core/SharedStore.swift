@@ -24,7 +24,11 @@ final class SharedStore {
         try withLock {
             var state = try read()
             try change(&state)
+            #if os(iOS)
+            try JSONEncoder().encode(state).write(to: stateURL(), options: [.atomic, .completeFileProtectionUntilFirstUserAuthentication])
+            #else
             try JSONEncoder().encode(state).write(to: stateURL(), options: .atomic)
+            #endif
             // Shields are updated under the same lock, so a stale extension
             // callback cannot overwrite a newer selection or temporary grant.
             afterSave(state)
@@ -53,6 +57,12 @@ final class SharedStore {
         let descriptor = open(directory.appendingPathComponent("blocking-state.lock").path, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR)
         guard descriptor >= 0 else { throw StoreError.unavailable }
         defer { close(descriptor) }
+        #if os(iOS)
+        // Allow the monitor to acquire its lock while the phone is locked after
+        // its first post-reboot unlock, matching the protection of the data file.
+        try FileManager.default.setAttributes([.protectionKey: FileProtectionType.completeUntilFirstUserAuthentication],
+                                              ofItemAtPath: directory.appendingPathComponent("blocking-state.lock").path)
+        #endif
         guard flock(descriptor, LOCK_EX) == 0 else { throw StoreError.unavailable }
         defer { flock(descriptor, LOCK_UN) }
         return try operation()
