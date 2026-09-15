@@ -19,7 +19,7 @@ def configure(target, bundle_id:, plist: nil, entitlements: nil)
     settings['TARGETED_DEVICE_FAMILY'] = '1'
     settings['SWIFT_VERSION'] = '5.0'
     settings['CODE_SIGN_STYLE'] = 'Automatic'
-    settings['CURRENT_PROJECT_VERSION'] = '5'
+    settings['CURRENT_PROJECT_VERSION'] = '6'
     settings['MARKETING_VERSION'] = '0.4.0'
     settings['CODE_SIGN_ENTITLEMENTS'] = entitlements if entitlements
     if plist
@@ -72,7 +72,7 @@ end
 app_sources = Dir.glob(File.join(root, 'FocusApp/**/*.swift')).map { |p| p.delete_prefix("#{root}/") }.sort
 add_sources(project, app, app_sources)
 add_resources(project, app, ['FocusApp/Resources/Assets.xcassets', 'FocusApp/Resources/PrivacyInfo.xcprivacy'])
-%w[FamilyControls.framework ManagedSettings.framework DeviceActivity.framework UserNotifications.framework AudioToolbox.framework WidgetKit.framework].each { |f| add_framework(project, app, f) }
+%w[FamilyControls.framework ManagedSettings.framework DeviceActivity.framework UserNotifications.framework AudioToolbox.framework WidgetKit.framework AVFoundation.framework Vision.framework].each { |f| add_framework(project, app, f) }
 
 extensions = [
   {
@@ -81,6 +81,13 @@ extensions = [
     bundle: 'com.dash1971.focusapp.deviceactivity',
     sources: [models, shared_store, time_policy, shield_policy, 'Extensions/DeviceActivityMonitor/DeviceActivityMonitorExtension.swift'],
     frameworks: %w[DeviceActivity.framework ManagedSettings.framework FamilyControls.framework]
+  },
+  {
+    name: 'DeviceActivityReportExtension',
+    directory: 'Extensions/DeviceActivityReport',
+    bundle: 'com.dash1971.focusapp.deviceactivityreport',
+    sources: [models, shared_store, time_policy, 'Extensions/DeviceActivityReport/DeviceActivityReportExtension.swift'],
+    frameworks: %w[DeviceActivity.framework ManagedSettings.framework FamilyControls.framework SwiftUI.framework]
   },
   {
     name: 'ShieldConfigurationExtension',

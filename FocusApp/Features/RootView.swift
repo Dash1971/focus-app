@@ -1,5 +1,6 @@
 import SwiftUI
 import FamilyControls
+import DeviceActivity
 
 private enum MainSection: String, CaseIterable, Identifiable {
     case restrictions = "Restrictions"
@@ -100,50 +101,65 @@ private struct MainNavigationBar: View {
 struct RestrictionsView: View {
     @EnvironmentObject private var model: AppModel
     @State private var showingUnlock = false
+    @State private var showingSettings = false
 
     var body: some View {
-        VStack(spacing: 20) {
-            Spacer()
-            Image(systemName: statusIcon)
-                .font(.system(size: 42, weight: .light))
-                .foregroundStyle(.secondary)
-            Text(statusTitle)
-                .font(.title2.bold())
-                .multilineTextAlignment(.center)
+        VStack(alignment: .leading, spacing: 0) {
+            Text("Today's Activity")
+                .font(.title3.weight(.semibold))
+                .padding(.top, 18)
+
+            if model.authorized {
+                TimelineView(.periodic(from: .now, by: 60)) { context in
+                    DeviceActivityReport(
+                        .init(AppConstants.dailyActivityReport),
+                        filter: dailyActivityFilter(at: context.date)
+                    )
+                    .frame(height: 148)
+                }
+                .padding(.top, 14)
+            } else {
+                ActivityStatsPlaceholder(state: model.blocking)
+                    .padding(.top, 14)
+            }
+
+            Spacer(minLength: 28)
 
             if !model.storageReady {
                 Button("Retry") { model.refreshFromSharedStore() }
-                    .buttonStyle(.bordered)
+                    .buttonStyle(LockInPrimaryButtonStyle())
             } else if !model.authorized {
                 Button("Allow Screen Time access") {
                     Task { await model.authorize() }
                 }
-                .buttonStyle(.borderedProminent)
-                .tint(.white)
-                .foregroundStyle(.black)
+                .buttonStyle(LockInPrimaryButtonStyle())
             } else if let grant = model.blocking.grant {
-                Text(grant.deadline.endsAt, style: .timer)
-                    .font(.system(size: 38, weight: .semibold, design: .rounded))
-                    .monospacedDigit()
+                HStack {
+                    Text("Temporary access")
+                        .foregroundStyle(.secondary)
+                    Spacer()
+                    Text(grant.deadline.endsAt, style: .timer)
+                        .font(.headline.monospacedDigit())
+                }
+                .padding(.bottom, 12)
                 Button("Lock now") { model.lockNow() }
-                    .buttonStyle(.bordered)
+                    .buttonStyle(LockInPrimaryButtonStyle())
             } else if !model.blocking.selection.isEmpty {
                 Button("Temporary unlock") { showingUnlock = true }
-                    .buttonStyle(.borderedProminent)
-                    .tint(.white)
-                    .foregroundStyle(.black)
+                    .buttonStyle(LockInPrimaryButtonStyle())
+            } else {
+                Button("Choose blocked apps") { showingSettings = true }
+                    .buttonStyle(LockInPrimaryButtonStyle())
             }
-            Spacer()
         }
         .frame(maxWidth: .infinity)
-        .padding(24)
+        .padding(.horizontal, 24)
+        .padding(.bottom, 18)
         .background(Color.black)
         .navigationTitle("Restrictions")
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                NavigationLink {
-                    RestrictionsSettingsView()
-                } label: {
+                Button { showingSettings = true } label: {
                     Image(systemName: "gearshape")
                 }
                 .accessibilityLabel("Restriction settings")
@@ -152,17 +168,149 @@ struct RestrictionsView: View {
         .sheet(isPresented: $showingUnlock) {
             UnlockView().environmentObject(model)
         }
+        .sheet(isPresented: $showingSettings) {
+            RestrictionsSettingsFlow(
+                requiresWait: model.authorized && !model.blocking.selection.isEmpty,
+                waitSeconds: model.blocking.waitSeconds
+            )
+            .environmentObject(model)
+        }
+        .onAppear { model.refreshFromSharedStore() }
     }
 
-    private var statusTitle: String {
-        if !model.storageReady { return "Storage unavailable" }
-        if !model.authorized { return "Set up restrictions" }
-        if model.blocking.selection.isEmpty { return "No apps selected" }
-        return model.blocking.grant == nil ? "Restrictions active" : "Temporary access"
+    private func dailyActivityFilter(at date: Date) -> DeviceActivityFilter {
+        let calendar = Calendar.current
+        let start = calendar.startOfDay(for: date)
+        let end = max(date, start.addingTimeInterval(1))
+        return DeviceActivityFilter(
+            segment: .daily(during: DateInterval(start: start, end: end)),
+            devices: .init([.iPhone])
+        )
+    }
+}
+
+private struct ActivityStatsPlaceholder: View {
+    let state: BlockingState
+
+    var body: some View {
+        let activity = state.unlockActivity()
+        HStack(spacing: 0) {
+            stat("UNLOCKS", "\(activity.count)")
+            stat("UNLOCK TIME", Self.duration(activity.duration))
+            stat("SCREEN TIME", "—")
+        }
+        .padding(.horizontal, 20)
+        .frame(height: 148)
+        .background(Color(white: 0.055), in: RoundedRectangle(cornerRadius: 20))
+        .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color.white.opacity(0.14)))
     }
 
-    private var statusIcon: String {
-        model.blocking.grant == nil ? "lock.fill" : "lock.open.fill"
+    private func stat(_ label: String, _ value: String) -> some View {
+        VStack(alignment: .leading, spacing: 7) {
+            Text(label)
+                .font(.caption2.weight(.medium))
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
+            Text(value)
+                .font(.system(size: 28, weight: .medium, design: .rounded))
+                .monospacedDigit()
+                .lineLimit(1)
+                .minimumScaleFactor(0.65)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    static func duration(_ seconds: TimeInterval) -> String {
+        let minutes = Int(seconds) / 60
+        let hours = minutes / 60
+        let remainder = minutes % 60
+        if hours > 0 { return remainder > 0 ? "\(hours)h \(remainder)m" : "\(hours)h" }
+        return "\(minutes)m"
+    }
+}
+
+private struct LockInPrimaryButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(.headline)
+            .foregroundStyle(.black)
+            .frame(maxWidth: .infinity)
+            .frame(height: 58)
+            .background(configuration.isPressed ? Color.white.opacity(0.82) : .white, in: RoundedRectangle(cornerRadius: 17))
+    }
+}
+
+private struct RestrictionsSettingsFlow: View {
+    @Environment(\.dismiss) private var dismiss
+    @State private var accessGranted: Bool
+    let requiresWait: Bool
+    let waitSeconds: Int
+
+    init(requiresWait: Bool, waitSeconds: Int) {
+        self.requiresWait = requiresWait
+        self.waitSeconds = waitSeconds
+        _accessGranted = State(initialValue: !requiresWait)
+    }
+
+    var body: some View {
+        NavigationStack {
+            if accessGranted {
+                RestrictionsSettingsView()
+            } else {
+                SettingsWaitView(seconds: waitSeconds) { accessGranted = true }
+                    .navigationTitle("Settings locked")
+                    .navigationBarTitleDisplayMode(.inline)
+            }
+        }
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                Button("Done") { dismiss() }
+            }
+        }
+    }
+}
+
+private struct SettingsWaitView: View {
+    @Environment(\.dismiss) private var dismiss
+    @State private var startedUptime: TimeInterval?
+    @State private var remaining: Int
+    let seconds: Int
+    let completed: () -> Void
+    private let ticks = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
+
+    init(seconds: Int, completed: @escaping () -> Void) {
+        self.seconds = seconds
+        self.completed = completed
+        _remaining = State(initialValue: seconds)
+    }
+
+    var body: some View {
+        VStack(spacing: 16) {
+            Spacer()
+            Text("\(remaining)")
+                .font(.system(size: 84, weight: .ultraLight, design: .rounded))
+                .monospacedDigit()
+            Text("Changing restrictions will be available when the wait ends.")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+            Spacer()
+            Button("Cancel") { dismiss() }
+                .buttonStyle(.bordered)
+        }
+        .padding(24)
+        .background(Color.black)
+        .onAppear {
+            startedUptime = ProcessInfo.processInfo.systemUptime
+            remaining = seconds
+        }
+        .onReceive(ticks) { _ in
+            guard let startedUptime else { return }
+            let value = max(0, Int(ceil(Double(seconds) - (ProcessInfo.processInfo.systemUptime - startedUptime))))
+            remaining = value
+            if value == 0 { completed() }
+        }
     }
 }
 
@@ -227,18 +375,23 @@ struct YearProgressView: View {
     var body: some View {
         TimelineView(.periodic(from: .now, by: 60)) { context in
             let progress = TimePolicy.yearProgress(from: startYear, at: context.date)
-            VStack(alignment: .leading, spacing: 9) {
+            VStack(spacing: 9) {
                 HStack {
-                    Text("\(String(startYear)) → \(String(startYear + 1))")
-                        .font(.subheadline.weight(.semibold))
-                    Spacer()
+                    Text(String(startYear))
+                        .frame(maxWidth: .infinity, alignment: .leading)
                     Text(progress, format: .percent.precision(.fractionLength(0)))
-                        .font(.subheadline.monospacedDigit())
-                        .foregroundStyle(.secondary)
+                        .monospacedDigit()
+                        .frame(maxWidth: .infinity, alignment: .center)
+                    Text(String(startYear + 1))
+                        .frame(maxWidth: .infinity, alignment: .trailing)
                 }
+                .font(.subheadline.weight(.semibold))
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel("\(String(startYear)) to \(String(startYear + 1)) progress")
+                .accessibilityValue(progress.formatted(.percent.precision(.fractionLength(0))))
                 ProgressView(value: progress)
                     .tint(.white)
-                    .accessibilityLabel("\(String(startYear)) to \(String(startYear + 1)) progress")
+                    .accessibilityHidden(true)
             }
         }
     }

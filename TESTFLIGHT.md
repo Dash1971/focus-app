@@ -6,6 +6,7 @@ Create these explicit App IDs in Certificates, Identifiers & Profiles:
 
 - `com.dash1971.focusapp`
 - `com.dash1971.focusapp.deviceactivity`
+- `com.dash1971.focusapp.deviceactivityreport`
 - `com.dash1971.focusapp.shieldconfiguration`
 - `com.dash1971.focusapp.shieldaction`
 - `com.dash1971.focusapp.widgets`
@@ -14,14 +15,14 @@ Create and enable the App Group:
 
 - `group.com.dash1971.focusapp`
 
-Attach all five App IDs to that App Group. Enable Family Controls for the app and the three Screen Time extensions; the widget needs only the App Group.
+Attach all six App IDs to that App Group. Enable Family Controls for the app and the four Screen Time extensions; the widget needs only the App Group.
 
-For TestFlight distribution, request Apple's Family Controls distribution entitlement for all four bundle IDs. Development signing alone is not sufficient for an App Store Connect upload.
+For TestFlight distribution, request Apple's Family Controls distribution entitlement for all five bundle IDs that use it. Development signing alone is not sufficient for an App Store Connect upload.
 
 ## 2. Xcode signing
 
 1. Open `FocusApp.xcodeproj` with full Xcode.
-2. Select the `FocusApp` project and set the same Apple Developer Team for the app and all four extensions.
+2. Select the `FocusApp` project and set the same Apple Developer Team for the app and all five extensions.
 3. Keep automatic signing enabled.
 4. Confirm the app and Screen Time targets show Family Controls and App Groups; confirm the widget target shows App Groups.
 5. Confirm the App Group is `group.com.dash1971.focusapp` for all targets.
@@ -39,11 +40,12 @@ Use a harmless app. Test the oldest supported iOS version and the current releas
 
 - [ ] Grant and deny/revoke Screen Time authorization; Restrictions must not imply protection without permission.
 - [ ] Select an app: it shields immediately and remains shielded across app closure and overnight with no focus session or schedule.
-- [ ] Test every preset: 30 seconds, 1, 5, 10, 15, 25 and 30 minutes; test custom 1 and 1,440 minutes.
+- [ ] Test every unlock preset in order: 30 seconds; 1, 5, 10, 15, 25, 30 and 45 minutes; and 1 and 2 hours. Confirm there is no Custom choice and no duration above 2 hours.
 - [ ] For each duration, leave LockIn, keep the unlocked app foregrounded, and measure actual automatic relock time.
 - [ ] Repeat short-grant tests after force-quitting LockIn, with screen locked, in Low Power Mode, and after reboot. A grant must not remain available indefinitely; investigate any delay.
 - [ ] Repeat across midnight, time-zone changes and manual clock changes. Reopening LockIn should expire inconsistent or elapsed grants.
-- [ ] Set each wait duration; no access before the wait AND final Unlock tap. Dismissing, switching targets or leaving LockIn cancels the wait.
+- [ ] Set each wait duration; one Request access tap starts the countdown immediately, no second wait/final-unlock tap appears, and access is granted automatically only when the wait completes. Dismissing, switching targets or leaving LockIn cancels the wait.
+- [ ] While restrictions are active, tap the settings gear and confirm the configured countdown starts immediately. Blocked apps and the wait duration must remain unavailable until it completes. Cancel/reopen must restart the full wait. With no active selection, settings may open directly.
 - [ ] Confirm failed monitor registration leaves shields in place; use an injected failure/debugger if needed.
 - [ ] Lock again early, then request a new grant. Old callbacks must not remove shields or cancel a still-valid new grant.
 - [ ] Test individual apps, websites, categories and overlapping selections; other selected items remain shielded during a grant.
@@ -53,10 +55,13 @@ Use a harmless app. Test the oldest supported iOS version and the current releas
 - [ ] Create/rename/delete habits; toggle today and past cells in Daily, Weekly, Month and Yearly grids, relaunch, and verify saved preferences. Future completions must be disabled.
 - [ ] Create/edit/delete notes with multiline and non-Latin text; verify Save, Cancel and relaunch persistence.
 - [ ] Check the 2026 → 2027 progress on January 1 and December 31; it must appear above the dedicated Calendar and clamp outside 2026.
+- [ ] Set the device display calendar to Japanese (and another non-Gregorian calendar) and confirm the 2026 / percentage / 2027 row still reports the correct Gregorian progress rather than 0%.
 - [ ] Start, pause, resume and reset each countdown preset and a custom wheel duration. Switch sections and use fullscreen; elapsed time must remain deadline-based and the completion alert must fire at 00:00.
 - [ ] Start, pause, resume and reset the stopwatch. Switch sections, background/foreground the app and use fullscreen; elapsed time must remain accurate.
 - [ ] Create, edit, disable, re-enable and delete one-time and repeating alarms. Verify each weekday choice, foreground Stop, background notification Stop, sound and supported vibration with the device locked and the app force-quit.
-- [ ] Open Mini Games from main navigation, play/restart Flappy Bird Push-Up, return with Back, and verify every main section remains directly reachable on small and large iPhones.
+- [ ] Open Mini Games from main navigation, allow/deny camera permission, and verify denial/unavailable states are handled. In a push-up position, confirm front-camera eye-level movement—not screen taps—controls the bird vertically; play until collision, restart, and return with Back.
+- [ ] Verify Today's Activity shows real Unlocks, elapsed Unlock Time (including an active and early-ended grant), and total iPhone Screen Time including unrestricted apps. Recheck after a minute, after midnight and after relaunch.
+- [ ] On iOS 26.5+, verify the shield says only “This app is blocked.” and Open LockIn launches LockIn while Close app exits the blocked app. On older supported iOS, record the platform-limited Open LockIn behavior and verify Close app still exits.
 - [ ] Check widgets before/during/after access, old widget/deep links, neutral theme and new launcher icon.
 - [ ] Check small/large iPhones, large Dynamic Type, VoiceOver and long names; verify all controls remain usable.
 

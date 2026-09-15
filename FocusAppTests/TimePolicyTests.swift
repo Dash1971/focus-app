@@ -39,11 +39,14 @@ final class TimePolicyTests: XCTestCase {
         XCTAssertTrue(restored.isActive(now: start.addingTimeInterval(30), uptime: 1030))
         XCTAssertFalse(restored.isActive(now: start.addingTimeInterval(60), uptime: 1060))
     }
-    func testCustomDurationBounds() {
+    func testUnlockDurationsAreTheExactSupportedPresets() {
+        XCTAssertEqual(TimePolicy.unlockDurations, [30, 60, 300, 600, 900, 1500, 1800, 2700, 3600, 7200])
         XCTAssertFalse(TimePolicy.validDuration(0))
         XCTAssertFalse(TimePolicy.validDuration(29))
         XCTAssertTrue(TimePolicy.validDuration(30))
-        XCTAssertTrue(TimePolicy.validDuration(86400))
+        XCTAssertTrue(TimePolicy.validDuration(7200))
+        XCTAssertFalse(TimePolicy.validDuration(7201))
+        XCTAssertFalse(TimePolicy.validDuration(86400))
         XCTAssertFalse(TimePolicy.validDuration(86401))
     }
     func testYearProgressResetsAndHandlesLeapYear() {
@@ -57,6 +60,13 @@ final class TimePolicyTests: XCTestCase {
         XCTAssertEqual(TimePolicy.yearProgress(from: 2026, at: date(2026, 1, 1), calendar: calendar), 0)
         XCTAssertEqual(TimePolicy.yearProgress(from: 2026, at: date(2027, 1, 1), calendar: calendar), 1)
         XCTAssertEqual(TimePolicy.yearProgress(from: 2026, at: date(2028, 1, 1), calendar: calendar), 1)
+    }
+    func testFixedGregorianYearProgressIgnoresDeviceCalendarEra() {
+        var japanese = Calendar(identifier: .japanese)
+        japanese.timeZone = calendar.timeZone
+        let progress = TimePolicy.yearProgress(from: 2026, at: date(2026, 9, 15, 12), calendar: japanese)
+        XCTAssertGreaterThan(progress, 0.70)
+        XCTAssertLessThan(progress, 0.71)
     }
     func testMonthAndHabitPeriodsHaveCorrectBoundaries() {
         XCTAssertEqual(TimePolicy.monthDays(containing: date(2024, 2, 20), calendar: calendar).count, 29)

@@ -7,20 +7,21 @@ A local-first iPhone app for keeping distractions locked and organizing everyday
 ## Version 0.4 next build
 
 - Six directly accessible sections: Restrictions, Calendar, Habits, Notes, Timer and Mini Games.
-- A focused Restrictions screen with blocked-item and unlock-delay configuration moved behind its settings button.
-- Calendar-only event management with a fixed 2026 → 2027 progress bar and an independent real-date today marker.
+- A focused Restrictions dashboard with real daily unlock count, elapsed unlock time and whole-device iPhone Screen Time. Active restrictions protect blocked-item and unlock-delay configuration with the same waiting period as temporary access.
+- Calendar-only event management with a locale-safe Gregorian 2026 → 2027 progress bar and an independent real-date today marker.
 - Card-based daily, weekly, monthly and yearly habit grids with individually editable day cells.
-- Persistent countdown and stopwatch state, wheel-based custom countdown entry, six presets and a distraction-free fullscreen clock.
+- Persistent countdown and stopwatch state, wheel-based custom countdown entry, six presets and a distraction-free fullscreen clock with an almost screen-filling display.
 - One-time and weekday-repeat alarms backed by iOS local notifications, including sound, supported vibration and a Stop action when the app is not open.
-- A data-driven Mini Games library beginning with the playable Flappy Bird Push-Up screen.
+- A data-driven Mini Games library beginning with Flappy Bird Push-Up, controlled by on-device front-camera eye-level tracking rather than touch flaps.
+- A minimal blocked-app shield with Open LockIn and Close app actions. Opening the parent controls app directly from a shield requires iOS 26.5 or newer; earlier iOS versions keep the shield in place when Open LockIn is tapped because Apple exposes no parent-app launch response there.
 
 Notification permission is required for countdowns and alarms to alert while LockIn is not active. Delivery, sound and vibration remain subject to iOS notification, Focus and device-sound settings.
 
 ## Version 0.3 blocking redesign
 
 - Selected apps, categories and websites stay shielded continuously while Screen Time authorization remains enabled.
-- Temporary access to one selected app, website or category after a configurable 10, 20, 30, 45 or 60 second wait. Leaving the app or dismissing the unlock screen cancels the wait.
-- A wheel picker offers 30 seconds, 1, 5, 10, 15, 25 and 30 minutes, plus custom 1–1,440 minutes. One temporary grant at a time; other selected items remain blocked.
+- Temporary access to one selected app, website or category after a configurable 10, 20, 30, 45 or 60 second wait. One Request access tap starts the countdown and access is granted automatically only after it completes. Leaving the app or dismissing the unlock screen cancels the wait.
+- A wheel picker offers exactly 30 seconds; 1, 5, 10, 15, 25, 30 and 45 minutes; and 1 or 2 hours. One temporary grant at a time; other selected items remain blocked.
 - A permanent dark theme with black, charcoal and gray surfaces and the supplied lock-and-arms icon.
 - Monthly calendar with named, colored events and important dates.
 - Habits with day, week, month and year views, period navigation and editable past completions.
@@ -34,9 +35,9 @@ A category grants access to the category as a whole. An app or website also sele
 
 Managed Settings holds the default shields. Before granting temporary access, LockIn registers a **one-time internal Device Activity interval starting at the relock deadline**, lasting 16 minutes. The monitor restores shields at `intervalDidStart`; `intervalDidEnd` is a backup. This avoids registering a sub-15-minute interval for short unlocks. These are implementation timers, not user blocking schedules. Foreground expiration and reopen reconciliation also restore shields.
 
-**Device Activity is controlled by iOS, not a real-time timer guarantee.** Short unlocks, force-quit, reboot, locked-screen and clock/time-zone behavior require the physical-device tests in [TESTFLIGHT.md](TESTFLIGHT.md). Clock/reboot detection takes effect when the app or monitor next runs. Permission revocation or uninstalling LockIn can disable protection; this is individual Screen Time authorization, not tamper-proof device management. Widgets show saved intent, not proof of current system enforcement.
+**Device Activity is controlled by iOS, not a real-time timer guarantee.** Short unlocks, force-quit, reboot, locked-screen, activity-report refresh and clock/time-zone behavior require the physical-device tests in [TESTFLIGHT.md](TESTFLIGHT.md). Clock/reboot detection takes effect when the app or monitor next runs. Permission revocation or uninstalling LockIn can disable protection; this is individual Screen Time authorization, not tamper-proof device management. Widgets show saved intent, not proof of current system enforcement.
 
-All supported iOS versions use a shield Close action with instructions to open LockIn manually. This avoids advertising an Open action that cannot work on older iOS versions.
+The shield's Close app action works on every supported iOS version. Open LockIn uses Apple's parent-controls-app response on iOS 26.5 and newer; older supported releases do not provide an extension API that can launch the parent app.
 
 ## Upgrade from 0.2.1
 
@@ -45,7 +46,7 @@ On first launch, preserve the global selection plus selections from the former a
 ## Project and validation
 
 - `FocusApp/`: SwiftUI application, policies and persistence.
-- `Extensions/`: relock monitor, shield appearance/actions, and widgets.
+- `Extensions/`: relock monitor, daily Screen Time report, shield appearance/actions, and widgets.
 - `FocusAppTests/`: date, deadline, persistence and migration regressions.
 - `Package.swift`: Foundation-only tests runnable with `swift test` without an iOS SDK.
 - `.github/workflows/ios.yml`: core tests, unsigned iPhone build and simulator tests.
@@ -57,6 +58,6 @@ Regenerate the project with `ruby scripts/generate_xcodeproj.rb` after installin
 
 ## Privacy
 
-No accounts, servers, analytics, advertising or network dependencies. Screen Time tokens and temporary grants live in the shared App Group container. A file lock and atomic writes serialize app/monitor transactions. Notes, habits and calendar events live separately in the app's Application Support directory. Events are local civil dates; no Calendar permission or external calendar sync is used. Unreadable saved data produces an error rather than silently replacing it with empty state.
+No accounts, servers, analytics, advertising or network dependencies. Screen Time tokens, bounded unlock history and temporary grants live in the shared App Group container. A file lock and atomic writes serialize app/extension transactions. Front-camera frames used for eye landmark detection stay on-device and are neither saved nor transmitted. Notes, habits and calendar events live separately in the app's Application Support directory. Events are local civil dates; no Calendar permission or external calendar sync is used. Unreadable saved data produces an error rather than silently replacing it with empty state.
 
 MIT License. See [LICENSE](LICENSE).

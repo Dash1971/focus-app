@@ -24,9 +24,9 @@ struct UnlockDeadline: Codable, Equatable {
 }
 
 enum TimePolicy {
-    static let unlockDurations = [30, 60, 300, 600, 900, 1500, 1800]
+    static let unlockDurations = [30, 60, 300, 600, 900, 1500, 1800, 2700, 3600, 7200]
     static let waitDurations = [10, 20, 30, 45, 60]
-    static func validDuration(_ seconds: Int) -> Bool { (30...86400).contains(seconds) }
+    static func validDuration(_ seconds: Int) -> Bool { unlockDurations.contains(seconds) }
 
     static func yearProgress(at date: Date, calendar: Calendar = .current) -> Double {
         guard let interval = calendar.dateInterval(of: .year, for: date) else { return 0 }
@@ -34,8 +34,14 @@ enum TimePolicy {
     }
 
     static func yearProgress(from startYear: Int, at date: Date, calendar: Calendar = .current) -> Double {
-        guard let start = calendar.date(from: DateComponents(year: startYear, month: 1, day: 1)),
-              let end = calendar.date(from: DateComponents(year: startYear + 1, month: 1, day: 1)),
+        // The labels are Gregorian years even when the device uses a Japanese,
+        // Buddhist, or other non-Gregorian display calendar. Using
+        // Calendar.current here can interpret 2026 as a year in that calendar
+        // and clamp a current-date result to zero.
+        var gregorian = Calendar(identifier: .gregorian)
+        gregorian.timeZone = calendar.timeZone
+        guard let start = gregorian.date(from: DateComponents(year: startYear, month: 1, day: 1)),
+              let end = gregorian.date(from: DateComponents(year: startYear + 1, month: 1, day: 1)),
               end > start else { return 0 }
         return min(1, max(0, date.timeIntervalSince(start) / end.timeIntervalSince(start)))
     }
@@ -52,6 +58,9 @@ enum TimePolicy {
     }
 
     static func durationLabel(_ seconds: Int) -> String {
-        seconds < 60 ? "\(seconds) sec" : "\(seconds / 60) min"
+        if seconds < 60 { return "\(seconds) sec" }
+        if seconds == 3600 { return "1 hour" }
+        if seconds.isMultiple(of: 3600) { return "\(seconds / 3600) hours" }
+        return "\(seconds / 60) min"
     }
 }

@@ -5,6 +5,7 @@ enum AppConstants {
     static let appGroup = "group.com.dash1971.focusapp"
     static let managedStore = "lockin.permanent"
     static let relockPrefix = "relock."
+    static let dailyActivityReport = "lockin.daily-activity"
 }
 
 struct UnlockGrant: Codable {
@@ -13,12 +14,70 @@ struct UnlockGrant: Codable {
     let deadline: UnlockDeadline
 }
 
+struct UnlockRecord: Codable, Equatable {
+    let id: UUID
+    let startedAt: Date
+    let scheduledEnd: Date
+    var endedAt: Date?
+
+    init(grant: UnlockGrant) {
+        id = grant.id
+        startedAt = grant.deadline.startedAt
+        scheduledEnd = grant.deadline.endsAt
+        endedAt = nil
+    }
+
+    func duration(during interval: DateInterval, now: Date = .now) -> TimeInterval {
+        let finish = min(endedAt ?? now, scheduledEnd)
+        let start = max(startedAt, interval.start)
+        let end = min(finish, interval.end)
+        return max(0, end.timeIntervalSince(start))
+    }
+}
+
 struct BlockingState: Codable {
     var selection = FamilyActivitySelection()
     var grant: UnlockGrant?
     var waitSeconds = 10
+    var unlockRecords: [UnlockRecord] = []
     // Retained only until old named stores have been cleared after an upgrade.
     var legacyStoreNames: [String] = []
+
+    init() {}
+
+    private enum CodingKeys: String, CodingKey {
+        case selection, grant, waitSeconds, unlockRecords, legacyStoreNames
+    }
+
+    init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        selection = try values.decodeIfPresent(FamilyActivitySelection.self, forKey: .selection) ?? .init()
+        grant = try values.decodeIfPresent(UnlockGrant.self, forKey: .grant)
+        waitSeconds = try values.decodeIfPresent(Int.self, forKey: .waitSeconds) ?? 10
+        unlockRecords = try values.decodeIfPresent([UnlockRecord].self, forKey: .unlockRecords) ?? []
+        legacyStoreNames = try values.decodeIfPresent([String].self, forKey: .legacyStoreNames) ?? []
+    }
+
+    mutating func finishGrant(at date: Date = .now) {
+        guard let grant else { return }
+        if let index = unlockRecords.firstIndex(where: { $0.id == grant.id }) {
+            let clamped = min(max(date, grant.deadline.startedAt), grant.deadline.endsAt)
+            unlockRecords[index].endedAt = clamped
+        }
+        self.grant = nil
+    }
+
+    mutating func pruneUnlockRecords(now: Date = .now, calendar: Calendar = .current) {
+        let cutoff = calendar.date(byAdding: .day, value: -32, to: now) ?? now.addingTimeInterval(-32 * 86_400)
+        unlockRecords.removeAll { $0.scheduledEnd < cutoff }
+    }
+
+    func unlockActivity(on date: Date = .now, calendar: Calendar = .current) -> (count: Int, duration: TimeInterval) {
+        guard let day = calendar.dateInterval(of: .day, for: date) else { return (0, 0) }
+        let count = unlockRecords.filter { day.contains($0.startedAt) }.count
+        let duration = unlockRecords.reduce(0) { $0 + $1.duration(during: day, now: date) }
+        return (count, duration)
+    }
 }
 
 extension FamilyActivitySelection {
