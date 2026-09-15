@@ -74,9 +74,10 @@ Preparation performs, in order:
 1. clean/exact-main, version, toolchain, credentials, and disk-space preflight;
 2. core tests, simulator tests, and an unsigned device build;
 3. complete bundle-layout and ExtensionKit metadata audit;
-4. signed archive and App Store export;
-5. signature, profile, entitlement, bundle ID, version, and SHA-256 audit; and
-6. server-side Apple validation with `altool`.
+4. signed archive audit (development or distribution, matching its embedded profiles) and App Store export;
+5. strict Apple Distribution signature/profile audit of the exported IPA;
+6. entitlement, bundle ID, version, and SHA-256 audit; and
+7. server-side Apple validation with `altool`.
 
 It stops at `apple_validation_passed` and prints the immutable manifest, IPA, and
 SHA-256. It does **not** upload.

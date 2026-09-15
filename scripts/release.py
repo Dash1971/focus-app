@@ -330,7 +330,45 @@ def signed_entitlements(bundle: Path) -> dict[str, Any]:
     return plist_from_output(result.stdout + result.stderr, f"entitlements {bundle.name}")
 
 
-def audit_signing(app: Path, structure: dict[str, Any], expected_team_id: str | None) -> dict[str, Any]:
+def signing_identity_kind(detail_text: str, relative: str) -> str:
+    if "Authority=Apple Distribution:" in detail_text:
+        return "distribution"
+    if "Authority=Apple Development:" in detail_text:
+        return "development"
+    fail(f"Bundle is not signed by an Apple development or distribution identity: {relative}")
+
+
+def validate_signing_purpose(identity_kind: str, require_distribution: bool, relative: str) -> None:
+    if require_distribution and identity_kind != "distribution":
+        fail(f"Bundle is not signed by Apple Distribution: {relative}")
+
+
+def validate_profile_scope(profile: dict[str, Any], identity_kind: str, relative: str) -> None:
+    entitlements = profile.get("Entitlements", {})
+    if not isinstance(entitlements, dict):
+        fail(f"Profile entitlements missing: {relative}")
+    get_task_allow = entitlements.get("get-task-allow")
+    provisioned_devices = profile.get("ProvisionedDevices")
+    provisions_all_devices = profile.get("ProvisionsAllDevices")
+    if identity_kind == "distribution":
+        if get_task_allow is not False:
+            fail(f"Profile is not App Store distribution: {relative}")
+        if provisioned_devices or provisions_all_devices:
+            fail(f"Profile is device-scoped or enterprise, not App Store: {relative}")
+        return
+    if get_task_allow is not True:
+        fail(f"Development profile does not allow debugging: {relative}")
+    if not isinstance(provisioned_devices, list) or not provisioned_devices or provisions_all_devices:
+        fail(f"Profile is not device-scoped development: {relative}")
+
+
+def audit_signing(
+    app: Path,
+    structure: dict[str, Any],
+    expected_team_id: str | None,
+    *,
+    require_distribution: bool,
+) -> dict[str, Any]:
     run(["codesign", "--verify", "--deep", "--strict", "--verbose=2", str(app)])
     paths = app_relative_paths(app)
     teams: set[str] = set()
@@ -341,12 +379,13 @@ def audit_signing(app: Path, structure: dict[str, Any], expected_team_id: str | 
         if details.returncode:
             fail(f"Could not inspect signature: {relative}")
         detail_text = (details.stdout + details.stderr).decode(errors="replace")
-        if "Authority=Apple Distribution:" not in detail_text:
-            fail(f"Bundle is not signed by Apple Distribution: {relative}")
+        identity_kind = signing_identity_kind(detail_text, relative)
+        validate_signing_purpose(identity_kind, require_distribution, relative)
         profile = decode_profile(bundle)
         entitlements = profile.get("Entitlements", {})
         if not isinstance(entitlements, dict):
             fail(f"Profile entitlements missing: {relative}")
+        validate_profile_scope(profile, identity_kind, relative)
         team_values = profile.get("TeamIdentifier", [])
         if not isinstance(team_values, list) or len(team_values) != 1:
             fail(f"Unexpected TeamIdentifier in profile: {relative}")
@@ -355,10 +394,6 @@ def audit_signing(app: Path, structure: dict[str, Any], expected_team_id: str | 
         bundle_id = EXPECTED_BUNDLES[relative]
         if entitlements.get("application-identifier") != f"{team_id}.{bundle_id}":
             fail(f"Profile application identifier mismatch: {relative}")
-        if entitlements.get("get-task-allow") is not False:
-            fail(f"Profile is not App Store distribution: {relative}")
-        if profile.get("ProvisionedDevices") or profile.get("ProvisionsAllDevices"):
-            fail(f"Profile is device-scoped or enterprise, not App Store: {relative}")
         expiration = profile.get("ExpirationDate")
         if not isinstance(expiration, dt.datetime):
             fail(f"Profile expiration missing: {relative}")
@@ -378,6 +413,7 @@ def audit_signing(app: Path, structure: dict[str, Any], expected_team_id: str | 
                 fail(f"Family Controls missing from signed entitlements: {relative}")
         signing.append({
             "path": relative,
+            "identity_kind": identity_kind,
             "team_id": team_id,
             "profile_uuid": str(profile.get("UUID", "")),
             "profile_expiration": expiration.isoformat(),
@@ -422,7 +458,12 @@ def audit_ipa(
     with tempfile.TemporaryDirectory(prefix="lockin-ipa-audit-") as temp:
         app = unpack_ipa(ipa, Path(temp))
         structure = audit_structure(app, expected_version=expected_version, expected_build=expected_build)
-        signing = audit_signing(app, structure, expected_team_id) if signed else None
+        signing = audit_signing(
+            app,
+            structure,
+            expected_team_id,
+            require_distribution=True,
+        ) if signed else None
     return {
         "ipa": str(ipa.resolve()),
         "sha256": sha256(ipa),
@@ -432,9 +473,22 @@ def audit_ipa(
     }
 
 
-def audit_app(app: Path, *, expected_version: str | None, expected_build: str | None, signed: bool, team_id: str | None) -> dict[str, Any]:
+def audit_app(
+    app: Path,
+    *,
+    expected_version: str | None,
+    expected_build: str | None,
+    signed: bool,
+    team_id: str | None,
+    require_distribution: bool = True,
+) -> dict[str, Any]:
     structure = audit_structure(app, expected_version=expected_version, expected_build=expected_build)
-    signing = audit_signing(app, structure, team_id) if signed else None
+    signing = audit_signing(
+        app,
+        structure,
+        team_id,
+        require_distribution=require_distribution,
+    ) if signed else None
     return {"app": str(app.resolve()), "structure": structure, "signing": signing}
 
 
@@ -631,6 +685,7 @@ def prepare(config_path: Path, *, allow_non_main: bool) -> Path:
         expected_build=build,
         signed=True,
         team_id=config["team_id"],
+        require_distribution=False,
     )
     manifest["archive"] = {"path": str(archive), "audit": archive_audit}
     manifest["state"] = "archive_audited"
