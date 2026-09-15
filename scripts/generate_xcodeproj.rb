@@ -19,7 +19,7 @@ def configure(target, bundle_id:, plist: nil, entitlements: nil)
     settings['TARGETED_DEVICE_FAMILY'] = '1'
     settings['SWIFT_VERSION'] = '5.0'
     settings['CODE_SIGN_STYLE'] = 'Automatic'
-    settings['CURRENT_PROJECT_VERSION'] = '5'
+    settings['CURRENT_PROJECT_VERSION'] = '6'
     settings['MARKETING_VERSION'] = '0.4.0'
     settings['CODE_SIGN_ENTITLEMENTS'] = entitlements if entitlements
     if plist
