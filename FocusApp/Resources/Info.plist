@@ -15,7 +15,7 @@
     <key>CFBundleURLSchemes</key><array><string>lockin</string></array>
   </dict></array>
   <key>LSApplicationCategoryType</key><string>public.app-category.productivity</string>
-  <key>NSCameraUsageDescription</key><string>LockIn uses the front camera to track eye-level movement for Flappy Bird Push-Up. Camera frames stay on the device and are not saved.</string>
+  <key>NSCameraUsageDescription</key><string>LockIn uses the front camera to track nose movement for Flappy Bird Push-Up. Camera frames stay on the device and are not saved.</string>
   <key>UIApplicationSceneManifest</key><dict><key>UIApplicationSupportsMultipleScenes</key><true/></dict>
   <key>UIUserInterfaceStyle</key><string>Dark</string>
   <key>UILaunchScreen</key><dict/>

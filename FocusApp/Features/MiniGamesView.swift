@@ -9,7 +9,8 @@ private struct MiniGame: Identifiable {
 
 private enum MiniGameCatalog {
     static let available = [
-        MiniGame(id: "flappy-push-up", title: "Flappy Bird Push-Up", icon: "figure.strengthtraining.traditional")
+        MiniGame(id: "flappy-push-up", title: "Flappy Bird Push-Up", icon: "figure.strengthtraining.traditional"),
+        MiniGame(id: "pushup-challenge", title: "Pushup Challenge", icon: "person.2")
     ]
 }
 
@@ -56,6 +57,7 @@ struct MiniGamesView: View {
     private func destination(for game: MiniGame) -> some View {
         switch game.id {
         case "flappy-push-up": FlappyBirdPushUpView()
+        case "pushup-challenge": PushupChallengeView()
         default: EmptyView()
         }
     }
@@ -65,13 +67,16 @@ private struct FlappyPipe: Identifiable {
     let id = UUID()
     var x: CGFloat
     let gapY: CGFloat
+    let gapHeight: CGFloat
     var counted = false
 }
 
 private struct FlappyBirdPushUpView: View {
-    @StateObject private var eyeTracker = EyeLevelCameraController()
+    @Environment(\.scenePhase) private var scenePhase
+    @State private var activeSeconds: TimeInterval = 0
+    @StateObject private var noseTracker = NoseCameraController()
     @State private var birdY: CGFloat = 0
-    @State private var eyeBaseline: CGFloat?
+    @State private var noseBaseline: CGFloat?
     @State private var pipes: [FlappyPipe] = []
     @State private var score = 0
     @State private var started = false
@@ -82,20 +87,20 @@ private struct FlappyBirdPushUpView: View {
     private let birdX: CGFloat = 72
     private let birdSize: CGFloat = 26
     private let pipeWidth: CGFloat = 56
-    private let gapHeight: CGFloat = 158
+    private var difficulty: FlappyDifficulty { FlappyDifficulty(activeSeconds: activeSeconds) }
 
     var body: some View {
         GeometryReader { geometry in
             TimelineView(.animation(
                 minimumInterval: 1.0 / 60.0,
-                paused: !started || gameOver || eyeTracker.eyeLevel == nil
+                paused: !started || gameOver || noseTracker.noseLevel == nil || scenePhase != .active
             )) { timeline in
                 ZStack {
                     Color.black
-                    if eyeTracker.status == .tracking || eyeTracker.status == .lookingForEyes {
-                        EyeCameraPreview(session: eyeTracker.session)
-                            .grayscale(1)
-                            .opacity(0.2)
+                    if noseTracker.status == .tracking || noseTracker.status == .lookingForNose {
+                        NoseCameraPreview(session: noseTracker.session)
+                            // Keep live camera pixels natural and fully visible.
+                            .accessibilityLabel("Live front camera preview")
                     }
                     Canvas { context, size in
                         drawGame(context: &context, size: size)
@@ -105,23 +110,28 @@ private struct FlappyBirdPushUpView: View {
                         Text("\(score)")
                             .font(.system(size: 38, weight: .light, design: .rounded))
                             .monospacedDigit()
+                            .padding(10)
+                            .background(Color.black.opacity(0.75), in: Capsule())
                             .padding(.top, 24)
+                        Text("Level \(difficulty.level)")
+                            .font(.caption).padding(6)
+                            .background(Color.black.opacity(0.75), in: Capsule())
                         Spacer()
                     }
 
                     if cameraUnavailable {
                         cameraUnavailableView
-                    } else if eyeTracker.status == .requestingPermission || eyeTracker.status == .starting {
+                    } else if noseTracker.status == .requestingPermission || noseTracker.status == .starting {
                         ProgressView("Starting camera…")
                             .padding(22)
                             .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 18))
-                    } else if eyeTracker.eyeLevel == nil {
-                        gameMessage("Position your eyes in view", detail: "Use the front camera in your push-up position.")
+                    } else if noseTracker.noseLevel == nil {
+                        gameMessage("Position your nose in view", detail: "Use the front camera in your push-up position.")
                     } else if !started || gameOver {
                         VStack(spacing: 10) {
                             Text(gameOver ? "Game Over" : "Ready")
                                 .font(.title2.bold())
-                            Text(gameOver ? "Tap to restart" : "Tap to start · move your eye level up and down")
+                            Text(gameOver ? "Tap to restart" : "Tap to start · move your nose up and down")
                                 .font(.subheadline)
                                 .foregroundStyle(.secondary)
                                 .multilineTextAlignment(.center)
@@ -136,8 +146,8 @@ private struct FlappyBirdPushUpView: View {
                         .onEnded { _ in startOrRestart(in: geometry.size) }
                 )
                 .onAppear { prepare(in: geometry.size) }
-                .onChange(of: eyeTracker.eyeLevel) { _, eyeLevel in
-                    updateBird(from: eyeLevel, in: geometry.size)
+                .onChange(of: noseTracker.noseLevel) { _, noseLevel in
+                    updateBird(from: noseLevel, in: geometry.size)
                 }
                 .onChange(of: timeline.date) { oldDate, newDate in
                     advance(from: oldDate, to: newDate, in: geometry.size)
@@ -147,23 +157,28 @@ private struct FlappyBirdPushUpView: View {
         .background(Color.black)
         .navigationTitle("Flappy Bird Push-Up")
         .navigationBarTitleDisplayMode(.inline)
-        .onAppear { eyeTracker.start() }
-        .onDisappear { eyeTracker.stop() }
+        .onAppear { noseTracker.start() }
+        .onDisappear { noseTracker.stop() }
+        .onChange(of: scenePhase) { _, phase in
+            lastFrame = .now
+            if phase == .active { noseTracker.start() }
+            else { noseTracker.stop() }
+        }
     }
 
     private var cameraUnavailable: Bool {
-        [.denied, .unavailable, .failed].contains(eyeTracker.status)
+        [.denied, .unavailable, .failed].contains(noseTracker.status)
     }
 
     @ViewBuilder
     private var cameraUnavailableView: some View {
         VStack(spacing: 12) {
-            Text(eyeTracker.status == .denied ? "Camera access is off" : "Front camera unavailable")
+            Text(noseTracker.status == .denied ? "Camera access is off" : "Front camera unavailable")
                 .font(.headline)
-            Text("Eye tracking is required to play.")
+            Text("Nose tracking is required to play.")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
-            if eyeTracker.status == .denied {
+            if noseTracker.status == .denied {
                 Button("Open Settings") {
                     if let url = URL(string: UIApplication.openSettingsURLString) {
                         UIApplication.shared.open(url)
@@ -199,8 +214,8 @@ private struct FlappyBirdPushUpView: View {
         context.fill(Path(roundedRect: beak, cornerRadius: 2), with: .color(Color(white: 0.45)))
 
         for pipe in pipes {
-            let topHeight = max(0, pipe.gapY - gapHeight / 2)
-            let bottomY = min(size.height, pipe.gapY + gapHeight / 2)
+            let topHeight = max(0, pipe.gapY - pipe.gapHeight / 2)
+            let bottomY = min(size.height, pipe.gapY + pipe.gapHeight / 2)
             let top = CGRect(x: pipe.x, y: 0, width: pipeWidth, height: topHeight)
             let bottom = CGRect(x: pipe.x, y: bottomY, width: pipeWidth, height: max(0, size.height - bottomY))
             context.fill(Path(roundedRect: top, cornerRadius: 8), with: .color(Color(white: 0.18)))
@@ -215,12 +230,13 @@ private struct FlappyBirdPushUpView: View {
     }
 
     private func startOrRestart(in size: CGSize) {
-        guard let eyeLevel = eyeTracker.eyeLevel, !cameraUnavailable else { return }
+        guard let noseLevel = noseTracker.noseLevel, !cameraUnavailable else { return }
         if !started || gameOver {
             birdY = size.height / 2
-            eyeBaseline = eyeLevel
+            noseBaseline = noseLevel
             pipes = []
             score = 0
+            activeSeconds = 0
             timeSincePipe = 0
             gameOver = false
             started = true
@@ -228,23 +244,24 @@ private struct FlappyBirdPushUpView: View {
         }
     }
 
-    private func updateBird(from eyeLevel: CGFloat?, in size: CGSize) {
-        guard started, !gameOver, let eyeLevel, let baseline = eyeBaseline, size.height > 0 else { return }
-        let controlled = min(0.9, max(0.1, 0.5 + (eyeLevel - baseline) * 2.7))
+    private func updateBird(from noseLevel: CGFloat?, in size: CGSize) {
+        guard started, !gameOver, let noseLevel, let baseline = noseBaseline, size.height > 0 else { return }
+        let controlled = min(0.9, max(0.1, 0.5 + (noseLevel - baseline) * 2.7))
         birdY = controlled * size.height
     }
 
     private func advance(from oldDate: Date, to newDate: Date, in size: CGSize) {
-        guard started, !gameOver, size.width > 0, size.height > 0 else { return }
+        guard started, !gameOver, noseTracker.noseLevel != nil, scenePhase == .active, size.width > 0, size.height > 0 else { return }
         let elapsed = newDate.timeIntervalSince(lastFrame)
         let delta = min(0.05, max(0, elapsed > 0 ? elapsed : newDate.timeIntervalSince(oldDate)))
         let step = CGFloat(delta)
         lastFrame = newDate
 
         timeSincePipe += delta
+        activeSeconds += delta
 
         for index in pipes.indices {
-            pipes[index].x -= 132 * step
+            pipes[index].x -= CGFloat(difficulty.speed) * step
             if !pipes[index].counted, pipes[index].x + pipeWidth < birdX {
                 pipes[index].counted = true
                 score += 1
@@ -252,11 +269,12 @@ private struct FlappyBirdPushUpView: View {
         }
         pipes.removeAll { $0.x + pipeWidth < -8 }
 
-        if timeSincePipe >= 1.75 {
+        if timeSincePipe >= difficulty.spawnInterval {
+            let gapHeight = min(CGFloat(difficulty.gapHeight), size.height * 0.65)
             timeSincePipe = 0
             let lower = max(gapHeight / 2 + 30, size.height * 0.24)
             let upper = min(size.height - gapHeight / 2 - 30, size.height * 0.76)
-            pipes.append(FlappyPipe(x: size.width + 12, gapY: CGFloat.random(in: lower...max(lower, upper))))
+            pipes.append(FlappyPipe(x: size.width + 12, gapY: CGFloat.random(in: lower...max(lower, upper)), gapHeight: gapHeight))
         }
 
         if collided(in: size) { gameOver = true }
@@ -272,8 +290,8 @@ private struct FlappyBirdPushUpView: View {
         if bird.minY <= 0 || bird.maxY >= size.height { return true }
 
         for pipe in pipes {
-            let top = CGRect(x: pipe.x, y: 0, width: pipeWidth, height: pipe.gapY - gapHeight / 2)
-            let bottomY = pipe.gapY + gapHeight / 2
+            let top = CGRect(x: pipe.x, y: 0, width: pipeWidth, height: pipe.gapY - pipe.gapHeight / 2)
+            let bottomY = pipe.gapY + pipe.gapHeight / 2
             let bottom = CGRect(x: pipe.x, y: bottomY, width: pipeWidth, height: size.height - bottomY)
             if bird.intersects(top) || bird.intersects(bottom) { return true }
         }

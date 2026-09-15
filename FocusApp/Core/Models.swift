@@ -4,6 +4,7 @@ import FamilyControls
 enum AppConstants {
     static let appGroup = "group.com.dash1971.focusapp"
     static let managedStore = "lockin.permanent"
+    static let recoveryActivity = "lockin.recovery"
     static let relockPrefix = "relock."
     static let dailyActivityReport = "lockin.daily-activity"
 }
@@ -28,7 +29,9 @@ struct UnlockRecord: Codable, Equatable {
     }
 
     func duration(during interval: DateInterval, now: Date = .now) -> TimeInterval {
-        let finish = min(endedAt ?? now, scheduledEnd)
+        // Completed records use the observed relock time, including a delayed
+        // system callback. Legacy orphan records without an end remain bounded.
+        let finish = min(endedAt ?? min(now, scheduledEnd), now)
         let start = max(startedAt, interval.start)
         let end = min(finish, interval.end)
         return max(0, end.timeIntervalSince(start))
@@ -58,10 +61,16 @@ struct BlockingState: Codable {
         legacyStoreNames = try values.decodeIfPresent([String].self, forKey: .legacyStoreNames) ?? []
     }
 
+    var hasTemporaryAccess: Bool { grant.map { !$0.selection.isEmpty && $0.deadline.isActive() } ?? false }
+
+    func canEditSettings(authorized: Bool) -> Bool {
+        RestrictionAccessPolicy.canEdit(hasSelection: !selection.isEmpty, authorized: authorized, activeGrant: hasTemporaryAccess)
+    }
+
     mutating func finishGrant(at date: Date = .now) {
         guard let grant else { return }
         if let index = unlockRecords.firstIndex(where: { $0.id == grant.id }) {
-            let clamped = min(max(date, grant.deadline.startedAt), grant.deadline.endsAt)
+            let clamped = max(date, grant.deadline.startedAt)
             unlockRecords[index].endedAt = clamped
         }
         self.grant = nil
@@ -74,7 +83,7 @@ struct BlockingState: Codable {
 
     func unlockActivity(on date: Date = .now, calendar: Calendar = .current) -> (count: Int, duration: TimeInterval) {
         guard let day = calendar.dateInterval(of: .day, for: date) else { return (0, 0) }
-        let count = unlockRecords.filter { day.contains($0.startedAt) }.count
+        let count = unlockRecords.filter { $0.startedAt >= day.start && $0.startedAt < day.end && $0.startedAt <= date }.count
         let duration = unlockRecords.reduce(0) { $0 + $1.duration(during: day, now: date) }
         return (count, duration)
     }

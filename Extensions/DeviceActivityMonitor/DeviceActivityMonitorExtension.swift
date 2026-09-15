@@ -15,11 +15,16 @@ final class DeviceActivityMonitorExtension: DeviceActivityMonitor {
 
     private func reconcile(_ activity: DeviceActivityName) {
         // Old callbacks must never clear the new permanent store.
-        guard activity.rawValue.hasPrefix(AppConstants.relockPrefix) else { return }
+        guard activity.rawValue.hasPrefix(AppConstants.relockPrefix) || activity.rawValue == AppConstants.recoveryActivity else { return }
         do {
             try SharedStore.shared.transaction({ state in
                 if let grant = state.grant, !grant.deadline.isActive() {
-                    state.finishGrant(at: min(.now, grant.deadline.endsAt))
+                    state.finishGrant()
+                }
+                do { try ShieldPolicy.refreshTokens(in: &state) }
+                catch {
+                    state.finishGrant()
+                    Logger(subsystem: "com.dash1971.focusapp", category: "relock").error("Screen Time token refresh failed; restoring full saved shields.")
                 }
                 state.pruneUnlockRecords()
             }, afterSave: ShieldPolicy.apply)

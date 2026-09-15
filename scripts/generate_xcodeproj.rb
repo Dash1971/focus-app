@@ -55,6 +55,7 @@ end
 models = 'FocusApp/Core/Models.swift'
 shared_store = 'FocusApp/Core/SharedStore.swift'
 time_policy = 'FocusApp/Core/TimePolicy.swift'
+access_policy = 'FocusApp/Core/AccessPolicy.swift'
 shield_policy = 'FocusApp/Core/ShieldPolicy.swift'
 
 app = project.new_target(:application, 'FocusApp', :ios, '18.0')
@@ -81,14 +82,14 @@ extensions = [
     name: 'DeviceActivityMonitorExtension',
     directory: 'Extensions/DeviceActivityMonitor',
     bundle: 'com.dash1971.focusapp.deviceactivity',
-    sources: [models, shared_store, time_policy, shield_policy, 'Extensions/DeviceActivityMonitor/DeviceActivityMonitorExtension.swift'],
+    sources: [models, shared_store, time_policy, access_policy, shield_policy, 'Extensions/DeviceActivityMonitor/DeviceActivityMonitorExtension.swift'],
     frameworks: %w[DeviceActivity.framework ManagedSettings.framework FamilyControls.framework]
   },
   {
     name: 'DeviceActivityReportExtension',
     directory: 'Extensions/DeviceActivityReport',
     bundle: 'com.dash1971.focusapp.deviceactivityreport',
-    sources: [models, shared_store, time_policy, 'Extensions/DeviceActivityReport/DeviceActivityReportExtension.swift'],
+    sources: [models, shared_store, time_policy, access_policy, 'Extensions/DeviceActivityReport/DeviceActivityReportExtension.swift'],
     frameworks: %w[DeviceActivity.framework ManagedSettings.framework FamilyControls.framework ExtensionKit.framework SwiftUI.framework],
     extensionkit: true
   },
@@ -149,7 +150,7 @@ widget.build_configurations.each do |config|
   config.build_settings['APPLICATION_EXTENSION_API_ONLY'] = 'YES'
   config.build_settings['PRODUCT_NAME'] = 'LockInWidgets'
 end
-add_sources(project, widget, [models, shared_store, time_policy, 'Extensions/LockInWidgets/LockInWidgets.swift'])
+add_sources(project, widget, [models, shared_store, time_policy, access_policy, 'Extensions/LockInWidgets/LockInWidgets.swift'])
 %w[WidgetKit.framework SwiftUI.framework FamilyControls.framework DeviceActivity.framework].each { |f| add_framework(project, widget, f) }
 app.add_dependency(widget)
 widget_build_file = embed_phase.add_file_reference(widget.product_reference, true)
