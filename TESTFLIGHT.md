@@ -1,6 +1,41 @@
-# LockIn TestFlight checklist
+# LockIn TestFlight release
 
-## 1. Apple Developer setup
+The supported release path is `scripts/release.py`. Do not archive in Xcode or drag an
+unidentified `LockIn.ipa` into Transporter. The pipeline uses immutable, versioned
+artifacts and will not upload anything during preparation.
+
+## 1. One-time unattended signing setup
+
+Create a **team** App Store Connect API key with the Developer role and access to
+Certificates, Identifiers & Profiles. Download its `.p8` private key; Apple permits
+that download only once. An individual API key cannot manage provisioning resources.
+
+Install the key and machine-local configuration outside the repository:
+
+```sh
+python3 scripts/release.py bootstrap \
+  --config "$LOCKIN_RELEASE_CONFIG" \
+  --api-key-file "/path/to/AuthKey_KEYID.p8" \
+  --api-key-id "KEYID" \
+  --api-issuer-id "ISSUER_UUID" \
+  --team-id "TEAMID" \
+  --output-root "/Users/Shared/LockInReleases"
+```
+
+The bootstrap command copies the key with mode `0600`, writes the config with mode
+`0600`, and refuses to overwrite either. Remove the original download after verifying
+the installed copy and secure backup. Check readiness without contacting Apple:
+
+```sh
+python3 scripts/release.py credentials --config "$LOCKIN_RELEASE_CONFIG"
+```
+
+The first unattended archive attempts Xcode automatic signing with the API key and a
+cloud-managed distribution certificate. If Apple does not permit cloud signing for
+the team, import one distribution identity into a dedicated release keychain once;
+subsequent runs remain unattended.
+
+## 2. Apple Developer setup
 
 Create these explicit App IDs in Certificates, Identifiers & Profiles:
 
@@ -19,22 +54,47 @@ Attach all six App IDs to that App Group. Enable Family Controls for the app and
 
 For TestFlight distribution, request Apple's Family Controls distribution entitlement for all five bundle IDs that use it. Development signing alone is not sufficient for an App Store Connect upload.
 
-## 2. Xcode signing
+## 3. Prepare and validate a release
 
-1. Open `FocusApp.xcodeproj` with full Xcode.
-2. Select the `FocusApp` project and set the same Apple Developer Team for the app and all five extensions.
-3. Keep automatic signing enabled.
-4. Confirm the app and Screen Time targets show Family Controls and App Groups; confirm the widget target shows App Groups.
-5. Confirm the App Group is `group.com.dash1971.focusapp` for all targets.
-
-If the project file needs regeneration, install the Ruby `xcodeproj` gem and run:
+Set the version/build in source, commit it, merge it, and ensure `HEAD` is the exact
+clean `origin/main` commit:
 
 ```sh
-gem install --user-install xcodeproj --no-document
-ruby scripts/generate_xcodeproj.rb
+python3 scripts/release.py set-version --version 0.4.0 --build 8
 ```
 
-## 3. Physical-device acceptance matrix (required before release)
+Then run one command:
+
+```sh
+python3 scripts/release.py prepare --config "$LOCKIN_RELEASE_CONFIG"
+```
+
+Preparation performs, in order:
+
+1. clean/exact-main, version, toolchain, credentials, and disk-space preflight;
+2. core tests, simulator tests, and an unsigned device build;
+3. complete bundle-layout and ExtensionKit metadata audit;
+4. signed archive and App Store export;
+5. signature, profile, entitlement, bundle ID, version, and SHA-256 audit; and
+6. server-side Apple validation with `altool`.
+
+It stops at `apple_validation_passed` and prints the immutable manifest, IPA, and
+SHA-256. It does **not** upload.
+
+After explicit approval of that exact hash, upload it:
+
+```sh
+python3 scripts/release.py upload \
+  --config "$LOCKIN_RELEASE_CONFIG" \
+  --manifest "/Users/Shared/LockInReleases/.../manifest.json" \
+  --confirm-sha256 "THE_EXACT_64_CHARACTER_HASH"
+```
+
+The uploader rechecks the file hash, layout, signatures, profiles, and entitlements
+immediately before upload. App Store Connect acceptance and build processing are
+reported as separate states.
+
+## 4. Physical-device acceptance matrix (required before release)
 
 Use a harmless app. Test the oldest supported iOS version and the current release. Record device, OS, grant duration, expected/actual relock times, and pass/fail in the PR.
 
@@ -67,17 +127,15 @@ Use a harmless app. Test the oldest supported iOS version and the current releas
 
 Device Activity callbacks are system-scheduled and can be delayed. A successful build or simulator test does not certify the requested real-time blocking behavior.
 
-## 4. TestFlight upload
+## 5. TestFlight activation
 
-1. In App Store Connect, create the LockIn app record using `com.dash1971.focusapp`.
-2. In Xcode, select **Any iOS Device (arm64)**.
-3. Choose **Product → Archive**.
-4. Validate the archive in Organizer.
-5. Distribute through **App Store Connect → Upload**.
-6. Add the build to an internal TestFlight group.
+After the upload command succeeds, wait for App Store Connect processing, resolve any
+compliance questions, and add the build to the intended internal TestFlight group.
+“Uploaded” does not mean “processed” or “available to testers.”
 
 ## Release status
 
-This redesign needs the acceptance matrix above before release. The PR documents automated validation separately. No App Store upload, distribution signing or device test is implied by opening the PR.
+Opening or merging a PR does not sign, validate, upload, process, or release a build.
+Those states exist only in a generated release manifest.
 
 The default shield is persistent while individual Screen Time authorization remains enabled. Users can revoke authorization, uninstall the app, or deliberately remove selections. On every supported iOS version, close the shield and open LockIn manually to request access.

@@ -17,17 +17,16 @@ jobs:
         run: sudo xcode-select -s /Applications/Xcode_26.5.app/Contents/Developer
       - name: Toolchain
         run: xcodebuild -version
+      - name: Release pipeline regression tests
+        run: python3 scripts/tests/test_release.py
+      - name: Release metadata consistency
+        run: python3 scripts/release.py preflight --allow-non-main
       - name: Core regression tests
         run: swift test
       - name: Build app and extensions for iPhone
         run: xcodebuild -project FocusApp.xcodeproj -scheme FocusApp -configuration Release -destination 'generic/platform=iOS' -derivedDataPath build/device CODE_SIGNING_ALLOWED=NO build
       - name: Verify Device Activity Report packaging
-        run: |
-          REPORT_BUNDLE="build/device/Build/Products/Release-iphoneos/LockIn.app/Extensions/DeviceActivityReportExtension.appex"
-          test -d "$REPORT_BUNDLE"
-          test ! -e "build/device/Build/Products/Release-iphoneos/LockIn.app/PlugIns/DeviceActivityReportExtension.appex"
-          test "$(/usr/libexec/PlistBuddy -c 'Print :EXAppExtensionAttributes:EXExtensionPointIdentifier' "$REPORT_BUNDLE/Info.plist")" = "com.apple.deviceactivityui.report-extension"
-          ! /usr/libexec/PlistBuddy -c 'Print :NSExtension' "$REPORT_BUNDLE/Info.plist"
+        run: python3 scripts/release.py audit-app --app build/device/Build/Products/Release-iphoneos/LockIn.app
       - name: Simulator regression tests
         run: |
           DEVICE_ID=$(xcrun simctl list devices available -j | python3 -c 'import json,sys; d=json.load(sys.stdin); print(next(x["udid"] for devices in d["devices"].values() for x in devices if "iPhone" in x["name"]))')

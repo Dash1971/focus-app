@@ -3,15 +3,17 @@
 
 require 'xcodeproj'
 require 'fileutils'
+require 'json'
 
 root = File.expand_path('..', __dir__)
 project_path = File.join(root, 'FocusApp.xcodeproj')
+release_version = JSON.parse(File.read(File.join(root, 'release', 'version.json')))
 FileUtils.rm_rf(project_path)
 project = Xcodeproj::Project.new(project_path)
 project.root_object.attributes['LastSwiftUpdateCheck'] = '2600'
 project.root_object.attributes['LastUpgradeCheck'] = '2600'
 
-def configure(target, bundle_id:, plist: nil, entitlements: nil)
+def configure(target, release_version:, bundle_id:, plist: nil, entitlements: nil)
   target.build_configurations.each do |config|
     settings = config.build_settings
     settings['PRODUCT_BUNDLE_IDENTIFIER'] = bundle_id
@@ -19,8 +21,8 @@ def configure(target, bundle_id:, plist: nil, entitlements: nil)
     settings['TARGETED_DEVICE_FAMILY'] = '1'
     settings['SWIFT_VERSION'] = '5.0'
     settings['CODE_SIGN_STYLE'] = 'Automatic'
-    settings['CURRENT_PROJECT_VERSION'] = '7'
-    settings['MARKETING_VERSION'] = '0.4.0'
+    settings['CURRENT_PROJECT_VERSION'] = release_version.fetch('build').to_s
+    settings['MARKETING_VERSION'] = release_version.fetch('version')
     settings['CODE_SIGN_ENTITLEMENTS'] = entitlements if entitlements
     if plist
       settings['GENERATE_INFOPLIST_FILE'] = 'NO'
@@ -57,7 +59,7 @@ shield_policy = 'FocusApp/Core/ShieldPolicy.swift'
 
 app = project.new_target(:application, 'FocusApp', :ios, '18.0')
 app.product_name = 'LockIn'
-configure(app, bundle_id: 'com.dash1971.focusapp', plist: 'FocusApp/Resources/Info.plist', entitlements: 'FocusApp/FocusApp.entitlements')
+configure(app, release_version: release_version, bundle_id: 'com.dash1971.focusapp', plist: 'FocusApp/Resources/Info.plist', entitlements: 'FocusApp/FocusApp.entitlements')
 app.build_configurations.each do |config|
   config.build_settings['PRODUCT_NAME'] = 'LockIn'
   config.build_settings['INFOPLIST_KEY_CFBundleDisplayName'] = 'LockIn'
@@ -117,6 +119,7 @@ extensions.each do |spec|
   target.product_type = 'com.apple.product-type.extensionkit-extension' if spec[:extensionkit]
   configure(
     target,
+    release_version: release_version,
     bundle_id: spec[:bundle],
     plist: "#{spec[:directory]}/Info.plist",
     entitlements: "#{spec[:directory]}/#{spec[:name].sub('Extension', '')}.entitlements"
@@ -136,6 +139,7 @@ end
 widget = project.new_target(:app_extension, 'LockInWidgetsExtension', :ios, '18.0')
 configure(
   widget,
+  release_version: release_version,
   bundle_id: 'com.dash1971.focusapp.widgets',
   plist: 'Extensions/LockInWidgets/Info.plist',
   entitlements: 'Extensions/LockInWidgets/LockInWidgets.entitlements'
@@ -152,7 +156,7 @@ widget_build_file = embed_phase.add_file_reference(widget.product_reference, tru
 widget_build_file.settings = { 'ATTRIBUTES' => %w[RemoveHeadersOnCopy CodeSignOnCopy] }
 
 tests = project.new_target(:unit_test_bundle, 'FocusAppTests', :ios, '18.0')
-configure(tests, bundle_id: 'com.dash1971.focusapp.tests')
+configure(tests, release_version: release_version, bundle_id: 'com.dash1971.focusapp.tests')
 tests.build_configurations.each do |config|
   config.build_settings['TEST_HOST'] = '$(BUILT_PRODUCTS_DIR)/LockIn.app/LockIn'
   config.build_settings['BUNDLE_LOADER'] = '$(TEST_HOST)'
