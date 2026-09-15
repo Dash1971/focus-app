@@ -109,19 +109,40 @@ struct RestrictionsView: View {
                 .font(.title3.weight(.semibold))
                 .padding(.top, 18)
 
-            if model.authorized {
-                TimelineView(.periodic(from: .now, by: 60)) { context in
-                    DeviceActivityReport(
-                        .init(AppConstants.dailyActivityReport),
-                        filter: dailyActivityFilter(at: context.date)
-                    )
-                    .frame(height: 148)
+            TimelineView(.periodic(from: .now, by: 1)) { context in
+                let activity = model.blocking.unlockActivity(on: context.date)
+                HStack(alignment: .top, spacing: 12) {
+                    ActivityStat(label: "Unlocks", value: model.storageReady ? "\(activity.count)" : "—")
+                    ActivityStat(label: "Unlock Time", value: model.storageReady ? TimePolicy.activityDuration(activity.duration) : "—")
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("Total Screen Time")
+                            .font(.caption).foregroundStyle(.secondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .frame(minHeight: 36, alignment: .topLeading)
+                        if model.authorized {
+                            ZStack {
+                                Text("—").foregroundStyle(.secondary)
+                                DeviceActivityReport(
+                                    .init(AppConstants.dailyActivityReport),
+                                    filter: dailyActivityFilter(at: context.date)
+                                )
+                                // Reports are system-owned. Refresh on a new minute,
+                                // including midnight, without rebuilding each second.
+                                .id(Int(context.date.timeIntervalSince1970 / 60))
+                            }
+                            .frame(height: 48)
+                        } else {
+                            Text("—").font(.title2.monospacedDigit())
+                                .accessibilityLabel("Total Screen Time unavailable. Allow Screen Time access.")
+                        }
+                    }.frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .padding(.top, 14)
-            } else {
-                ActivityStatsPlaceholder(state: model.blocking)
-                    .padding(.top, 14)
+                .padding(20)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(Color(white: 0.09), in: RoundedRectangle(cornerRadius: 20))
+                .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color.white.opacity(0.14)))
             }
+            .padding(.top, 14)
 
             Spacer(minLength: 28)
 
@@ -181,7 +202,8 @@ struct RestrictionsView: View {
     private func dailyActivityFilter(at date: Date) -> DeviceActivityFilter {
         let calendar = Calendar.current
         let start = calendar.startOfDay(for: date)
-        let end = max(date, start.addingTimeInterval(1))
+        let minute = Date(timeIntervalSince1970: floor(date.timeIntervalSince1970 / 60) * 60)
+        let end = max(minute, start.addingTimeInterval(1))
         return DeviceActivityFilter(
             segment: .daily(during: DateInterval(start: start, end: end)),
             devices: .init([.iPhone])
@@ -189,44 +211,19 @@ struct RestrictionsView: View {
     }
 }
 
-private struct ActivityStatsPlaceholder: View {
-    let state: BlockingState
-
+private struct ActivityStat: View {
+    let label: String
+    let value: String
     var body: some View {
-        let activity = state.unlockActivity()
-        HStack(spacing: 0) {
-            stat("UNLOCKS", "\(activity.count)")
-            stat("UNLOCK TIME", Self.duration(activity.duration))
-            stat("SCREEN TIME", "—")
-        }
-        .padding(.horizontal, 20)
-        .frame(height: 148)
-        .background(Color(white: 0.055), in: RoundedRectangle(cornerRadius: 20))
-        .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color.white.opacity(0.14)))
-    }
-
-    private func stat(_ label: String, _ value: String) -> some View {
-        VStack(alignment: .leading, spacing: 7) {
-            Text(label)
-                .font(.caption2.weight(.medium))
-                .foregroundStyle(.secondary)
-                .lineLimit(1)
-                .minimumScaleFactor(0.7)
-            Text(value)
-                .font(.system(size: 28, weight: .medium, design: .rounded))
-                .monospacedDigit()
-                .lineLimit(1)
-                .minimumScaleFactor(0.65)
+        VStack(alignment: .leading, spacing: 10) {
+            Text(label).font(.caption).foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(minHeight: 36, alignment: .topLeading)
+            Text(value).font(.title2.monospacedDigit())
+                .lineLimit(1).minimumScaleFactor(0.65)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-    }
-
-    static func duration(_ seconds: TimeInterval) -> String {
-        let minutes = Int(seconds) / 60
-        let hours = minutes / 60
-        let remainder = minutes % 60
-        if hours > 0 { return remainder > 0 ? "\(hours)h \(remainder)m" : "\(hours)h" }
-        return "\(minutes)m"
+        .accessibilityElement(children: .combine)
     }
 }
 

@@ -9,7 +9,8 @@ private struct MiniGame: Identifiable {
 
 private enum MiniGameCatalog {
     static let available = [
-        MiniGame(id: "flappy-push-up", title: "Flappy Bird Push-Up", icon: "figure.strengthtraining.traditional")
+        MiniGame(id: "flappy-push-up", title: "Flappy Bird Push-Up", icon: "figure.strengthtraining.traditional"),
+        MiniGame(id: "pushup-challenge", title: "Pushup Challenge", icon: "person.2")
     ]
 }
 
@@ -56,6 +57,7 @@ struct MiniGamesView: View {
     private func destination(for game: MiniGame) -> some View {
         switch game.id {
         case "flappy-push-up": FlappyBirdPushUpView()
+        case "pushup-challenge": PushupChallengeView()
         default: EmptyView()
         }
     }
@@ -94,8 +96,8 @@ private struct FlappyBirdPushUpView: View {
                     Color.black
                     if eyeTracker.status == .tracking || eyeTracker.status == .lookingForEyes {
                         EyeCameraPreview(session: eyeTracker.session)
-                            .grayscale(1)
-                            .opacity(0.2)
+                            // Keep live camera pixels natural and fully visible.
+                            .accessibilityLabel("Live front camera preview")
                     }
                     Canvas { context, size in
                         drawGame(context: &context, size: size)
@@ -105,6 +107,8 @@ private struct FlappyBirdPushUpView: View {
                         Text("\(score)")
                             .font(.system(size: 38, weight: .light, design: .rounded))
                             .monospacedDigit()
+                            .padding(10)
+                            .background(Color.black.opacity(0.75), in: Capsule())
                             .padding(.top, 24)
                         Spacer()
                     }

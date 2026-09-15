@@ -24,6 +24,15 @@ struct UnlockDeadline: Codable, Equatable {
 }
 
 enum TimePolicy {
+    static func activityDuration(_ seconds: TimeInterval) -> String {
+        guard seconds.isFinite else { return "—" }
+        let total = Int(min(Double(Int.max / 2), max(0, seconds)))
+        if total < 60 { return "\(total)s" }
+        let minutes = total / 60
+        if minutes < 60 { return "\(minutes)m" }
+        return "\(minutes / 60)h \(minutes % 60)m"
+    }
+
     static let unlockDurations = [30, 60, 300, 600, 900, 1500, 1800, 2700, 3600, 7200]
     static let waitDurations = [10, 20, 30, 45, 60]
     static func validDuration(_ seconds: Int) -> Bool { unlockDurations.contains(seconds) }

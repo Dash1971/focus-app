@@ -86,4 +86,13 @@ final class TimePolicyTests: XCTestCase {
         XCTAssertEqual(Set(spring.map { TimePolicy.dayKey($0, calendar: local) }).count, 31)
         XCTAssertEqual(Set(autumn.map { TimePolicy.dayKey($0, calendar: local) }).count, 30)
     }
+    func testActivityDurationShowsShortUnlocksInsteadOfRoundingToZero() {
+        XCTAssertEqual(TimePolicy.activityDuration(0), "0s")
+        XCTAssertEqual(TimePolicy.activityDuration(30), "30s")
+        XCTAssertEqual(TimePolicy.activityDuration(60), "1m")
+        XCTAssertEqual(TimePolicy.activityDuration(3660), "1h 1m")
+        XCTAssertEqual(TimePolicy.activityDuration(-10), "0s")
+        XCTAssertEqual(TimePolicy.activityDuration(.nan), "—")
+    }
+
 }

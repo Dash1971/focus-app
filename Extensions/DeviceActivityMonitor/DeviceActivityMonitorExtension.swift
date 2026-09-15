@@ -19,7 +19,7 @@ final class DeviceActivityMonitorExtension: DeviceActivityMonitor {
         do {
             try SharedStore.shared.transaction({ state in
                 if let grant = state.grant, !grant.deadline.isActive() {
-                    state.finishGrant(at: min(.now, grant.deadline.endsAt))
+                    state.finishGrant()
                 }
                 state.pruneUnlockRecords()
             }, afterSave: ShieldPolicy.apply)

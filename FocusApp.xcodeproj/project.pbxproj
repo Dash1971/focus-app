@@ -13,6 +13,7 @@
 		115F6D0A4E6C5944FCF567E9 /* ShieldPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E01418C50F72DCD5CFED2CF2 /* ShieldPolicy.swift */; };
 		12F24AD7D7F20CF88359317E /* UnlockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF8196057299A0B7D86F276 /* UnlockView.swift */; };
 		1367F74C87810BA3A6442C32 /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 76D96BD4E810F7EAD155BCB0 /* DeviceActivity.framework */; };
+		1B5BDABEE13585D4FF7A8CB1 /* PushupChallengeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A3FA3EDF732839FE77951B9 /* PushupChallengeView.swift */; };
 		1D05D2B351CA0BB1C6FDC88A /* LifeStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6932D467C893101DA4386C3F /* LifeStoreTests.swift */; };
 		1FDD8FDCBE3B4061AB4A700F /* LockInWidgetsExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 7A770AC963610A285FABBC18 /* LockInWidgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, CodeSignOnCopy, ); }; };
 		245C721314783E3D9981C57B /* DeviceActivityReportExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660B8413815EC8C62DC519FC /* DeviceActivityReportExtension.swift */; };
@@ -22,7 +23,6 @@
 		2A996C58A0F4D88F3C67C981 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = A57615A6A1C359A65BC7A05E /* Models.swift */; };
 		2AFB5F5DB4319C114AA2564A /* BlockingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BD55E0801DC43E8FDCC1BE /* BlockingController.swift */; };
 		2C8A838A8E073478983D67C3 /* DeviceActivityReportExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = A4D521577883371B29898819 /* DeviceActivityReportExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, CodeSignOnCopy, ); }; };
-		D7A000000000000000000004 /* ExtensionKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D7A000000000000000000003 /* ExtensionKit.framework */; };
 		2D691A285CA7537B27148ACA /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BB1901C3F9E7E8AA7D2C1C8 /* DeviceActivity.framework */; };
 		305503BB6B866EEF67915FAE /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = E2F769EF957716ACF22626BD /* PrivacyInfo.xcprivacy */; };
 		342DA69F03FB7A930D654ACF /* TimekeeperModelsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31C390BF61A31FFF0E97CB80 /* TimekeeperModelsTests.swift */; };
@@ -31,6 +31,7 @@
 		3803AB6D44D6C24E9BB71DE0 /* HabitsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA87C539215470199B77CDB /* HabitsView.swift */; };
 		38EAA7B98087FFC437FE643F /* SharedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C75E82C297FB55D368FE601D /* SharedStore.swift */; };
 		3E7AEC20D5272C2B506D3733 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98AAE2CC19572A346CED4DB1 /* AppModel.swift */; };
+		49D56247A6ADE46B722B64B5 /* PushupGameTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C93D7E5D6C496B55245B6E9 /* PushupGameTests.swift */; };
 		4A904B39FF43FD98C292A7B4 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0808C6EAE6BA9D079C0F00D /* AudioToolbox.framework */; };
 		4FF0FBAFAE196D1E05E5FC1A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CA54E5F1CB85ECAD6B07F83 /* Foundation.framework */; };
 		5659C5425FF9846445E0C82C /* ManagedSettingsUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABF08865A584ED556E10D730 /* ManagedSettingsUI.framework */; };
@@ -68,12 +69,14 @@
 		BCBF112E0A1E09C576F3CEBE /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 269A790FBE44DA980DD16D7C /* DeviceActivity.framework */; };
 		C18069DEFF7980478C50F8A1 /* SharedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C75E82C297FB55D368FE601D /* SharedStore.swift */; };
 		C4A76D9E06523A03F5EE307D /* EyeLevelCamera.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1FA7E8CD1BD48FB0AFBE7B4 /* EyeLevelCamera.swift */; };
+		C9754A9240D988CAD623ED4F /* PushupGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = F696E02AA15BC969C3E9B045 /* PushupGame.swift */; };
 		CDC2C9E69BD3D00001902777 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CA54E5F1CB85ECAD6B07F83 /* Foundation.framework */; };
 		CF8027D245453BC2168E7A87 /* DeviceActivityMonitorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6855B2A5C385C1ADD874089 /* DeviceActivityMonitorExtension.swift */; };
 		D10DFDBCDD8C5827A31DBA0A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CA54E5F1CB85ECAD6B07F83 /* Foundation.framework */; };
 		D23291E506AC5A96EFBCD8FE /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 103D21E0736DF801C7519319 /* CalendarView.swift */; };
 		D35A9179729F8A952CA7430E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CA54E5F1CB85ECAD6B07F83 /* Foundation.framework */; };
 		D65597609812D53FC9879C51 /* TimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7A2B26DEF1C98476BF93EC /* TimerView.swift */; };
+		D7A000000000000000000004 /* ExtensionKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D7A000000000000000000003 /* ExtensionKit.framework */; };
 		DCEE15DF334584C3369FD0C9 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 10914D84E8062F818739783F /* SwiftUI.framework */; };
 		E0AC4F66C963E7DE028A9321 /* LockInWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE9551063C0A78656E99994B /* LockInWidgets.swift */; };
 		E5B8461B9615B60649CB3D0A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CA54E5F1CB85ECAD6B07F83 /* Foundation.framework */; };
@@ -169,6 +172,7 @@
 		1AF5D6793D2E22AA0EA10D8C /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = "<group>"; };
 		1B2DE69245F003075C3129B0 /* DeviceActivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DeviceActivity.framework; path = System/Library/Frameworks/DeviceActivity.framework; sourceTree = "<group>"; };
 		1BB1901C3F9E7E8AA7D2C1C8 /* DeviceActivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DeviceActivity.framework; path = System/Library/Frameworks/DeviceActivity.framework; sourceTree = "<group>"; };
+		1C93D7E5D6C496B55245B6E9 /* PushupGameTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PushupGameTests.swift; path = FocusAppTests/PushupGameTests.swift; sourceTree = "<group>"; };
 		2121845D60CC80D1818926CF /* NotesView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = NotesView.swift; path = FocusApp/Features/NotesView.swift; sourceTree = "<group>"; };
 		2580F28FFC2A72F367600D10 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = System/Library/Frameworks/XCTest.framework; sourceTree = "<group>"; };
 		269A790FBE44DA980DD16D7C /* DeviceActivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DeviceActivity.framework; path = System/Library/Frameworks/DeviceActivity.framework; sourceTree = "<group>"; };
@@ -189,6 +193,7 @@
 		60FE75BBA70FEEEFB89E11CD /* FocusApp.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FocusApp.swift; path = FocusApp/App/FocusApp.swift; sourceTree = "<group>"; };
 		660B8413815EC8C62DC519FC /* DeviceActivityReportExtension.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DeviceActivityReportExtension.swift; path = Extensions/DeviceActivityReport/DeviceActivityReportExtension.swift; sourceTree = "<group>"; };
 		6932D467C893101DA4386C3F /* LifeStoreTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = LifeStoreTests.swift; path = FocusAppTests/LifeStoreTests.swift; sourceTree = "<group>"; };
+		6A3FA3EDF732839FE77951B9 /* PushupChallengeView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PushupChallengeView.swift; path = FocusApp/Features/PushupChallengeView.swift; sourceTree = "<group>"; };
 		6ACBC5FE0501318739B1920F /* DeviceActivityMonitorExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = DeviceActivityMonitorExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		750E9B21E8606B47BD112584 /* FamilyControls.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FamilyControls.framework; path = System/Library/Frameworks/FamilyControls.framework; sourceTree = "<group>"; };
 		763D059EB27D11A11DFA8365 /* FamilyControls.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FamilyControls.framework; path = System/Library/Frameworks/FamilyControls.framework; sourceTree = "<group>"; };
@@ -215,8 +220,8 @@
 		C75E82C297FB55D368FE601D /* SharedStore.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SharedStore.swift; path = FocusApp/Core/SharedStore.swift; sourceTree = "<group>"; };
 		CA031035F2C2AF57040CD448 /* ShieldConfigurationExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ShieldConfigurationExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE4F5F94D2BD5598AB6D6023 /* SharedStoreTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SharedStoreTests.swift; path = FocusAppTests/SharedStoreTests.swift; sourceTree = "<group>"; };
-		D9604E00219808926E7A7A3E /* ManagedSettings.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ManagedSettings.framework; path = System/Library/Frameworks/ManagedSettings.framework; sourceTree = "<group>"; };
 		D7A000000000000000000003 /* ExtensionKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExtensionKit.framework; path = System/Library/Frameworks/ExtensionKit.framework; sourceTree = "<group>"; };
+		D9604E00219808926E7A7A3E /* ManagedSettings.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ManagedSettings.framework; path = System/Library/Frameworks/ManagedSettings.framework; sourceTree = "<group>"; };
 		D9ABD5894900C2E396A2FC77 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = "<group>"; };
 		DE9551063C0A78656E99994B /* LockInWidgets.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = LockInWidgets.swift; path = Extensions/LockInWidgets/LockInWidgets.swift; sourceTree = "<group>"; };
 		E01418C50F72DCD5CFED2CF2 /* ShieldPolicy.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ShieldPolicy.swift; path = FocusApp/Core/ShieldPolicy.swift; sourceTree = "<group>"; };
@@ -225,6 +230,7 @@
 		F0808C6EAE6BA9D079C0F00D /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<group>"; };
 		F16EABEDBF0D673A952BC8AE /* ManagedSettings.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ManagedSettings.framework; path = System/Library/Frameworks/ManagedSettings.framework; sourceTree = "<group>"; };
 		F67488360708C881F977F132 /* DeviceActivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DeviceActivity.framework; path = System/Library/Frameworks/DeviceActivity.framework; sourceTree = "<group>"; };
+		F696E02AA15BC969C3E9B045 /* PushupGame.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PushupGame.swift; path = FocusApp/Core/PushupGame.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -383,6 +389,9 @@
 				CE4F5F94D2BD5598AB6D6023 /* SharedStoreTests.swift */,
 				C3945C56FA79B192D5FE9E4A /* TimePolicyTests.swift */,
 				31C390BF61A31FFF0E97CB80 /* TimekeeperModelsTests.swift */,
+				F696E02AA15BC969C3E9B045 /* PushupGame.swift */,
+				6A3FA3EDF732839FE77951B9 /* PushupChallengeView.swift */,
+				1C93D7E5D6C496B55245B6E9 /* PushupGameTests.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -650,6 +659,8 @@
 				64D5311100D2B5FB92EDBC30 /* RootView.swift in Sources */,
 				D65597609812D53FC9879C51 /* TimerView.swift in Sources */,
 				12F24AD7D7F20CF88359317E /* UnlockView.swift in Sources */,
+				C9754A9240D988CAD623ED4F /* PushupGame.swift in Sources */,
+				1B5BDABEE13585D4FF7A8CB1 /* PushupChallengeView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -700,6 +711,7 @@
 				B2AE7E5E4A3F4ADE5031605D /* SharedStoreTests.swift in Sources */,
 				AC8AA72484036AD9E9BE1777 /* TimePolicyTests.swift in Sources */,
 				342DA69F03FB7A930D654ACF /* TimekeeperModelsTests.swift in Sources */,
+				49D56247A6ADE46B722B64B5 /* PushupGameTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

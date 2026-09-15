@@ -83,4 +83,42 @@ final class SharedStoreTests: XCTestCase {
         XCTAssertEqual(activity.count, 2)
         XCTAssertEqual(activity.duration, 120 + 1800, accuracy: 0.001)
     }
+    func testUnlockActivitySplitsMidnightAndDoesNotCountFutureStarts() {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(secondsFromGMT: 0)!
+        let midnight = calendar.date(from: DateComponents(year: 2026, month: 9, day: 15))!
+        func record(start: Date, seconds: Int) -> UnlockRecord {
+            UnlockRecord(grant: UnlockGrant(id: UUID(), selection: .init(), deadline: UnlockDeadline(seconds: seconds, now: start, uptime: 100)))
+        }
+        var state = BlockingState()
+        state.unlockRecords = [
+            record(start: midnight.addingTimeInterval(-60), seconds: 120),
+            record(start: midnight, seconds: 30),
+            record(start: midnight.addingTimeInterval(86400), seconds: 60)
+        ]
+        let today = state.unlockActivity(on: midnight.addingTimeInterval(120), calendar: calendar)
+        XCTAssertEqual(today.count, 1)
+        XCTAssertEqual(today.duration, 90)
+        let yesterday = state.unlockActivity(on: midnight.addingTimeInterval(-1), calendar: calendar)
+        XCTAssertEqual(yesterday.count, 1)
+        XCTAssertEqual(yesterday.duration, 59)
+    }
+    func testRecordedFinishCannotAddTimeBeyondCurrentDateAfterClockRollback() {
+        let start = Date(timeIntervalSince1970: 1_000_000)
+        var record = UnlockRecord(grant: UnlockGrant(id: UUID(), selection: .init(), deadline: UnlockDeadline(seconds: 300, now: start, uptime: 100)))
+        record.endedAt = start.addingTimeInterval(200)
+        XCTAssertEqual(record.duration(during: DateInterval(start: start, duration: 86400), now: start.addingTimeInterval(30)), 30)
+    }
+
+    func testLateRelockUsesObservedEndInsteadOfPlannedDuration() {
+        let start = Date(timeIntervalSince1970: 1_000_000)
+        let grant = UnlockGrant(id: UUID(), selection: .init(), deadline: UnlockDeadline(seconds: 30, now: start, uptime: 100))
+        var state = BlockingState()
+        state.grant = grant
+        state.unlockRecords = [UnlockRecord(grant: grant)]
+        state.finishGrant(at: start.addingTimeInterval(45))
+        XCTAssertEqual(state.unlockRecords[0].duration(during: DateInterval(start: start, duration: 86400), now: start.addingTimeInterval(60)), 45)
+        XCTAssertNil(state.grant)
+    }
+
 }

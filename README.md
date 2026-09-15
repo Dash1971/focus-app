@@ -12,7 +12,9 @@ A local-first iPhone app for keeping distractions locked and organizing everyday
 - Card-based daily, weekly, monthly and yearly habit grids with individually editable day cells.
 - Persistent countdown and stopwatch state, wheel-based custom countdown entry, six presets and a distraction-free fullscreen clock with an almost screen-filling display.
 - One-time and weekday-repeat alarms backed by iOS local notifications, including sound, supported vibration and a Stop action when the app is not open.
-- A data-driven Mini Games library beginning with Flappy Bird Push-Up, controlled by on-device front-camera eye-level tracking rather than touch flaps.
+- Flappy Bird Push-Up uses a full-opacity, natural-color front-camera preview for on-device eye-level tracking. The surrounding controls remain black/gray.
+- Pushup Challenge is a separate two-player game on **one shared iPhone**: both players tap Ready, then take turns drawing a plain 1–3 or SKIP card. Done passes the turn; Give Up ends the game with the current player losing. No camera, networking, accounts or connection setup.
+- The Restrictions activity card keeps live local unlock counters visible independently of Apple's Total Screen Time report. Missing report data shows “—”, not an invented zero. Short unlocks display seconds; finished grants use observed relock time.
 - A minimal blocked-app shield with Open LockIn and Close app actions. Opening the parent controls app directly from a shield requires iOS 26.5 or newer; earlier iOS versions keep the shield in place when Open LockIn is tapped because Apple exposes no parent-app launch response there.
 
 Notification permission is required for countdowns and alarms to alert while LockIn is not active. Delivery, sound and vibration remain subject to iOS notification, Focus and device-sound settings.

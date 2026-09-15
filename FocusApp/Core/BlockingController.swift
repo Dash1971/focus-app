@@ -17,7 +17,7 @@ final class BlockingController {
         // Persist and apply permanent protection BEFORE clearing legacy stores.
         let state = try shared.transaction({ state in
             if let grant = state.grant, !grant.deadline.isActive() {
-                state.finishGrant(at: min(.now, grant.deadline.endsAt))
+                state.finishGrant()
             }
             state.pruneUnlockRecords()
         }, afterSave: ShieldPolicy.apply)
@@ -79,6 +79,7 @@ final class BlockingController {
             return try shared.transaction({ current in
                 guard current.selection.contains(selection), grant.deadline.isActive(),
                       current.grant == nil || current.grant?.deadline.isActive() == false else { throw BlockingError.invalidRequest }
+                current.finishGrant()
                 current.grant = grant
                 current.unlockRecords.append(UnlockRecord(grant: grant))
                 current.pruneUnlockRecords()
