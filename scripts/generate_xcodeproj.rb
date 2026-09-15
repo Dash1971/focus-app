@@ -19,7 +19,7 @@ def configure(target, bundle_id:, plist: nil, entitlements: nil)
     settings['TARGETED_DEVICE_FAMILY'] = '1'
     settings['SWIFT_VERSION'] = '5.0'
     settings['CODE_SIGN_STYLE'] = 'Automatic'
-    settings['CURRENT_PROJECT_VERSION'] = '6'
+    settings['CURRENT_PROJECT_VERSION'] = '7'
     settings['MARKETING_VERSION'] = '0.4.0'
     settings['CODE_SIGN_ENTITLEMENTS'] = entitlements if entitlements
     if plist
@@ -87,7 +87,8 @@ extensions = [
     directory: 'Extensions/DeviceActivityReport',
     bundle: 'com.dash1971.focusapp.deviceactivityreport',
     sources: [models, shared_store, time_policy, 'Extensions/DeviceActivityReport/DeviceActivityReportExtension.swift'],
-    frameworks: %w[DeviceActivity.framework ManagedSettings.framework FamilyControls.framework SwiftUI.framework]
+    frameworks: %w[DeviceActivity.framework ManagedSettings.framework FamilyControls.framework ExtensionKit.framework SwiftUI.framework],
+    extensionkit: true
   },
   {
     name: 'ShieldConfigurationExtension',
@@ -107,9 +108,13 @@ extensions = [
 
 embed_phase = app.new_copy_files_build_phase('Embed App Extensions')
 embed_phase.symbol_dst_subfolder_spec = :plug_ins
+extensionkit_embed_phase = app.new_copy_files_build_phase('Embed Foundation Extensions')
+extensionkit_embed_phase.symbol_dst_subfolder_spec = :products_directory
+extensionkit_embed_phase.dst_path = '$(EXTENSIONS_FOLDER_PATH)'
 
 extensions.each do |spec|
   target = project.new_target(:app_extension, spec[:name], :ios, '18.0')
+  target.product_type = 'com.apple.product-type.extensionkit-extension' if spec[:extensionkit]
   configure(
     target,
     bundle_id: spec[:bundle],
@@ -123,7 +128,8 @@ extensions.each do |spec|
   add_sources(project, target, spec[:sources])
   spec[:frameworks].each { |f| add_framework(project, target, f) }
   app.add_dependency(target)
-  build_file = embed_phase.add_file_reference(target.product_reference, true)
+  destination_phase = spec[:extensionkit] ? extensionkit_embed_phase : embed_phase
+  build_file = destination_phase.add_file_reference(target.product_reference, true)
   build_file.settings = { 'ATTRIBUTES' => %w[RemoveHeadersOnCopy CodeSignOnCopy] }
 end
 

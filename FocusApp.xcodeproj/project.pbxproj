@@ -21,7 +21,8 @@
 		2A6EBD66AFAAA3383A09FF7E /* ManagedSettings.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9604E00219808926E7A7A3E /* ManagedSettings.framework */; };
 		2A996C58A0F4D88F3C67C981 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = A57615A6A1C359A65BC7A05E /* Models.swift */; };
 		2AFB5F5DB4319C114AA2564A /* BlockingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BD55E0801DC43E8FDCC1BE /* BlockingController.swift */; };
-		2C8A838A8E073478983D67C3 /* DeviceActivityReportExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = A4D521577883371B29898819 /* DeviceActivityReportExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, CodeSignOnCopy, ); }; };
+		2C8A838A8E073478983D67C3 /* DeviceActivityReportExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = A4D521577883371B29898819 /* DeviceActivityReportExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, CodeSignOnCopy, ); }; };
+		D7A000000000000000000004 /* ExtensionKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D7A000000000000000000003 /* ExtensionKit.framework */; };
 		2D691A285CA7537B27148ACA /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BB1901C3F9E7E8AA7D2C1C8 /* DeviceActivity.framework */; };
 		305503BB6B866EEF67915FAE /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = E2F769EF957716ACF22626BD /* PrivacyInfo.xcprivacy */; };
 		342DA69F03FB7A930D654ACF /* TimekeeperModelsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31C390BF61A31FFF0E97CB80 /* TimekeeperModelsTests.swift */; };
@@ -139,12 +140,22 @@
 			dstSubfolderSpec = 13;
 			files = (
 				F87F55815806C4ECA558679A /* DeviceActivityMonitorExtension.appex in Embed App Extensions */,
-				2C8A838A8E073478983D67C3 /* DeviceActivityReportExtension.appex in Embed App Extensions */,
 				F31A8176FE062FA948439A15 /* ShieldConfigurationExtension.appex in Embed App Extensions */,
 				A5FE0F5C8161796CB332E870 /* ShieldActionExtension.appex in Embed App Extensions */,
 				1FDD8FDCBE3B4061AB4A700F /* LockInWidgetsExtension.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D7A000000000000000000001 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(EXTENSIONS_FOLDER_PATH)";
+			dstSubfolderSpec = 16;
+			files = (
+				2C8A838A8E073478983D67C3 /* DeviceActivityReportExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -205,6 +216,7 @@
 		CA031035F2C2AF57040CD448 /* ShieldConfigurationExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ShieldConfigurationExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE4F5F94D2BD5598AB6D6023 /* SharedStoreTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SharedStoreTests.swift; path = FocusAppTests/SharedStoreTests.swift; sourceTree = "<group>"; };
 		D9604E00219808926E7A7A3E /* ManagedSettings.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ManagedSettings.framework; path = System/Library/Frameworks/ManagedSettings.framework; sourceTree = "<group>"; };
+		D7A000000000000000000003 /* ExtensionKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExtensionKit.framework; path = System/Library/Frameworks/ExtensionKit.framework; sourceTree = "<group>"; };
 		D9ABD5894900C2E396A2FC77 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = "<group>"; };
 		DE9551063C0A78656E99994B /* LockInWidgets.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = LockInWidgets.swift; path = Extensions/LockInWidgets/LockInWidgets.swift; sourceTree = "<group>"; };
 		E01418C50F72DCD5CFED2CF2 /* ShieldPolicy.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ShieldPolicy.swift; path = FocusApp/Core/ShieldPolicy.swift; sourceTree = "<group>"; };
@@ -244,6 +256,7 @@
 				2D691A285CA7537B27148ACA /* DeviceActivity.framework in Frameworks */,
 				FF8C924BD916EC420B56F869 /* ManagedSettings.framework in Frameworks */,
 				A0AE56C69B0FB30251079368 /* FamilyControls.framework in Frameworks */,
+				D7A000000000000000000004 /* ExtensionKit.framework in Frameworks */,
 				EC1E5331A0CE7E3C065E32B6 /* SwiftUI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -331,6 +344,7 @@
 				85EBDD338393B904E30BE40C /* FamilyControls.framework */,
 				269A790FBE44DA980DD16D7C /* DeviceActivity.framework */,
 				2580F28FFC2A72F367600D10 /* XCTest.framework */,
+				D7A000000000000000000003 /* ExtensionKit.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -405,6 +419,7 @@
 				A8A4AEBD4EECFD9D114E89FA /* Frameworks */,
 				FE121762C8A20033E2C74D54 /* Resources */,
 				22CAFDAE1B01F2EF9B0E2D3B /* Embed App Extensions */,
+				D7A000000000000000000001 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
@@ -469,7 +484,7 @@
 			name = DeviceActivityReportExtension;
 			productName = DeviceActivityReportExtension;
 			productReference = A4D521577883371B29898819 /* DeviceActivityReportExtension.appex */;
-			productType = "com.apple.product-type.app-extension";
+			productType = "com.apple.product-type.extensionkit-extension";
 		};
 		7A87F9769EFA67AF45B7DA35 /* LockInWidgetsExtension */ = {
 			isa = PBXNativeTarget;
@@ -747,7 +762,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MARKETING_VERSION = 0.4.0;
@@ -767,7 +782,7 @@
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_ENTITLEMENTS = Extensions/ShieldConfiguration/ShieldConfiguration.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Extensions/ShieldConfiguration/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
@@ -787,7 +802,7 @@
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_ENTITLEMENTS = Extensions/ShieldAction/ShieldAction.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Extensions/ShieldAction/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
@@ -809,7 +824,7 @@
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_ENTITLEMENTS = FocusApp/FocusApp.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = FocusApp/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = LockIn;
@@ -835,7 +850,7 @@
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_ENTITLEMENTS = Extensions/DeviceActivityMonitor/DeviceActivityMonitor.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Extensions/DeviceActivityMonitor/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
@@ -972,7 +987,7 @@
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_ENTITLEMENTS = Extensions/LockInWidgets/LockInWidgets.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Extensions/LockInWidgets/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
@@ -993,7 +1008,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MARKETING_VERSION = 0.4.0;
@@ -1012,7 +1027,7 @@
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_ENTITLEMENTS = Extensions/ShieldAction/ShieldAction.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Extensions/ShieldAction/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
@@ -1032,7 +1047,7 @@
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_ENTITLEMENTS = Extensions/DeviceActivityMonitor/DeviceActivityMonitor.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Extensions/DeviceActivityMonitor/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
@@ -1054,7 +1069,7 @@
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_ENTITLEMENTS = FocusApp/FocusApp.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = FocusApp/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = LockIn;
@@ -1081,7 +1096,7 @@
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_ENTITLEMENTS = Extensions/DeviceActivityReport/DeviceActivityReport.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Extensions/DeviceActivityReport/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
@@ -1101,7 +1116,7 @@
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_ENTITLEMENTS = Extensions/LockInWidgets/LockInWidgets.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Extensions/LockInWidgets/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
@@ -1122,7 +1137,7 @@
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_ENTITLEMENTS = Extensions/ShieldConfiguration/ShieldConfiguration.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Extensions/ShieldConfiguration/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
@@ -1143,7 +1158,7 @@
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_ENTITLEMENTS = Extensions/DeviceActivityReport/DeviceActivityReport.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Extensions/DeviceActivityReport/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
