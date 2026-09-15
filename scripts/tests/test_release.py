@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 
+import datetime as dt
+import hashlib
 import importlib.util
 import plistlib
-import hashlib
 import tempfile
 import unittest
 from pathlib import Path
@@ -80,6 +81,45 @@ class BundleAuditTests(unittest.TestCase):
                     expected_version="0.4.0",
                     expected_build="8",
                 )
+
+
+class SigningPolicyTests(unittest.TestCase):
+    def profile(self, *, development: bool) -> dict:
+        profile = {
+            "Entitlements": {"get-task-allow": development},
+            "ExpirationDate": dt.datetime.now(dt.timezone.utc) + dt.timedelta(days=1),
+        }
+        if development:
+            profile["ProvisionedDevices"] = ["test-device"]
+        return profile
+
+    def test_archive_accepts_development_identity_and_profile(self) -> None:
+        details = "Authority=Apple Development: Example (TEAMID)"
+        kind = release.signing_identity_kind(details, "LockIn.app")
+        self.assertEqual(kind, "development")
+        release.validate_signing_purpose(kind, False, "LockIn.app")
+        release.validate_profile_scope(self.profile(development=True), kind, "LockIn.app")
+
+    def test_distribution_identity_and_profile_pass(self) -> None:
+        details = "Authority=Apple Distribution: Example (TEAMID)"
+        kind = release.signing_identity_kind(details, "LockIn.app")
+        self.assertEqual(kind, "distribution")
+        release.validate_signing_purpose(kind, True, "LockIn.app")
+        release.validate_profile_scope(self.profile(development=False), kind, "LockIn.app")
+
+    def test_export_rejects_development_identity(self) -> None:
+        with self.assertRaisesRegex(release.ReleaseError, "Apple Distribution"):
+            release.validate_signing_purpose("development", True, "LockIn.app")
+
+    def test_identity_and_profile_scope_mismatch_is_rejected(self) -> None:
+        with self.assertRaisesRegex(release.ReleaseError, "not App Store distribution"):
+            release.validate_profile_scope(self.profile(development=True), "distribution", "LockIn.app")
+        with self.assertRaisesRegex(release.ReleaseError, "does not allow debugging"):
+            release.validate_profile_scope(self.profile(development=False), "development", "LockIn.app")
+
+    def test_unknown_apple_identity_is_rejected(self) -> None:
+        with self.assertRaisesRegex(release.ReleaseError, "development or distribution"):
+            release.signing_identity_kind("Authority=Developer ID Application: Example", "LockIn.app")
 
 
 class UploadApprovalTests(unittest.TestCase):
