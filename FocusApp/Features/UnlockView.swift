@@ -6,9 +6,9 @@ struct UnlockView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var chosen = FamilyActivitySelection()
     @State private var seconds = 300
-    @State private var customMinutes = 45
+    @State private var requestSubmitted = false
+    @State private var granting = false
 
-    private var duration: Int { seconds == -1 ? customMinutes * 60 : seconds }
     private var waiting: Bool { model.waitRemaining != nil }
 
     var body: some View {
@@ -34,30 +34,35 @@ struct UnlockView: View {
                 } header: { Text("Blocked items") } footer: {
                     Text("A category unlock applies to that entire category. Apps or websites also selected individually remain blocked; unlock those individually.")
                 }
+                .disabled(waiting)
                 Section("Access duration") {
                     Picker("Access duration", selection: $seconds) {
                         ForEach(TimePolicy.unlockDurations, id: \.self) { Text(TimePolicy.durationLabel($0)).tag($0) }
-                        Text("Custom").tag(-1)
-                    }.pickerStyle(.wheel).frame(height: 150)
-                    if seconds == -1 {
-                        Picker("Custom duration", selection: $customMinutes) {
-                            ForEach(1...1440, id: \.self) { Text("\($0) minutes").tag($0) }
-                        }.pickerStyle(.wheel).frame(height: 130)
                     }
+                    .pickerStyle(.wheel)
+                    .frame(height: 180)
                 }.disabled(waiting)
                 Section {
                     if let remaining = model.waitRemaining {
                         if remaining > 0 {
-                            Text("Take a breath. \(remaining)s remaining.").font(.headline).monospacedDigit()
-                            Text("Stay in LockIn while you wait.").foregroundStyle(.secondary)
-                        } else {
-                            Button("Unlock for \(TimePolicy.durationLabel(duration))") {
-                                if model.unlock(chosen, seconds: duration) { dismiss() }
+                            VStack(spacing: 10) {
+                                Text("\(remaining)")
+                                    .font(.system(size: 52, weight: .light, design: .rounded))
+                                    .monospacedDigit()
+                                Text("Waiting")
+                                    .foregroundStyle(.secondary)
                             }
+                            .frame(maxWidth: .infinity)
+                        } else {
+                            ProgressView("Granting temporary access…")
+                                .frame(maxWidth: .infinity)
                         }
                         Button("Cancel wait", role: .cancel) { model.cancelWait() }
                     } else {
-                        Button("Wait \(model.blocking.waitSeconds) seconds to unlock") { model.startWait() }
+                        Button("Request access") {
+                            requestSubmitted = true
+                            model.startWait()
+                        }
                             .disabled(chosen.isEmpty || !model.authorized || !model.storageReady)
                     }
                 } footer: {
@@ -66,6 +71,16 @@ struct UnlockView: View {
             }
             .navigationTitle("Temporary unlock")
             .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } } }
+            .onChange(of: model.waitRemaining) { _, remaining in
+                guard requestSubmitted, remaining == 0, !granting else { return }
+                granting = true
+                if model.unlock(chosen, seconds: seconds) {
+                    dismiss()
+                } else {
+                    requestSubmitted = false
+                    granting = false
+                }
+            }
             .onDisappear { model.cancelWait() }
         }
     }

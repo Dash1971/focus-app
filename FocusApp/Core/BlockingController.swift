@@ -16,7 +16,10 @@ final class BlockingController {
     func reconcile() throws -> BlockingState {
         // Persist and apply permanent protection BEFORE clearing legacy stores.
         let state = try shared.transaction({ state in
-            if state.grant?.deadline.isActive() == false { state.grant = nil }
+            if let grant = state.grant, !grant.deadline.isActive() {
+                state.finishGrant(at: min(.now, grant.deadline.endsAt))
+            }
+            state.pruneUnlockRecords()
         }, afterSave: ShieldPolicy.apply)
         let obsolete = center.activities.filter { activity in
             activity.rawValue == "activeFocusSession" || activity.rawValue.hasPrefix("schedule.")
@@ -35,13 +38,16 @@ final class BlockingController {
         guard selection.applicationTokens.count <= 50, selection.webDomainTokens.count <= 50 else {
             throw BlockingError.tooManyItems
         }
-        let state = try shared.transaction({ $0.selection = selection; $0.grant = nil }, afterSave: ShieldPolicy.apply)
+        let state = try shared.transaction({ state in
+            state.finishGrant()
+            state.selection = selection
+        }, afterSave: ShieldPolicy.apply)
         center.stopMonitoring(center.activities.filter { $0.rawValue.hasPrefix(AppConstants.relockPrefix) })
         return state
     }
 
     func lockNow() throws -> BlockingState {
-        let state = try shared.transaction({ $0.grant = nil }, afterSave: ShieldPolicy.apply)
+        let state = try shared.transaction({ $0.finishGrant() }, afterSave: ShieldPolicy.apply)
         center.stopMonitoring(center.activities.filter { $0.rawValue.hasPrefix(AppConstants.relockPrefix) })
         return state
     }
@@ -74,6 +80,8 @@ final class BlockingController {
                 guard current.selection.contains(selection), grant.deadline.isActive(),
                       current.grant == nil || current.grant?.deadline.isActive() == false else { throw BlockingError.invalidRequest }
                 current.grant = grant
+                current.unlockRecords.append(UnlockRecord(grant: grant))
+                current.pruneUnlockRecords()
             }, afterSave: ShieldPolicy.apply)
         } catch {
             center.stopMonitoring([activity])
@@ -86,7 +94,7 @@ enum BlockingError: LocalizedError {
     case invalidRequest, notAuthorized, tooManyItems
     var errorDescription: String? {
         switch self {
-        case .invalidRequest: "Choose blocked items and a duration from 30 seconds to 24 hours. Lock the current temporary access before requesting another."
+        case .invalidRequest: "Choose blocked items and one of the available durations up to 2 hours. Lock the current temporary access before requesting another."
         case .notAuthorized: "Allow Screen Time access before unlocking apps."
         case .tooManyItems: "Choose at most 50 individual apps and 50 websites. You can also select categories."
         }

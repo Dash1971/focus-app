@@ -381,11 +381,12 @@ private struct FullscreenTimerView: View {
         ZStack {
             Color.black.ignoresSafeArea()
             Text(displayText)
-                .font(.system(size: 84, weight: .ultraLight, design: .rounded))
+                .font(.system(size: 240, weight: .ultraLight, design: .rounded))
                 .monospacedDigit()
-                .minimumScaleFactor(0.3)
+                .minimumScaleFactor(0.12)
                 .lineLimit(1)
-                .padding(.horizontal, 24)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .padding(.horizontal, 8)
 
             if controlsVisible {
                 VStack {
@@ -425,7 +426,10 @@ private struct FullscreenTimerView: View {
                 includeHours: timekeeper.state.countdown.durationSeconds >= 3600
             )
         case .stopwatch:
-            return TimeFormat.stopwatch(timekeeper.stopwatchElapsed)
+            return TimeFormat.clock(
+                Int(timekeeper.stopwatchElapsed),
+                includeHours: timekeeper.stopwatchElapsed >= 3600
+            )
         }
     }
 

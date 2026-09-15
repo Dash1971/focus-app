@@ -18,7 +18,10 @@ final class DeviceActivityMonitorExtension: DeviceActivityMonitor {
         guard activity.rawValue.hasPrefix(AppConstants.relockPrefix) else { return }
         do {
             try SharedStore.shared.transaction({ state in
-                if let grant = state.grant, !grant.deadline.isActive() { state.grant = nil }
+                if let grant = state.grant, !grant.deadline.isActive() {
+                    state.finishGrant(at: min(.now, grant.deadline.endsAt))
+                }
+                state.pruneUnlockRecords()
             }, afterSave: ShieldPolicy.apply)
         } catch {
             Logger(subsystem: "com.dash1971.focusapp", category: "relock").error("Relock state unavailable: \(error.localizedDescription, privacy: .public)")
