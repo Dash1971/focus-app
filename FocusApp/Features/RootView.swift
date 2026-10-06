@@ -186,7 +186,7 @@ struct RestrictionsView: View {
                 .accessibilityLabel("Restriction settings")
             }
         }
-        .sheet(isPresented: $showingUnlock) {
+        .fullScreenCover(isPresented: $showingUnlock) {
             UnlockView().environmentObject(model)
         }
         .sheet(isPresented: $showingSettings) {
@@ -238,7 +238,6 @@ private struct LockInPrimaryButtonStyle: ButtonStyle {
 private struct RestrictionsSettingsFlow: View {
     @EnvironmentObject private var model: AppModel
     @Environment(\.dismiss) private var dismiss
-    @State private var showingUnlock = false
 
     var body: some View {
         NavigationStack {
@@ -249,10 +248,9 @@ private struct RestrictionsSettingsFlow: View {
                     Button("Allow Screen Time access") { Task { await model.authorize() } }
                 } else {
                     VStack(spacing: 20) {
-                        Text("Settings are locked").font(.title2)
-                        Text("Complete Temporary Unlock and have active access before changing blocked apps or the waiting time.")
+                        Text("Settings are locked.").font(.title2)
+                        Text("Restrictions are active, so settings cannot currently be changed.")
                             .foregroundStyle(.secondary).multilineTextAlignment(.center)
-                        Button("Temporary Unlock") { showingUnlock = true }.buttonStyle(.bordered).disabled(!model.storageReady)
                     }.padding(24)
                 }
             }
@@ -260,7 +258,6 @@ private struct RestrictionsSettingsFlow: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Done") { dismiss() } } }
         }
-        .sheet(isPresented: $showingUnlock) { UnlockView().environmentObject(model) }
     }
 }
 

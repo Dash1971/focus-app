@@ -34,8 +34,8 @@ final class FlappyPolicyTests: XCTestCase {
         XCTAssertEqual(after.level, 2)
         XCTAssertEqual(before.speed, after.speed, accuracy: 0.001)
     }
-    func testNoseFilterRespondsWithoutOvershootAndPausesOnLoss() throws {
-        var filter = NoseTrackingFilter()
+    func testEyeFilterRespondsWithoutOvershootAndPausesOnLoss() throws {
+        var filter = EyeTrackingFilter()
         XCTAssertEqual(filter.update(0.5, at: 0), 0.5)
         let moved = try XCTUnwrap(filter.update(0.8, at: 0.06))
         XCTAssertGreaterThan(moved, 0.68)
@@ -45,12 +45,18 @@ final class FlappyPolicyTests: XCTestCase {
         XCTAssertEqual(filter.update(0.2, at: 0.4), 0.2)
         XCTAssertNil(filter.update(.nan, at: 1))
     }
-    func testNoseSmoothingIsIndependentOfFrameRate() throws {
-        var thirty = NoseTrackingFilter()
-        var sixty = NoseTrackingFilter()
+    func testEyeSmoothingIsIndependentOfFrameRate() throws {
+        var thirty = EyeTrackingFilter()
+        var sixty = EyeTrackingFilter()
         _ = thirty.update(0.3, at: 0); _ = sixty.update(0.3, at: 0)
         for frame in 1...3 { _ = thirty.update(0.7, at: Double(frame) / 30) }
         for frame in 1...6 { _ = sixty.update(0.7, at: Double(frame) / 60) }
         XCTAssertEqual(try XCTUnwrap(thirty.level), try XCTUnwrap(sixty.level), accuracy: 0.000001)
+    }
+    func testEyeMovementDirectionAndNeutralCalibrationInput() throws {
+        XCTAssertEqual(try XCTUnwrap(EyeTrackingPolicy.screenLevel(forPupilOffsets: [0, 0])), 0.5)
+        XCTAssertLessThan(try XCTUnwrap(EyeTrackingPolicy.screenLevel(forPupilOffsets: [0.3, 0.2])), 0.5)
+        XCTAssertGreaterThan(try XCTUnwrap(EyeTrackingPolicy.screenLevel(forPupilOffsets: [-0.3, -0.2])), 0.5)
+        XCTAssertNil(EyeTrackingPolicy.screenLevel(forPupilOffsets: []))
     }
 }

@@ -381,7 +381,7 @@ private struct FullscreenTimerView: View {
         ZStack {
             Color.black.ignoresSafeArea()
             Text(displayText)
-                .font(.system(size: 240, weight: .ultraLight, design: .rounded))
+                .font(.system(size: 240, weight: .bold, design: .rounded))
                 .monospacedDigit()
                 .minimumScaleFactor(0.12)
                 .lineLimit(1)

@@ -14,9 +14,9 @@ struct UnlockView: View {
             Group {
                 if let remaining = model.waitRemaining, remaining > 0 {
                     VStack(spacing: 18) {
-                        Text("\(remaining)").font(.system(size: 72, weight: .light)).monospacedDigit()
-                        Text("Take a moment").font(.title2)
-                        Text("App selection opens automatically when the wait ends.")
+                        Text("\(remaining)").font(.system(size: 72, weight: .semibold)).monospacedDigit()
+                        Text("Stay on this screen").font(.title2)
+                        Text("Leaving LockIn cancels this wait. App selection opens when the countdown ends.")
                             .foregroundStyle(.secondary).multilineTextAlignment(.center)
                     }.padding(24).frame(maxWidth: .infinity, maxHeight: .infinity).background(Color.black)
                 } else if model.waitRemaining == 0 {

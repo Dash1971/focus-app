@@ -9,7 +9,16 @@ struct FlappyDifficulty {
     var spawnInterval: Double { 1.75 - 0.55 * progress }
 }
 
-struct NoseTrackingFilter {
+enum EyeTrackingPolicy {
+    // Vision landmark Y points upward. Screen Y points downward.
+    static func screenLevel(forPupilOffsets offsets: [Double]) -> Double? {
+        guard !offsets.isEmpty, offsets.allSatisfy(\.isFinite) else { return nil }
+        let gaze = offsets.reduce(0, +) / Double(offsets.count)
+        return min(1, max(0, 0.5 - gaze * 0.4))
+    }
+}
+
+struct EyeTrackingFilter {
     private(set) var level: Double?
     private var lastValid: TimeInterval?
     private var lastUpdate: TimeInterval?
