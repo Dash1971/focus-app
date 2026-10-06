@@ -180,7 +180,7 @@ final class TimekeeperController: ObservableObject {
     }
 
     func dismissSignal() {
-        alertPlayer?.stop()
+        stopAlertSound()
         if let id = activeSignal?.id {
             notifications.removeDeliveredNotifications(withIdentifiers: [id])
         }
@@ -348,7 +348,7 @@ final class TimekeeperController: ObservableObject {
         let delivered = notification.userInfo?["notification"] as? UNNotification
         guard let systemNotification = response?.notification ?? delivered else { return }
         if response?.actionIdentifier == LockInNotification.stopAction {
-            alertPlayer?.stop()
+            stopAlertSound()
             notifications.removeDeliveredNotifications(withIdentifiers: [systemNotification.request.identifier])
             return
         }
@@ -360,16 +360,26 @@ final class TimekeeperController: ObservableObject {
         )
         if response == nil, let url = Bundle.main.url(forResource: "LockInAlert", withExtension: "aiff") {
             do {
-                alertPlayer?.stop()
+                stopAlertSound()
+                try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [.duckOthers])
+                try AVAudioSession.sharedInstance().setActive(true)
                 alertPlayer = try AVAudioPlayer(contentsOf: url)
                 alertPlayer?.numberOfLoops = 6
                 alertPlayer?.prepareToPlay()
-                alertPlayer?.play()
+                if alertPlayer?.play() != true {
+                    notificationError = "The alert sound could not start. Check your audio output."
+                }
             } catch {
                 notificationError = "The alert sound could not play. \(error.localizedDescription)"
             }
         }
         AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
+    }
+
+    private func stopAlertSound() {
+        alertPlayer?.stop()
+        alertPlayer = nil
+        try? AVAudioSession.sharedInstance().setActive(false, options: [.notifyOthersOnDeactivation])
     }
 }
 
