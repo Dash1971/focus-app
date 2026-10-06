@@ -3,6 +3,7 @@ import Combine
 import UserNotifications
 import UIKit
 import AudioToolbox
+import AVFoundation
 
 extension Notification.Name {
     static let lockInNotificationFired = Notification.Name("lockIn.notificationFired")
@@ -13,6 +14,7 @@ enum LockInNotification {
     static let timerCategory = "LOCKIN_TIMER"
     static let stopAction = "LOCKIN_STOP"
     static let countdownIdentifier = "timer.countdown"
+    static let sound = UNNotificationSound(named: UNNotificationSoundName("LockInAlert.aiff"))
 
     static func alarmIdentifier(_ id: UUID, suffix: String) -> String {
         "alarm.\(id.uuidString).\(suffix)"
@@ -41,6 +43,7 @@ final class TimekeeperController: ObservableObject {
     private let notifications = UNUserNotificationCenter.current()
     private var ticker: Foundation.Timer?
     private var notificationObserver: NSObjectProtocol?
+    private var alertPlayer: AVAudioPlayer?
 
     init() {
         let support = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
@@ -177,6 +180,7 @@ final class TimekeeperController: ObservableObject {
     }
 
     func dismissSignal() {
+        stopAlertSound()
         if let id = activeSignal?.id {
             notifications.removeDeliveredNotifications(withIdentifiers: [id])
         }
@@ -239,7 +243,7 @@ final class TimekeeperController: ObservableObject {
             let content = UNMutableNotificationContent()
             content.title = "Countdown complete"
             content.body = "Time is up."
-            content.sound = .default
+            content.sound = LockInNotification.sound
             content.categoryIdentifier = LockInNotification.timerCategory
             let request = UNNotificationRequest(
                 identifier: LockInNotification.countdownIdentifier,
@@ -267,7 +271,7 @@ final class TimekeeperController: ObservableObject {
             let content = UNMutableNotificationContent()
             content.title = "Alarm"
             content.body = "Your alarm is ringing."
-            content.sound = .default
+            content.sound = LockInNotification.sound
             content.categoryIdentifier = LockInNotification.alarmCategory
 
             do {
@@ -320,6 +324,10 @@ final class TimekeeperController: ObservableObject {
             let settings = await notifications.notificationSettings()
             switch settings.authorizationStatus {
             case .authorized, .provisional, .ephemeral:
+                if settings.soundSetting != .enabled {
+                    notificationError = "Enable notification sounds in Settings so timers and alarms can be heard outside LockIn."
+                    return false
+                }
                 return true
             case .notDetermined:
                 let granted = try await notifications.requestAuthorization(options: [.alert, .sound])
@@ -340,6 +348,7 @@ final class TimekeeperController: ObservableObject {
         let delivered = notification.userInfo?["notification"] as? UNNotification
         guard let systemNotification = response?.notification ?? delivered else { return }
         if response?.actionIdentifier == LockInNotification.stopAction {
+            stopAlertSound()
             notifications.removeDeliveredNotifications(withIdentifiers: [systemNotification.request.identifier])
             return
         }
@@ -349,7 +358,28 @@ final class TimekeeperController: ObservableObject {
             title: content.title,
             message: content.body
         )
+        if response == nil, let url = Bundle.main.url(forResource: "LockInAlert", withExtension: "aiff") {
+            do {
+                stopAlertSound()
+                try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [.duckOthers])
+                try AVAudioSession.sharedInstance().setActive(true)
+                alertPlayer = try AVAudioPlayer(contentsOf: url)
+                alertPlayer?.numberOfLoops = 6
+                alertPlayer?.prepareToPlay()
+                if alertPlayer?.play() != true {
+                    notificationError = "The alert sound could not start. Check your audio output."
+                }
+            } catch {
+                notificationError = "The alert sound could not play. \(error.localizedDescription)"
+            }
+        }
         AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
+    }
+
+    private func stopAlertSound() {
+        alertPlayer?.stop()
+        alertPlayer = nil
+        try? AVAudioSession.sharedInstance().setActive(false, options: [.notifyOthersOnDeactivation])
     }
 }
 
@@ -389,7 +419,9 @@ final class NotificationBridge: NSObject, UIApplicationDelegate, UNUserNotificat
             object: nil,
             userInfo: ["notification": notification]
         )
-        return [.sound]
+        // The foreground alert plays its bundled sound through AVAudioPlayer.
+        // Background delivery uses the same sound on the local notification.
+        return []
     }
 
     func userNotificationCenter(

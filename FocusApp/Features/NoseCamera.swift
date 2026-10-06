@@ -16,7 +16,7 @@ final class NoseCameraController: NSObject, ObservableObject, AVCaptureVideoData
     private let intentLock = NSLock()
     private var runID: UUID?
     private var configured = false
-    private var filter = NoseTrackingFilter()
+    private var filter = EyeTrackingFilter()
 
     func start() {
         intentLock.lock()
@@ -46,7 +46,7 @@ final class NoseCameraController: NSObject, ObservableObject, AVCaptureVideoData
         cameraQueue.async { [weak self] in
             guard let self else { return }
             if self.session.isRunning { self.session.stopRunning() }
-            self.filter = NoseTrackingFilter()
+            self.filter = EyeTrackingFilter()
         }
     }
 
@@ -61,7 +61,7 @@ final class NoseCameraController: NSObject, ObservableObject, AVCaptureVideoData
             guard let self, self.isCurrent(id) else { return }
             if !self.configured, !self.configureSession(id) { return }
             guard self.isCurrent(id) else { return }
-            self.filter = NoseTrackingFilter()
+            self.filter = EyeTrackingFilter()
             if !self.session.isRunning { self.session.startRunning() }
             self.publish(nil, status: .lookingForNose, id: id)
         }
@@ -115,12 +115,22 @@ final class NoseCameraController: NSObject, ObservableObject, AVCaptureVideoData
         do {
             try VNImageRequestHandler(cmSampleBuffer: sampleBuffer, orientation: .up, options: [:]).perform([request])
             if let face = request.results?.max(by: { $0.boundingBox.width < $1.boundingBox.width }),
-               let nose = face.landmarks?.nose, !nose.normalizedPoints.isEmpty {
-                // Face bounds only transform landmark coordinates. Control uses
-                // the nose contour's vertical center, never eyes or head center.
-                let points = nose.normalizedPoints
-                let localY = points.reduce(CGFloat.zero) { $0 + $1.y } / CGFloat(points.count)
-                measurement = Double(1 - (face.boundingBox.minY + localY * face.boundingBox.height))
+               let landmarks = face.landmarks {
+                // Pupil displacement within each eye is independent of the face's
+                // position in the camera frame. Do not use head/nose movement.
+                let eyeOffsets = [(landmarks.leftEye, landmarks.leftPupil),
+                                  (landmarks.rightEye, landmarks.rightPupil)].compactMap { eye, pupil -> Double? in
+                    guard let eye, let pupil, !eye.normalizedPoints.isEmpty,
+                          !pupil.normalizedPoints.isEmpty else { return nil }
+                    let ys = eye.normalizedPoints.map(\.y)
+                    guard let low = ys.min(), let high = ys.max(), high - low > 0.005 else { return nil }
+                    let pupilY = pupil.normalizedPoints.reduce(CGFloat.zero) { $0 + $1.y }
+                        / CGFloat(pupil.normalizedPoints.count)
+                    return Double((pupilY - (low + high) / 2) / (high - low))
+                }
+                if !eyeOffsets.isEmpty {
+                    measurement = EyeTrackingPolicy.screenLevel(forPupilOffsets: eyeOffsets)
+                }
             }
         } catch { measurement = nil }
         let level = filter.update(measurement, at: now)

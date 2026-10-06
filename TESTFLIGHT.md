@@ -6,7 +6,7 @@ artifacts and will not upload anything during preparation.
 
 ## 1. One-time unattended signing setup
 
-Create a **team** App Store Connect API key with the Developer role and access to
+Create a **team** App Store Connect API key with the Admin role and access to
 Certificates, Identifiers & Profiles. Download its `.p8` private key; Apple permits
 that download only once. An individual API key cannot manage provisioning resources.
 
@@ -105,8 +105,8 @@ Use a harmless app. Test the oldest supported iOS version and the current releas
 - [ ] For each duration, leave LockIn, keep the unlocked app foregrounded, and measure actual automatic relock time.
 - [ ] Repeat short-grant tests after force-quitting LockIn, with screen locked, in Low Power Mode, and after reboot. A grant must not remain available indefinitely; investigate any delay.
 - [ ] Repeat across midnight, time-zone changes and manual clock changes. Reopening LockIn should expire inconsistent or elapsed grants.
-- [ ] Set each wait duration; one Request access tap starts the countdown immediately, no second wait/final-unlock tap appears, and access is granted automatically only when the wait completes. Dismissing, switching targets or leaving LockIn cancels the wait.
-- [ ] While restrictions are active, tap the settings gear and confirm the configured countdown starts immediately. Blocked apps and the wait duration must remain unavailable until it completes. Cancel/reopen must restart the full wait. With no active selection, settings may open directly.
+- [ ] Set each wait duration; Temporary Unlock opens a full-screen visible countdown above the navigation bar. Switching apps, locking the device or leaving LockIn cancels the wait; return requires the full countdown again. The selection form appears only at zero, and access is granted only after selecting items and duration.
+- [ ] While restrictions are active, tap the settings gear and confirm a locked-state message appears immediately, with no settings wait. Blocked apps and the wait duration remain unavailable until temporary access is active. With no active selection, settings may open directly.
 - [ ] Confirm failed monitor registration leaves shields in place; use an injected failure/debugger if needed.
 - [ ] Lock again early, then request a new grant. Old callbacks must not remove shields or cancel a still-valid new grant.
 - [ ] Test individual apps, websites, categories and overlapping selections; other selected items remain shielded during a grant.
@@ -117,10 +117,11 @@ Use a harmless app. Test the oldest supported iOS version and the current releas
 - [ ] Create/edit/delete notes with multiline and non-Latin text; verify Save, Cancel and relaunch persistence.
 - [ ] Check the 2026 → 2027 progress on January 1 and December 31; it must appear above the dedicated Calendar and clamp outside 2026.
 - [ ] Set the device display calendar to Japanese (and another non-Gregorian calendar) and confirm the 2026 / percentage / 2027 row still reports the correct Gregorian progress rather than 0%.
-- [ ] Start, pause, resume and reset each countdown preset and a custom wheel duration. Switch sections and use fullscreen; elapsed time must remain deadline-based and the completion alert must fire at 00:00.
+- [ ] Start, pause, resume and reset each countdown preset and a custom wheel duration. Switch sections and use fullscreen; elapsed time must remain deadline-based, fullscreen digits must be bold, and the audible completion alert must fire at 00:00 with LockIn foregrounded, backgrounded and force-quit. Verify notification sound permission and device mute/focus behavior.
 - [ ] Start, pause, resume and reset the stopwatch. Switch sections, background/foreground the app and use fullscreen; elapsed time must remain accurate.
-- [ ] Create, edit, disable, re-enable and delete one-time and repeating alarms. Verify each weekday choice, foreground Stop, background notification Stop, sound and supported vibration with the device locked and the app force-quit.
-- [ ] Open Mini Games from main navigation, allow/deny camera permission, and verify denial/unavailable states are handled. In a push-up position, confirm front-camera eye-level movement—not screen taps—controls the bird vertically; play until collision, restart, and return with Back.
+- [ ] Create, edit, disable, re-enable and delete one-time and repeating alarms. Verify each weekday choice, foreground Stop, background notification Stop, audible sound and supported vibration with the device locked and the app force-quit.
+- [ ] Open Mini Games from main navigation. Verify the Flappy card shows the in-game bird and the Pushup card shows the exact supplied two-person image. Allow/deny camera permission and verify denial/unavailable states. In a push-up position, calibrate neutral eye level at game start; move eyes up/down and tilt the head separately. Bird Y must follow eyes smoothly without large tilt-induced movement, while X stays fixed. Play until collision, restart, and return with Back.
+- [ ] For 2, 3 and 4 players, select the count, verify exactly that many Ready buttons, complete all 10 rounds (each player draws and completes one 1–3/SKIP card per round), verify the round counter and cooperative completion screen, then replay.
 - [ ] Verify Today's Activity shows real Unlocks, elapsed Unlock Time (including an active and early-ended grant), and total iPhone Screen Time including unrestricted apps. Recheck after a minute, after midnight and after relaunch.
 - [ ] On iOS 26.5+, verify the shield says only “This app is blocked.” and Open LockIn launches LockIn while Close app exits the blocked app. On older supported iOS, record the platform-limited Open LockIn behavior and verify Close app still exits.
 - [ ] Check widgets before/during/after access, old widget/deep links, neutral theme and new launcher icon.

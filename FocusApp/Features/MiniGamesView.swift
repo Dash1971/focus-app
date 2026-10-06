@@ -4,13 +4,12 @@ import UIKit
 private struct MiniGame: Identifiable {
     let id: String
     let title: String
-    let icon: String
 }
 
 private enum MiniGameCatalog {
     static let available = [
-        MiniGame(id: "flappy-push-up", title: "Flappy Bird Push-Up", icon: "figure.strengthtraining.traditional"),
-        MiniGame(id: "pushup-challenge", title: "Pushup Challenge", icon: "person.2")
+        MiniGame(id: "flappy-push-up", title: "Flappy Bird Push-Up"),
+        MiniGame(id: "pushup-challenge", title: "Pushup Challenge")
     ]
 }
 
@@ -25,9 +24,15 @@ struct MiniGamesView: View {
                         destination(for: game)
                     } label: {
                         VStack(alignment: .leading, spacing: 16) {
-                            Image(systemName: game.icon)
-                                .font(.system(size: 30, weight: .light))
-                                .foregroundStyle(.white)
+                            if game.id == "pushup-challenge" {
+                                Image("PushupFriends")
+                                    .resizable().scaledToFit()
+                                    .frame(width: 58, height: 58)
+                                    .background(.white, in: RoundedRectangle(cornerRadius: 8))
+                            } else {
+                                FlappyBirdIcon()
+                                    .frame(width: 58, height: 58)
+                            }
                             Spacer()
                             Text(game.title)
                                 .font(.headline)
@@ -60,6 +65,28 @@ struct MiniGamesView: View {
         case "pushup-challenge": PushupChallengeView()
         default: EmptyView()
         }
+    }
+}
+
+private enum FlappyBirdArtwork {
+    static func draw(context: inout GraphicsContext, center: CGPoint, size: CGFloat) {
+        let bird = CGRect(x: center.x - size / 2, y: center.y - size / 2, width: size, height: size)
+        context.fill(Path(ellipseIn: bird), with: .color(.white))
+        let beak = CGRect(x: bird.maxX - size / 13, y: center.y - size / 9,
+                          width: size * 9 / 26, height: size * 6 / 26)
+        context.fill(Path(roundedRect: beak, cornerRadius: size * 2 / 26),
+                     with: .color(Color(white: 0.45)))
+    }
+}
+
+private struct FlappyBirdIcon: View {
+    var body: some View {
+        Canvas { context, size in
+            FlappyBirdArtwork.draw(context: &context,
+                                   center: CGPoint(x: size.width * 0.43, y: size.height / 2),
+                                   size: min(size.width, size.height) * 0.63)
+        }
+        .accessibilityLabel("Flappy Bird")
     }
 }
 
@@ -126,12 +153,12 @@ private struct FlappyBirdPushUpView: View {
                             .padding(22)
                             .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 18))
                     } else if noseTracker.noseLevel == nil {
-                        gameMessage("Position your nose in view", detail: "Use the front camera in your push-up position.")
+                        gameMessage("Position your eyes in view", detail: "Use the front camera in your push-up position.")
                     } else if !started || gameOver {
                         VStack(spacing: 10) {
                             Text(gameOver ? "Game Over" : "Ready")
                                 .font(.title2.bold())
-                            Text(gameOver ? "Tap to restart" : "Tap to start · move your nose up and down")
+                            Text(gameOver ? "Tap to restart" : "Tap to start · move your eyes up and down")
                                 .font(.subheadline)
                                 .foregroundStyle(.secondary)
                                 .multilineTextAlignment(.center)
@@ -203,15 +230,7 @@ private struct FlappyBirdPushUpView: View {
     }
 
     private func drawGame(context: inout GraphicsContext, size: CGSize) {
-        let birdRect = CGRect(
-            x: birdX - birdSize / 2,
-            y: birdY - birdSize / 2,
-            width: birdSize,
-            height: birdSize
-        )
-        context.fill(Path(ellipseIn: birdRect), with: .color(.white))
-        let beak = CGRect(x: birdRect.maxX - 2, y: birdY - 3, width: 9, height: 6)
-        context.fill(Path(roundedRect: beak, cornerRadius: 2), with: .color(Color(white: 0.45)))
+        FlappyBirdArtwork.draw(context: &context, center: CGPoint(x: birdX, y: birdY), size: birdSize)
 
         for pipe in pipes {
             let topHeight = max(0, pipe.gapY - pipe.gapHeight / 2)
@@ -246,8 +265,9 @@ private struct FlappyBirdPushUpView: View {
 
     private func updateBird(from noseLevel: CGFloat?, in size: CGSize) {
         guard started, !gameOver, let noseLevel, let baseline = noseBaseline, size.height > 0 else { return }
-        let controlled = min(0.9, max(0.1, 0.5 + (noseLevel - baseline) * 2.7))
-        birdY = controlled * size.height
+        let controlled = min(0.85, max(0.15, 0.5 + (noseLevel - baseline) * 1.5))
+        let target = controlled * size.height
+        birdY += (target - birdY) * 0.35
     }
 
     private func advance(from oldDate: Date, to newDate: Date, in size: CGSize) {
