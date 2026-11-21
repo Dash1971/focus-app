@@ -8,13 +8,13 @@ A local-first iPhone app for keeping distractions locked and organizing everyday
 
 - Six directly accessible sections: Restrictions, Calendar, Habits, Notes, Timer and Mini Games.
 - A focused Restrictions dashboard with real daily unlock count, elapsed unlock time and whole-device iPhone Screen Time. Active restrictions protect blocked-item and unlock-delay configuration until a real temporary grant is active. Waiting alone does not open settings.
-- Calendar-only event management with a locale-safe Gregorian 2026 → 2027 progress bar and an independent real-date today marker.
+- Calendar-only event management with a locale-safe Gregorian 2026 → 2027 progress bar and an independent real-date today marker. A read-only holiday overlay adds Japanese public holidays and selected worldwide observances without touching saved events; moving dates are recalculated for each year.
 - Card-based daily, weekly, monthly and yearly habit grids with individually editable day cells.
 - Persistent countdown and stopwatch state, wheel-based custom countdown entry, six presets and a distraction-free fullscreen clock with an almost screen-filling display.
 - One-time and weekday-repeat alarms backed by iOS local notifications, including sound, supported vibration and a Stop action when the app is not open.
 - Flappy Bird Push-Up uses a full-opacity, natural-color front-camera preview for on-device nose tracking. The surrounding controls remain black/gray.
 - Flappy difficulty increases smoothly with active play time (one level per 20 seconds), caps at level 50, and stays there indefinitely until collision. Nose loss pauses play; the score remains.
-- Pushup Challenge is a separate two-player game on **one shared iPhone**: both players tap Ready, then take turns drawing a plain 1–3 or SKIP card. Done passes the turn; Give Up ends the game with the current player losing. No camera, networking, accounts or connection setup.
+- Pushup Challenge supports 2–4 players on **one shared iPhone**, with 5 Rounds, 10 Rounds or Endless selected before play. Each player taps Ready, then takes turns drawing 1–3 or SKIP and confirming with Done. Endless continues until Finish game is confirmed. The summary shows recorded per-round counts, player totals, the group total and a comparison graph; unconfirmed cards never count. No camera, networking, accounts or connection setup.
 - The Restrictions activity card keeps live local unlock counters visible independently of Apple's Total Screen Time report. Missing report data shows “—”, not an invented zero. Short unlocks display seconds; finished grants use observed relock time.
 - A minimal blocked-app shield with Open LockIn and Close app actions. Opening the parent controls app directly from a shield requires iOS 26.5 or newer; earlier iOS versions keep the shield in place when Open LockIn is tapped because Apple exposes no parent-app launch response there.
 
@@ -23,7 +23,7 @@ Notification permission is required for countdowns and alarms to alert while Loc
 ## Version 0.3 blocking redesign
 
 - Selected apps, categories and websites stay shielded continuously while Screen Time authorization remains enabled.
-- Requesting Temporary Unlock immediately starts the configured wait (None, 10, 20, 30, 45 or 60 seconds). After the wait, app selection and the duration wheel appear automatically. Select one or more blocked items and tap Unlock selected apps. None opens that selection flow immediately; it never bypasses the settings lock. Leaving the app or dismissing the unlock screen cancels the request.
+- Requesting Temporary Unlock opens a full-screen front-camera countdown for the configured wait (10, 20, 30, 45 or 60 seconds). Only continuous fresh face detections earn time; a missing face or capture gap resets the countdown. Face-presence detection uses no eye/gaze tracking or identity recognition. After the wait, app selection and the duration wheel appear automatically. Select one or more blocked items and tap Unlock selected apps. The existing None setting still opens selection immediately; it never bypasses the settings lock. Leaving the app, losing active scene status or dismissing the unlock screen cancels the request.
 - A wheel picker offers exactly 30 seconds; 1, 5, 10, 15, 25, 30 and 45 minutes; and 1 or 2 hours. One temporary grant at a time; other selected items remain blocked. The duration choices are enforced in the model as well as the wheel.
 - A permanent dark theme with black, charcoal and gray surfaces and the supplied lock-and-arms icon.
 - Monthly calendar with named, colored events and important dates.
@@ -61,6 +61,17 @@ Regenerate the project with `ruby scripts/generate_xcodeproj.rb` after installin
 
 ## Privacy
 
-No accounts, servers, analytics, advertising or network dependencies. Screen Time tokens, bounded unlock history and temporary grants live in the shared App Group container. A file lock and atomic writes serialize app/extension transactions. Front-camera frames used for nose landmark detection stay on-device and are neither saved nor transmitted. Notes, habits and calendar events live separately in the app's Application Support directory. Events are local civil dates; no Calendar permission or external calendar sync is used. Unreadable saved data produces an error rather than silently replacing it with empty state.
+No accounts, servers, analytics, advertising or network dependencies. Screen Time tokens, bounded unlock history and temporary grants live in the shared App Group container. A file lock and atomic writes serialize app/extension transactions. Front-camera frames used for face-presence detection or nose-bridge landmark detection stay on-device and are neither saved nor transmitted. Notes, habits and calendar events live separately in the app's Application Support directory. Events are local civil dates; no Calendar permission or external calendar sync is used. Unreadable saved data produces an error rather than silently replacing it with empty state.
 
 MIT License. See [LICENSE](LICENSE).
+
+## November 2026 update verification
+
+See [the update acceptance checklist](docs/20261122_v0_update_acceptance.md) for
+requirements, holiday coverage/sources, and physical-device checks. No network
+calendar dependency or Calendar permission is added. Official Japanese dates are
+bundled through 2027. Dates for 2028–2099 follow current rules and are explicitly
+labeled projected; legislative changes and newly declared one-off holidays require
+a data update. The worldwide set is curated, not an exhaustive list of every
+country's public holidays. Regional Mother’s/Father’s Day and US Thanksgiving are
+labeled accordingly.

@@ -4,6 +4,13 @@ import UIKit
 import Vision
 
 final class NoseCameraController: NSObject, ObservableObject, AVCaptureVideoDataOutputSampleBufferDelegate {
+    enum Mode { case noseBridge, facePresence }
+    struct FaceSample { let visible: Bool; let uptime: TimeInterval }
+    private let mode: Mode
+    @Published private(set) var faceSample: FaceSample?
+
+    init(mode: Mode = .noseBridge) { self.mode = mode; super.init() }
+
     enum Status: Equatable {
         case requestingPermission, starting, lookingForNose, tracking, denied, unavailable, failed
     }
@@ -16,7 +23,7 @@ final class NoseCameraController: NSObject, ObservableObject, AVCaptureVideoData
     private let intentLock = NSLock()
     private var runID: UUID?
     private var configured = false
-    private var filter = EyeTrackingFilter()
+    private var filter = NoseTrackingFilter()
 
     func start() {
         intentLock.lock()
@@ -43,10 +50,11 @@ final class NoseCameraController: NSObject, ObservableObject, AVCaptureVideoData
     func stop() {
         intentLock.lock(); runID = nil; intentLock.unlock()
         noseLevel = nil
+        faceSample = nil
         cameraQueue.async { [weak self] in
             guard let self else { return }
             if self.session.isRunning { self.session.stopRunning() }
-            self.filter = EyeTrackingFilter()
+            self.filter = NoseTrackingFilter()
         }
     }
 
@@ -61,7 +69,7 @@ final class NoseCameraController: NSObject, ObservableObject, AVCaptureVideoData
             guard let self, self.isCurrent(id) else { return }
             if !self.configured, !self.configureSession(id) { return }
             guard self.isCurrent(id) else { return }
-            self.filter = EyeTrackingFilter()
+            self.filter = NoseTrackingFilter()
             if !self.session.isRunning { self.session.startRunning() }
             self.publish(nil, status: .lookingForNose, id: id)
         }
@@ -109,28 +117,35 @@ final class NoseCameraController: NSObject, ObservableObject, AVCaptureVideoData
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         intentLock.lock(); let id = runID; intentLock.unlock()
         guard let id else { return }
-        let request = VNDetectFaceLandmarksRequest()
         let now = ProcessInfo.processInfo.systemUptime
+        // Unlocking deliberately uses bounding boxes only: no eye landmarks,
+        // pupil positions, gaze direction, identity recognition or recording.
+        if mode == .facePresence {
+            let request = VNDetectFaceRectanglesRequest()
+            var visible = false
+            do {
+                try VNImageRequestHandler(cmSampleBuffer: sampleBuffer, orientation: .up, options: [:]).perform([request])
+                visible = request.results?.contains { $0.confidence >= 0.7 } == true
+            } catch { visible = false }
+            let detected = visible
+            DispatchQueue.main.async { [weak self] in
+                guard let self, self.isCurrent(id) else { return }
+                self.faceSample = FaceSample(visible: detected, uptime: now)
+                self.status = detected ? .tracking : .lookingForNose
+            }
+            return
+        }
+        let request = VNDetectFaceLandmarksRequest()
         var measurement: Double?
         do {
             try VNImageRequestHandler(cmSampleBuffer: sampleBuffer, orientation: .up, options: [:]).perform([request])
             if let face = request.results?.max(by: { $0.boundingBox.width < $1.boundingBox.width }),
-               let landmarks = face.landmarks {
-                // Pupil displacement within each eye is independent of the face's
-                // position in the camera frame. Do not use head/nose movement.
-                let eyeOffsets = [(landmarks.leftEye, landmarks.leftPupil),
-                                  (landmarks.rightEye, landmarks.rightPupil)].compactMap { eye, pupil -> Double? in
-                    guard let eye, let pupil, !eye.normalizedPoints.isEmpty,
-                          !pupil.normalizedPoints.isEmpty else { return nil }
-                    let ys = eye.normalizedPoints.map(\.y)
-                    guard let low = ys.min(), let high = ys.max(), high - low > 0.005 else { return nil }
-                    let pupilY = pupil.normalizedPoints.reduce(CGFloat.zero) { $0 + $1.y }
-                        / CGFloat(pupil.normalizedPoints.count)
-                    return Double((pupilY - (low + high) / 2) / (high - low))
-                }
-                if !eyeOffsets.isEmpty {
-                    measurement = EyeTrackingPolicy.screenLevel(forPupilOffsets: eyeOffsets)
-                }
+               let crest = face.landmarks?.noseCrest, !crest.normalizedPoints.isEmpty {
+                // Use the top of the nose crest (bridge/inner-eye height), not
+                // the nose tip, eye contours, pupils or gaze displacement.
+                let bridge = crest.normalizedPoints.max(by: { $0.y < $1.y })!
+                let frameY = face.boundingBox.minY + bridge.y * face.boundingBox.height
+                measurement = NoseTrackingPolicy.screenLevel(bridgeY: Double(frameY))
             }
         } catch { measurement = nil }
         let level = filter.update(measurement, at: now)

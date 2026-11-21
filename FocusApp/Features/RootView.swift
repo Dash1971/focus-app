@@ -104,78 +104,91 @@ struct RestrictionsView: View {
     @State private var showingSettings = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            Text("Today's Activity")
-                .font(.title3.weight(.semibold))
-                .padding(.top, 18)
+        ScrollView {
+            VStack(alignment: .leading, spacing: 0) {
+                Text("Today's Activity")
+                    .font(.title3.weight(.semibold))
+                    .padding(.top, 18)
 
-            TimelineView(.periodic(from: .now, by: 1)) { context in
-                let activity = model.blocking.unlockActivity(on: context.date)
-                HStack(alignment: .top, spacing: 12) {
-                    ActivityStat(label: "Unlocks", value: model.storageReady ? "\(activity.count)" : "—")
-                    ActivityStat(label: "Unlock Time", value: model.storageReady ? TimePolicy.activityDuration(activity.duration) : "—")
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text("Total Screen Time")
-                            .font(.caption).foregroundStyle(.secondary)
-                            .fixedSize(horizontal: false, vertical: true)
-                            .frame(minHeight: 36, alignment: .topLeading)
-                        if model.authorized {
-                            ZStack {
-                                Text("—").foregroundStyle(.secondary)
-                                DeviceActivityReport(
-                                    .init(AppConstants.dailyActivityReport),
-                                    filter: dailyActivityFilter(at: context.date)
-                                )
-                                // Reports are system-owned. Refresh on a new minute,
-                                // including midnight, without rebuilding each second.
-                                .id(Int(context.date.timeIntervalSince1970 / 60))
+                TimelineView(.periodic(from: .now, by: 1)) { context in
+                    let activity = model.blocking.unlockActivity(on: context.date)
+                    HStack(alignment: .top, spacing: 12) {
+                        ActivityStat(label: "Unlocks", value: model.storageReady ? "\(activity.count)" : "—")
+                        ActivityStat(label: "Unlock Time", value: model.storageReady ? TimePolicy.activityDuration(activity.duration) : "—")
+                        VStack(alignment: .leading, spacing: 10) {
+                            Text("Total Screen Time")
+                                .font(.caption).foregroundStyle(.secondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .frame(minHeight: 36, alignment: .topLeading)
+                            if model.authorized {
+                                ZStack {
+                                    Text("—").foregroundStyle(.secondary)
+                                    DeviceActivityReport(
+                                        .init(AppConstants.dailyActivityReport),
+                                        filter: dailyActivityFilter(at: context.date)
+                                    )
+                                    // Reports are system-owned. Refresh on a new minute,
+                                    // including midnight, without rebuilding each second.
+                                    .id(Int(context.date.timeIntervalSince1970 / 60))
+                                }
+                                .frame(height: 48)
+                            } else {
+                                Text("—").font(.title2.monospacedDigit())
+                                    .accessibilityLabel("Total Screen Time unavailable. Allow Screen Time access.")
                             }
-                            .frame(height: 48)
-                        } else {
-                            Text("—").font(.title2.monospacedDigit())
-                                .accessibilityLabel("Total Screen Time unavailable. Allow Screen Time access.")
+                        }.frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .padding(20)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Color(white: 0.09), in: RoundedRectangle(cornerRadius: 20))
+                    .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color.white.opacity(0.14)))
+                }
+                .padding(.top, 14)
+
+                Spacer().frame(height: 28)
+
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Temporary Unlock").font(.title3.weight(.semibold))
+                    Text("Choose limited access after the selected camera wait. Everything else stays locked.")
+                        .font(.subheadline).foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                    if !model.storageReady {
+                        Button("Retry") { model.refreshFromSharedStore() }
+                            .buttonStyle(LockInPrimaryButtonStyle())
+                    } else if !model.authorized {
+                        Button("Allow Screen Time access") {
+                            Task { await model.authorize() }
                         }
-                    }.frame(maxWidth: .infinity, alignment: .leading)
+                        .buttonStyle(LockInPrimaryButtonStyle())
+                    } else if let grant = model.blocking.grant {
+                        HStack {
+                            Text("Temporary access")
+                                .foregroundStyle(.secondary)
+                            Spacer()
+                            Text(grant.deadline.endsAt, style: .timer)
+                                .font(.headline.monospacedDigit())
+                        }
+                        .padding(.bottom, 12)
+                        Button("Lock now") { model.lockNow() }
+                            .buttonStyle(LockInPrimaryButtonStyle())
+                    } else if !model.blocking.selection.isEmpty {
+                        Button("Temporary unlock") { showingUnlock = true }
+                            .buttonStyle(LockInPrimaryButtonStyle())
+                    } else {
+                        Button("Choose blocked apps") { showingSettings = true }
+                            .buttonStyle(LockInPrimaryButtonStyle())
+                    }
                 }
-                .padding(20)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(Color(white: 0.09), in: RoundedRectangle(cornerRadius: 20))
-                .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color.white.opacity(0.14)))
             }
-            .padding(.top, 14)
-
-            Spacer(minLength: 28)
-
-            if !model.storageReady {
-                Button("Retry") { model.refreshFromSharedStore() }
-                    .buttonStyle(LockInPrimaryButtonStyle())
-            } else if !model.authorized {
-                Button("Allow Screen Time access") {
-                    Task { await model.authorize() }
-                }
-                .buttonStyle(LockInPrimaryButtonStyle())
-            } else if let grant = model.blocking.grant {
-                HStack {
-                    Text("Temporary access")
-                        .foregroundStyle(.secondary)
-                    Spacer()
-                    Text(grant.deadline.endsAt, style: .timer)
-                        .font(.headline.monospacedDigit())
-                }
-                .padding(.bottom, 12)
-                Button("Lock now") { model.lockNow() }
-                    .buttonStyle(LockInPrimaryButtonStyle())
-            } else if !model.blocking.selection.isEmpty {
-                Button("Temporary unlock") { showingUnlock = true }
-                    .buttonStyle(LockInPrimaryButtonStyle())
-            } else {
-                Button("Choose blocked apps") { showingSettings = true }
-                    .buttonStyle(LockInPrimaryButtonStyle())
-            }
+            .frame(maxWidth: .infinity)
+            .padding(.horizontal, 24)
+            .padding(.bottom, 36)
         }
-        .frame(maxWidth: .infinity)
-        .padding(.horizontal, 24)
-        .padding(.bottom, 18)
+        // The enclosing NavigationStack can retain the full-height proposal.
+        // Reserve the unchanged main navigation bar's 48-point height explicitly.
+        .safeAreaPadding(.bottom, 48)
+        .defaultScrollAnchor(.bottom, for: .initialOffset)
+        .defaultScrollAnchor(.top, for: .alignment)
         .background(Color.black)
         .navigationTitle("Restrictions")
         .toolbar {
