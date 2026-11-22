@@ -19,6 +19,7 @@
 		245C721314783E3D9981C57B /* DeviceActivityReportExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660B8413815EC8C62DC519FC /* DeviceActivityReportExtension.swift */; };
 		24A7863814B0BAA40C828CC5 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = A57615A6A1C359A65BC7A05E /* Models.swift */; };
 		2612DA259C765B0B6B93501A /* ShieldActionExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A16866CA23D9D59723E8162F /* ShieldActionExtension.swift */; };
+		26EAA7AC4376250083FF467F /* HolidayCalendar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CB92CDDB3A059B0029AE2E0 /* HolidayCalendar.swift */; };
 		2A6EBD66AFAAA3383A09FF7E /* ManagedSettings.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9604E00219808926E7A7A3E /* ManagedSettings.framework */; };
 		2A996C58A0F4D88F3C67C981 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = A57615A6A1C359A65BC7A05E /* Models.swift */; };
 		2AFB5F5DB4319C114AA2564A /* BlockingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BD55E0801DC43E8FDCC1BE /* BlockingController.swift */; };
@@ -31,9 +32,11 @@
 		3803AB6D44D6C24E9BB71DE0 /* HabitsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA87C539215470199B77CDB /* HabitsView.swift */; };
 		38EAA7B98087FFC437FE643F /* SharedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C75E82C297FB55D368FE601D /* SharedStore.swift */; };
 		3E7AEC20D5272C2B506D3733 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98AAE2CC19572A346CED4DB1 /* AppModel.swift */; };
+		42B55BD9BDCE2B111CCDDF90 /* UpdateLayoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD0DC0AA99C3F3AF2DCFBFD /* UpdateLayoutTests.swift */; };
 		49D56247A6ADE46B722B64B5 /* PushupGameTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C93D7E5D6C496B55245B6E9 /* PushupGameTests.swift */; };
 		4A904B39FF43FD98C292A7B4 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0808C6EAE6BA9D079C0F00D /* AudioToolbox.framework */; };
 		4FF0FBAFAE196D1E05E5FC1A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CA54E5F1CB85ECAD6B07F83 /* Foundation.framework */; };
+		536A2397E9C863A4C02C121B /* JapaneseHolidayData.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0CAF2A829C80CEE6E2DDD0 /* JapaneseHolidayData.swift */; };
 		56491A56CA1A9DA9F5F696BA /* AccessPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E38197920A0F5E7A431907 /* AccessPolicyTests.swift */; };
 		5659C5425FF9846445E0C82C /* ManagedSettingsUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABF08865A584ED556E10D730 /* ManagedSettingsUI.framework */; };
 		58978C0DF8EB46F13BDBFAD3 /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B2DE69245F003075C3129B0 /* DeviceActivity.framework */; };
@@ -42,12 +45,12 @@
 		61990C5D4A04A39FD59199BA /* NotesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2121845D60CC80D1818926CF /* NotesView.swift */; };
 		63B1F9682F9FDAA3939260BD /* TimePolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28058112C8E5337EAAAAD21B /* TimePolicy.swift */; };
 		64D5311100D2B5FB92EDBC30 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACC25C6A47B3FCB619C53696 /* RootView.swift */; };
+		659CF2D50DB242A70E4BBEFA /* HolidayCalendarTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83D4A4601D6EACD7F22EBED0 /* HolidayCalendarTests.swift */; };
 		6837DD768F2B96221E870F39 /* ManagedSettings.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7F98F568B68CCF317BAB50A0 /* ManagedSettings.framework */; };
 		6E3C3A99B46965A90492BED5 /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90CF1D011657F9E34921602F /* UserNotifications.framework */; };
 		74BD7184724E6DF7F0AA74F5 /* TimePolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28058112C8E5337EAAAAD21B /* TimePolicy.swift */; };
 		7AFA37D6F74C4FBD4134ADCA /* ShieldConfigurationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC18E008E0EB6B6A59CF2AF /* ShieldConfigurationExtension.swift */; };
 		82075B71B3E2E42BD3978A0C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 370A133FFDDFD9B5575C4679 /* Assets.xcassets */; };
-		A110C10C0000000000000001 /* LockInAlert.aiff in Resources */ = {isa = PBXBuildFile; fileRef = A110C10C0000000000000002 /* LockInAlert.aiff */; };
 		87C33CFAE9F53200EB708E14 /* Vision.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 350F76B619C767457E0F4A53 /* Vision.framework */; };
 		8820CDCD48CFF46506DC317F /* AccessPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0A7F904570EFDA1C361979E /* AccessPolicy.swift */; };
 		8DBA0F0596066D80B839A995 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = A57615A6A1C359A65BC7A05E /* Models.swift */; };
@@ -59,6 +62,7 @@
 		9AC52D24387AA132DF5F79EC /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2580F28FFC2A72F367600D10 /* XCTest.framework */; };
 		9F84B83E0BA1968DE6A67866 /* TimePolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28058112C8E5337EAAAAD21B /* TimePolicy.swift */; };
 		A0AE56C69B0FB30251079368 /* FamilyControls.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 763D059EB27D11A11DFA8365 /* FamilyControls.framework */; };
+		A110C10C0000000000000001 /* LockInAlert.aiff in Resources */ = {isa = PBXBuildFile; fileRef = A110C10C0000000000000002 /* LockInAlert.aiff */; };
 		A4E44F8BE01185FB636B2F27 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = A57615A6A1C359A65BC7A05E /* Models.swift */; };
 		A5FE0F5C8161796CB332E870 /* ShieldActionExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 320F694DD2965466C1092EB7 /* ShieldActionExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, CodeSignOnCopy, ); }; };
 		A703E899A312A99F9BC1F760 /* ManagedSettings.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7757549C6B22A1C3F05ADBD5 /* ManagedSettings.framework */; };
@@ -174,6 +178,7 @@
 /* Begin PBXFileReference section */
 		01BD55E0801DC43E8FDCC1BE /* BlockingController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BlockingController.swift; path = FocusApp/Core/BlockingController.swift; sourceTree = "<group>"; };
 		07653449606CEE09B3063329 /* MiniGamesView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MiniGamesView.swift; path = FocusApp/Features/MiniGamesView.swift; sourceTree = "<group>"; };
+		0CD0DC0AA99C3F3AF2DCFBFD /* UpdateLayoutTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = UpdateLayoutTests.swift; path = FocusAppTests/UpdateLayoutTests.swift; sourceTree = "<group>"; };
 		103D21E0736DF801C7519319 /* CalendarView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CalendarView.swift; path = FocusApp/Features/CalendarView.swift; sourceTree = "<group>"; };
 		10914D84E8062F818739783F /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = "<group>"; };
 		155189F946780C1384AD5D5E /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = "<group>"; };
@@ -210,18 +215,20 @@
 		7757549C6B22A1C3F05ADBD5 /* ManagedSettings.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ManagedSettings.framework; path = System/Library/Frameworks/ManagedSettings.framework; sourceTree = "<group>"; };
 		7A770AC963610A285FABBC18 /* LockInWidgetsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = LockInWidgetsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		7F98F568B68CCF317BAB50A0 /* ManagedSettings.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ManagedSettings.framework; path = System/Library/Frameworks/ManagedSettings.framework; sourceTree = "<group>"; };
+		83D4A4601D6EACD7F22EBED0 /* HolidayCalendarTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = HolidayCalendarTests.swift; path = FocusAppTests/HolidayCalendarTests.swift; sourceTree = "<group>"; };
 		85EBDD338393B904E30BE40C /* FamilyControls.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FamilyControls.framework; path = System/Library/Frameworks/FamilyControls.framework; sourceTree = "<group>"; };
 		8A4C02D26EE2EAB5D6FA1B62 /* ManagedSettings.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ManagedSettings.framework; path = System/Library/Frameworks/ManagedSettings.framework; sourceTree = "<group>"; };
+		8CB92CDDB3A059B0029AE2E0 /* HolidayCalendar.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = HolidayCalendar.swift; path = FocusApp/Core/HolidayCalendar.swift; sourceTree = "<group>"; };
 		90CF1D011657F9E34921602F /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = "<group>"; };
 		98AAE2CC19572A346CED4DB1 /* AppModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AppModel.swift; path = FocusApp/App/AppModel.swift; sourceTree = "<group>"; };
 		9C52EABC2246BE6A42D15737 /* LifeModels.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = LifeModels.swift; path = FocusApp/Core/LifeModels.swift; sourceTree = "<group>"; };
+		A110C10C0000000000000002 /* LockInAlert.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = FocusApp/Resources/Sounds/LockInAlert.aiff; sourceTree = "<group>"; };
 		A16866CA23D9D59723E8162F /* ShieldActionExtension.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ShieldActionExtension.swift; path = Extensions/ShieldAction/ShieldActionExtension.swift; sourceTree = "<group>"; };
 		A4D521577883371B29898819 /* DeviceActivityReportExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = DeviceActivityReportExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		A57615A6A1C359A65BC7A05E /* Models.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Models.swift; path = FocusApp/Core/Models.swift; sourceTree = "<group>"; };
 		ABF08865A584ED556E10D730 /* ManagedSettingsUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ManagedSettingsUI.framework; path = System/Library/Frameworks/ManagedSettingsUI.framework; sourceTree = "<group>"; };
 		ACC25C6A47B3FCB619C53696 /* RootView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RootView.swift; path = FocusApp/Features/RootView.swift; sourceTree = "<group>"; };
 		ADF8196057299A0B7D86F276 /* UnlockView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = UnlockView.swift; path = FocusApp/Features/UnlockView.swift; sourceTree = "<group>"; };
-		A110C10C0000000000000002 /* LockInAlert.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = FocusApp/Resources/Sounds/LockInAlert.aiff; sourceTree = "<group>"; };
 		B1F7E8DD6B2E54E3D7FA069B /* FamilyControls.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FamilyControls.framework; path = System/Library/Frameworks/FamilyControls.framework; sourceTree = "<group>"; };
 		B1FA7E8CD1BD48FB0AFBE7B4 /* NoseCamera.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FocusApp/Features/NoseCamera.swift; sourceTree = "<group>"; };
 		B43F8D6750B5FDF8CC29543D /* TimekeeperModels.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TimekeeperModels.swift; path = FocusApp/Core/TimekeeperModels.swift; sourceTree = "<group>"; };
@@ -238,6 +245,7 @@
 		E0A7F904570EFDA1C361979E /* AccessPolicy.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AccessPolicy.swift; path = FocusApp/Core/AccessPolicy.swift; sourceTree = "<group>"; };
 		E2F769EF957716ACF22626BD /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = FocusApp/Resources/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		E6E38197920A0F5E7A431907 /* AccessPolicyTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AccessPolicyTests.swift; path = FocusAppTests/AccessPolicyTests.swift; sourceTree = "<group>"; };
+		EC0CAF2A829C80CEE6E2DDD0 /* JapaneseHolidayData.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = JapaneseHolidayData.swift; path = FocusApp/Core/JapaneseHolidayData.swift; sourceTree = "<group>"; };
 		ECE21FDABA6FE55AC0D7827C /* FocusApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FocusApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F0808C6EAE6BA9D079C0F00D /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<group>"; };
 		F16EABEDBF0D673A952BC8AE /* ManagedSettings.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ManagedSettings.framework; path = System/Library/Frameworks/ManagedSettings.framework; sourceTree = "<group>"; };
@@ -410,6 +418,10 @@
 				FA020C1C85B3C1EFAF5B98D3 /* FlappyPolicy.swift */,
 				E6E38197920A0F5E7A431907 /* AccessPolicyTests.swift */,
 				75A389E722297DAAB1FD4DB5 /* FlappyPolicyTests.swift */,
+				8CB92CDDB3A059B0029AE2E0 /* HolidayCalendar.swift */,
+				EC0CAF2A829C80CEE6E2DDD0 /* JapaneseHolidayData.swift */,
+				83D4A4601D6EACD7F22EBED0 /* HolidayCalendarTests.swift */,
+				0CD0DC0AA99C3F3AF2DCFBFD /* UpdateLayoutTests.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -682,6 +694,8 @@
 				1B5BDABEE13585D4FF7A8CB1 /* PushupChallengeView.swift in Sources */,
 				C0CC81B4F300CC3B61473FA8 /* AccessPolicy.swift in Sources */,
 				F1437E180F59F665C63D2371 /* FlappyPolicy.swift in Sources */,
+				26EAA7AC4376250083FF467F /* HolidayCalendar.swift in Sources */,
+				536A2397E9C863A4C02C121B /* JapaneseHolidayData.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -737,6 +751,8 @@
 				49D56247A6ADE46B722B64B5 /* PushupGameTests.swift in Sources */,
 				56491A56CA1A9DA9F5F696BA /* AccessPolicyTests.swift in Sources */,
 				BF596BCD1B835DBDCDF2D136 /* FlappyPolicyTests.swift in Sources */,
+				659CF2D50DB242A70E4BBEFA /* HolidayCalendarTests.swift in Sources */,
+				42B55BD9BDCE2B111CCDDF90 /* UpdateLayoutTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -800,10 +816,10 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 10;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
-				MARKETING_VERSION = 0.4.1;
+				MARKETING_VERSION = 0.4.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dash1971.focusapp.tests;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
@@ -820,11 +836,11 @@
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_ENTITLEMENTS = Extensions/ShieldConfiguration/ShieldConfiguration.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 10;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Extensions/ShieldConfiguration/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
-				MARKETING_VERSION = 0.4.1;
+				MARKETING_VERSION = 0.4.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dash1971.focusapp.shieldconfiguration;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -840,11 +856,11 @@
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_ENTITLEMENTS = Extensions/ShieldAction/ShieldAction.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 10;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Extensions/ShieldAction/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
-				MARKETING_VERSION = 0.4.1;
+				MARKETING_VERSION = 0.4.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dash1971.focusapp.shieldaction;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -862,7 +878,7 @@
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_ENTITLEMENTS = FocusApp/FocusApp.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 10;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = FocusApp/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = LockIn;
@@ -871,7 +887,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 0.4.1;
+				MARKETING_VERSION = 0.4.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dash1971.focusapp;
 				PRODUCT_NAME = LockIn;
 				SDKROOT = iphoneos;
@@ -888,11 +904,11 @@
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_ENTITLEMENTS = Extensions/DeviceActivityMonitor/DeviceActivityMonitor.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 10;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Extensions/DeviceActivityMonitor/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
-				MARKETING_VERSION = 0.4.1;
+				MARKETING_VERSION = 0.4.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dash1971.focusapp.deviceactivity;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -1025,11 +1041,11 @@
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_ENTITLEMENTS = Extensions/LockInWidgets/LockInWidgets.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 10;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Extensions/LockInWidgets/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
-				MARKETING_VERSION = 0.4.1;
+				MARKETING_VERSION = 0.4.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dash1971.focusapp.widgets;
 				PRODUCT_NAME = LockInWidgets;
 				SDKROOT = iphoneos;
@@ -1046,10 +1062,10 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 10;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
-				MARKETING_VERSION = 0.4.1;
+				MARKETING_VERSION = 0.4.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dash1971.focusapp.tests;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
@@ -1065,11 +1081,11 @@
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_ENTITLEMENTS = Extensions/ShieldAction/ShieldAction.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 10;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Extensions/ShieldAction/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
-				MARKETING_VERSION = 0.4.1;
+				MARKETING_VERSION = 0.4.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dash1971.focusapp.shieldaction;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -1085,11 +1101,11 @@
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_ENTITLEMENTS = Extensions/DeviceActivityMonitor/DeviceActivityMonitor.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 10;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Extensions/DeviceActivityMonitor/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
-				MARKETING_VERSION = 0.4.1;
+				MARKETING_VERSION = 0.4.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dash1971.focusapp.deviceactivity;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -1107,7 +1123,7 @@
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_ENTITLEMENTS = FocusApp/FocusApp.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 10;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = FocusApp/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = LockIn;
@@ -1116,7 +1132,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 0.4.1;
+				MARKETING_VERSION = 0.4.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dash1971.focusapp;
 				PRODUCT_NAME = LockIn;
 				SDKROOT = iphoneos;
@@ -1134,11 +1150,11 @@
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_ENTITLEMENTS = Extensions/DeviceActivityReport/DeviceActivityReport.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 10;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Extensions/DeviceActivityReport/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
-				MARKETING_VERSION = 0.4.1;
+				MARKETING_VERSION = 0.4.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dash1971.focusapp.deviceactivityreport;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -1154,11 +1170,11 @@
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_ENTITLEMENTS = Extensions/LockInWidgets/LockInWidgets.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 10;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Extensions/LockInWidgets/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
-				MARKETING_VERSION = 0.4.1;
+				MARKETING_VERSION = 0.4.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dash1971.focusapp.widgets;
 				PRODUCT_NAME = LockInWidgets;
 				SDKROOT = iphoneos;
@@ -1175,11 +1191,11 @@
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_ENTITLEMENTS = Extensions/ShieldConfiguration/ShieldConfiguration.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 10;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Extensions/ShieldConfiguration/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
-				MARKETING_VERSION = 0.4.1;
+				MARKETING_VERSION = 0.4.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dash1971.focusapp.shieldconfiguration;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -1196,11 +1212,11 @@
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_ENTITLEMENTS = Extensions/DeviceActivityReport/DeviceActivityReport.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 10;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Extensions/DeviceActivityReport/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
-				MARKETING_VERSION = 0.4.1;
+				MARKETING_VERSION = 0.4.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dash1971.focusapp.deviceactivityreport;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;

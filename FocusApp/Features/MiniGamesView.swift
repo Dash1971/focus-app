@@ -28,7 +28,7 @@ struct MiniGamesView: View {
                                 Image("PushupFriends")
                                     .resizable().scaledToFit()
                                     .frame(width: 58, height: 58)
-                                    .background(.white, in: RoundedRectangle(cornerRadius: 8))
+                                    .background(.black, in: RoundedRectangle(cornerRadius: 8))
                             } else {
                                 FlappyBirdIcon()
                                     .frame(width: 58, height: 58)
@@ -153,12 +153,12 @@ private struct FlappyBirdPushUpView: View {
                             .padding(22)
                             .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 18))
                     } else if noseTracker.noseLevel == nil {
-                        gameMessage("Position your eyes in view", detail: "Use the front camera in your push-up position.")
+                        gameMessage("Position your nose bridge in view", detail: "Use the front camera in your push-up position.")
                     } else if !started || gameOver {
                         VStack(spacing: 10) {
                             Text(gameOver ? "Game Over" : "Ready")
                                 .font(.title2.bold())
-                            Text(gameOver ? "Tap to restart" : "Tap to start · move your eyes up and down")
+                            Text(gameOver ? "Tap to restart" : "Tap to start · move your head up and down")
                                 .font(.subheadline)
                                 .foregroundStyle(.secondary)
                                 .multilineTextAlignment(.center)

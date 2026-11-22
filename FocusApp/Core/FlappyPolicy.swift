@@ -9,16 +9,16 @@ struct FlappyDifficulty {
     var spawnInterval: Double { 1.75 - 0.55 * progress }
 }
 
-enum EyeTrackingPolicy {
-    // Vision landmark Y points upward. Screen Y points downward.
-    static func screenLevel(forPupilOffsets offsets: [Double]) -> Double? {
-        guard !offsets.isEmpty, offsets.allSatisfy(\.isFinite) else { return nil }
-        let gaze = offsets.reduce(0, +) / Double(offsets.count)
-        return min(1, max(0, 0.5 - gaze * 0.4))
+// The upper nose bridge is close to the head's rotation center. Unlike the
+// pupil or nose tip, this landmark does not move with gaze or amplify pitch.
+enum NoseTrackingPolicy {
+    static func screenLevel(bridgeY: Double) -> Double? {
+        guard bridgeY.isFinite, (0...1).contains(bridgeY) else { return nil }
+        return 1 - bridgeY // Vision Y is upward; screen Y is downward.
     }
 }
 
-struct EyeTrackingFilter {
+struct NoseTrackingFilter {
     private(set) var level: Double?
     private var lastValid: TimeInterval?
     private var lastUpdate: TimeInterval?
@@ -31,9 +31,12 @@ struct EyeTrackingFilter {
             return nil
         }
         let elapsed = max(0, time - (lastUpdate ?? time))
-        let alpha = 1 - exp(-elapsed / 0.06)
+        let alpha = 1 - exp(-elapsed / 0.12)
         if let previous = level, let lastValid, time - lastValid < 0.2 {
-            level = previous + alpha * (measurement - previous)
+            // Reject tiny landmark jitter and cap sudden tilt-induced jumps.
+            let difference = abs(measurement - previous) < 0.002 ? 0 : measurement - previous
+            let maximumStep = 0.8 * elapsed
+            level = previous + min(maximumStep, max(-maximumStep, alpha * difference))
         } else { level = measurement }
         lastValid = time
         lastUpdate = time

@@ -1,8 +1,11 @@
 import SwiftUI
+import Charts
 
-// Players cooperate through ten rounds on one shared iPhone.
+// Players cooperate on one shared iPhone. Totals come only from confirmed turns.
 struct PushupChallengeView: View {
     @State private var game: PushupGame?
+    @State private var rounds: PushupRounds = .ten
+    @State private var confirmingFinish = false
 
     var body: some View {
         ScrollView {
@@ -11,7 +14,7 @@ struct PushupChallengeView: View {
                     switch game.phase {
                     case .preparing: preparation(game)
                     case .playing: turn(game)
-                    case .finished: result
+                    case .finished: result(game)
                     }
                 } else {
                     introduction
@@ -21,17 +24,26 @@ struct PushupChallengeView: View {
         .background(Color.black)
         .navigationTitle("Pushup Challenge")
         .navigationBarTitleDisplayMode(.inline)
+        .confirmationDialog("Finish the challenge?", isPresented: $confirmingFinish, titleVisibility: .visible) {
+            Button("Finish game") { if let game { perform(.finish, player: game.turn) } }
+            Button("Keep playing", role: .cancel) {}
+        } message: {
+            Text("Only turns confirmed with Done will appear in the summary. An unfinished card will not count.")
+        }
     }
 
     private var introduction: some View {
         VStack(spacing: 20) {
             Text("Place the phone where everyone can reach it. Get into pushup position, then each tap Ready.")
                 .foregroundStyle(.secondary).multilineTextAlignment(.center)
-            Text("Take turns drawing 1–3 or SKIP. Complete the card and tap Done. Everyone completes all ten rounds together.")
+            Text("Take turns drawing 1–3 or SKIP. Complete the card and tap Done. Choose 5 rounds, 10 rounds or keep going in Endless mode.")
                 .foregroundStyle(.secondary).multilineTextAlignment(.center)
+            Picker("Rounds", selection: $rounds) {
+                ForEach(PushupRounds.allCases) { Text($0.rawValue).tag($0) }
+            }.pickerStyle(.segmented)
             Text("How many players?").font(.title2.weight(.semibold))
             ForEach(2...4, id: \.self) { count in
-                Button("\(count) Players") { game = PushupGame(playerCount: count) }
+                Button("\(count) Players") { game = PushupGame(playerCount: count, rounds: rounds) }
                     .buttonStyle(.bordered)
             }
         }
@@ -52,7 +64,7 @@ struct PushupChallengeView: View {
 
     private func turn(_ game: PushupGame) -> some View {
         VStack(spacing: 24) {
-            Text("ROUND \(game.round) / \(PushupGame.totalRounds)")
+            Text(game.rounds.limit.map { "ROUND \(game.round) / \($0)" } ?? "ROUND \(game.round) · ENDLESS")
                 .font(.title2.weight(.semibold))
             Text("Player \(game.turn + 1)'s turn")
                 .font(.title.weight(.semibold))
@@ -72,14 +84,47 @@ struct PushupChallengeView: View {
                 .buttonStyle(.bordered)
                 .disabled(game.card == nil)
                 .accessibilityHint("Complete Player \(game.turn + 1)'s turn")
+            if game.rounds == .endless {
+                Button("Finish game") { confirmingFinish = true }.buttonStyle(.bordered)
+            }
         }
     }
 
-    private var result: some View {
-        VStack(spacing: 20) {
+    private func result(_ game: PushupGame) -> some View {
+        VStack(alignment: .leading, spacing: 20) {
             Text("Challenge complete!").font(.largeTitle.bold())
-            Text("All players completed 10 rounds together.").foregroundStyle(.secondary)
-            Button("Play again") { game = nil }.buttonStyle(.bordered)
+            Text("\(game.completedRounds) complete rounds · \(game.rounds.rawValue)").foregroundStyle(.secondary)
+            Text("All players: \(game.totalPushups) pushups").font(.title2.bold())
+            Chart {
+                ForEach(0..<game.playerCount, id: \.self) { player in
+                    BarMark(x: .value("Pushups", game.playerTotals[player]),
+                            y: .value("Player", "Player \(player + 1)"))
+                        .foregroundStyle(Color.gray)
+                        .annotation(position: .trailing) { Text("\(game.playerTotals[player])").font(.caption) }
+                        .accessibilityLabel("Player \(player + 1)")
+                        .accessibilityValue("\(game.playerTotals[player]) pushups")
+                }
+            }
+            .chartXScale(domain: 0...max(1, game.playerTotals.max() ?? 0))
+            .chartXAxisLabel("Total pushups")
+            .frame(height: CGFloat(game.playerCount * 50 + 40))
+            ForEach(0..<game.playerCount, id: \.self) { player in
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Player \(player + 1) — \(game.playerTotals[player]) total").font(.headline)
+                    ForEach(game.roundPushups.indices, id: \.self) { index in
+                        HStack {
+                            Text("Round \(index + 1)")
+                            Spacer()
+                            Text(game.roundPushups[index][player].map { "\($0)" } ?? "Not completed")
+                                .monospacedDigit()
+                        }.font(.subheadline)
+                    }
+                    if game.roundPushups.isEmpty { Text("No completed turns.").foregroundStyle(.secondary) }
+                }.card()
+            }
+            Text("Recorded from cards confirmed with Done; SKIP counts as 0. Unfinished turns do not count.")
+                .font(.footnote).foregroundStyle(.secondary)
+            Button("Play again") { self.game = nil }.buttonStyle(.bordered)
         }
     }
 

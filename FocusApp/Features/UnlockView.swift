@@ -1,5 +1,6 @@
 import SwiftUI
 import FamilyControls
+import UIKit
 
 struct UnlockView: View {
     @EnvironmentObject private var model: AppModel
@@ -8,17 +9,13 @@ struct UnlockView: View {
     @State private var chosen = FamilyActivitySelection()
     @State private var seconds = 300
     @State private var granting = false
+    @StateObject private var camera = NoseCameraController(mode: .facePresence)
 
     var body: some View {
         NavigationStack {
             Group {
                 if let remaining = model.waitRemaining, remaining > 0 {
-                    VStack(spacing: 18) {
-                        Text("\(remaining)").font(.system(size: 72, weight: .semibold)).monospacedDigit()
-                        Text("Stay on this screen").font(.title2)
-                        Text("Leaving LockIn cancels this wait. App selection opens when the countdown ends.")
-                            .foregroundStyle(.secondary).multilineTextAlignment(.center)
-                    }.padding(24).frame(maxWidth: .infinity, maxHeight: .infinity).background(Color.black)
+                    cameraWait(remaining: remaining)
                 } else if model.waitRemaining == 0 {
                     selectionForm
                 } else {
@@ -27,11 +24,61 @@ struct UnlockView: View {
             }
             .navigationTitle("Temporary unlock")
             .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } } }
-            .onAppear { model.startWait() }
-            .onDisappear { model.cancelWait() }
-            .onChange(of: scenePhase) { _, phase in
-                if phase != .active { model.cancelWait(); dismiss() }
-            }
+        }
+        .onAppear { beginWait() }
+        .onDisappear { model.cancelWait(); camera.stop() }
+        .onReceive(camera.$faceSample) { sample in
+            guard let sample, scenePhase == .active else { return }
+            model.observeWaitFace(visible: sample.visible, uptime: sample.uptime)
+        }
+        .onChange(of: model.waitRemaining) { _, remaining in
+            if remaining == 0 { camera.stop() }
+        }
+        .onChange(of: scenePhase) { _, phase in
+            if phase != .active {
+                model.cancelWait()
+                camera.stop()
+                if phase == .background { dismiss() }
+            } else { beginWait() }
+        }
+    }
+
+    private func beginWait() {
+        model.startWait()
+        if let remaining = model.waitRemaining, remaining > 0 { camera.start() }
+    }
+
+    private func cameraWait(remaining: Int) -> some View {
+        ZStack {
+            NoseCameraPreview(session: camera.session)
+                .ignoresSafeArea()
+                .accessibilityLabel("Live front camera preview")
+            Color.black.opacity(0.25).ignoresSafeArea()
+            ScrollView {
+                VStack(spacing: 18) {
+                    Text("\(remaining)")
+                        .font(.system(size: 72, weight: .semibold)).monospacedDigit()
+                    Text(camera.status == .tracking ? "Keep your face visible" : "Show your face to begin")
+                        .font(.title2).multilineTextAlignment(.center)
+                    Text("Keep your face in the front camera for the entire wait. If your face disappears, the countdown resets. Leaving this screen cancels the wait.")
+                        .multilineTextAlignment(.center)
+                    if [.denied, .unavailable, .failed].contains(camera.status) {
+                        Text(camera.status == .denied ? "Camera access is required for this wait." : "The front camera is unavailable. Access remains locked.")
+                            .font(.headline).multilineTextAlignment(.center)
+                        if camera.status == .denied {
+                            Button("Open Settings") {
+                                if let url = URL(string: UIApplication.openSettingsURLString) { UIApplication.shared.open(url) }
+                            }.buttonStyle(.borderedProminent)
+                        }
+                    } else if [.starting, .requestingPermission].contains(camera.status) {
+                        ProgressView("Starting camera…")
+                    }
+                }
+                .padding(24)
+                .frame(maxWidth: .infinity)
+                .background(Color.black.opacity(0.75), in: RoundedRectangle(cornerRadius: 20))
+                .padding(24)
+            }.defaultScrollAnchor(.center)
         }
     }
 

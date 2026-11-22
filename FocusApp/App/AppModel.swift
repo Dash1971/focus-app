@@ -58,6 +58,18 @@ final class AppModel: ObservableObject {
 
     func cancelWait() { unlockWait.cancel(); waitRemaining = nil }
 
+    func observeWaitFace(visible: Bool, uptime: TimeInterval) {
+        let now = ProcessInfo.processInfo.systemUptime
+        // Ignore delayed camera results; old frames cannot complete a wait.
+        guard now >= uptime, now - uptime <= UnlockWait.maximumFrameGap else {
+            unlockWait.observeFace(visible: false)
+            waitRemaining = unlockWait.remaining()
+            return
+        }
+        unlockWait.observeFace(visible: visible, uptime: uptime)
+        waitRemaining = unlockWait.remaining()
+    }
+
     @discardableResult
     func unlock(_ selection: FamilyActivitySelection, seconds: Int) -> Bool {
         guard storageReady, unlockWait.completed() else { return false }

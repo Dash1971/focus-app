@@ -62,6 +62,7 @@ struct CalendarMonthView: View {
     private let calendar = Calendar.current
     private var days: [Date] { TimePolicy.monthDays(containing: month) }
     private var selectedEvents: [CalendarEvent] { events(on: selectedDate) }
+    private var selectedObservances: [CalendarObservance] { HolidayCalendar.events(on: selectedDate) }
 
     var body: some View {
         TimelineView(.periodic(from: .now, by: 60)) { timeline in
@@ -127,11 +128,22 @@ struct CalendarMonthView: View {
 
     @ViewBuilder
     private var eventList: some View {
-        if selectedEvents.isEmpty {
+        if selectedEvents.isEmpty && selectedObservances.isEmpty {
             Text("No events on this date.")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
         } else {
+            ForEach(selectedObservances) { event in
+                HStack(alignment: .top) {
+                    Circle().fill(event.japanesePublicHoliday ? Color.red : Color.orange).frame(width: 8, height: 8).padding(.top, 5)
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(event.title).foregroundStyle(.primary)
+                        Text(event.projected ? "Built-in · projected under current Japanese holiday rules" : "Built-in holiday / observance")
+                            .font(.caption).foregroundStyle(.secondary)
+                    }
+                    Spacer()
+                }.accessibilityElement(children: .combine)
+            }
             ForEach(selectedEvents) { event in
                 Button { onEditEvent(event) } label: {
                     HStack {
@@ -168,6 +180,7 @@ struct CalendarMonthView: View {
 
     private func dayCell(_ date: Date, today: Date) -> some View {
         let items = events(on: date)
+        let observances = HolidayCalendar.events(on: date)
         let selected = calendar.isDate(date, inSameDayAs: selectedDate)
         let isToday = calendar.isDate(date, inSameDayAs: today)
 
@@ -179,7 +192,11 @@ struct CalendarMonthView: View {
                     .frame(width: 28, height: 28)
                     .background(isToday ? Color.white : Color.clear, in: Circle())
                 HStack(spacing: 2) {
-                    ForEach(Array(items.prefix(3))) { event in
+                    if !observances.isEmpty {
+                        Circle().fill(observances.contains(where: \.japanesePublicHoliday) ? Color.red : Color.orange)
+                            .frame(width: 5, height: 5)
+                    }
+                    ForEach(Array(items.prefix(observances.isEmpty ? 3 : 2))) { event in
                         Circle().fill(event.color.tint).frame(width: 5, height: 5)
                     }
                 }
@@ -197,6 +214,7 @@ struct CalendarMonthView: View {
             date.formatted(date: .complete, time: .omitted)
                 + (isToday ? ", today" : "")
                 + ", \(items.count) events"
+                + (observances.isEmpty ? "" : ", " + observances.map(\.title).joined(separator: ", "))
                 + (items.contains(where: \.important) ? ", important date" : "")
         )
         .accessibilityAddTraits(selected ? .isSelected : [])

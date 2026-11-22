@@ -3,15 +3,34 @@ import Foundation
 struct UnlockWait {
     private(set) var startedUptime: TimeInterval?
     private(set) var requiredSeconds = 0
+    private(set) var visibleSeconds: TimeInterval = 0
+    private var lastFaceUptime: TimeInterval?
+    // Missing frames, interrupted capture and stalled delivery never earn time.
+    static let maximumFrameGap: TimeInterval = 0.5
 
     mutating func start(seconds: Int, uptime: TimeInterval = ProcessInfo.processInfo.systemUptime) {
         requiredSeconds = TimePolicy.waitDurations.contains(seconds) ? seconds : 10
         startedUptime = uptime
+        visibleSeconds = 0
+        lastFaceUptime = nil
     }
-    mutating func cancel() { startedUptime = nil }
+    mutating func cancel() { startedUptime = nil; visibleSeconds = 0; lastFaceUptime = nil }
+    mutating func observeFace(visible: Bool, uptime: TimeInterval = ProcessInfo.processInfo.systemUptime) {
+        guard let startedUptime, uptime.isFinite, uptime >= startedUptime,
+              visibleSeconds < Double(requiredSeconds) else { return }
+        guard visible else { visibleSeconds = 0; lastFaceUptime = nil; return }
+        if let lastFaceUptime, uptime >= lastFaceUptime,
+           uptime - lastFaceUptime <= Self.maximumFrameGap {
+            visibleSeconds += uptime - lastFaceUptime
+        } else { visibleSeconds = 0 }
+        lastFaceUptime = uptime
+    }
     func remaining(uptime: TimeInterval = ProcessInfo.processInfo.systemUptime) -> Int? {
-        guard let startedUptime, uptime >= startedUptime else { return nil }
-        return max(0, Int(ceil(Double(requiredSeconds) - (uptime - startedUptime))))
+        guard let startedUptime, uptime.isFinite, uptime >= startedUptime else { return nil }
+        if visibleSeconds >= Double(requiredSeconds) { return 0 }
+        guard let lastFaceUptime, uptime >= lastFaceUptime,
+              uptime - lastFaceUptime <= Self.maximumFrameGap else { return requiredSeconds }
+        return max(0, Int(ceil(Double(requiredSeconds) - visibleSeconds)))
     }
     func completed(uptime: TimeInterval = ProcessInfo.processInfo.systemUptime) -> Bool { remaining(uptime: uptime) == 0 }
 }
