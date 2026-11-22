@@ -38,7 +38,9 @@ final class AccessPolicyTests: XCTestCase {
         for tick in 0...20 { wait.observeFace(visible: true, uptime: 100 + Double(tick) / 4) }
         XCTAssertEqual(wait.remaining(uptime: 105), 5)
         wait.observeFace(visible: false, uptime: 105.1)
-        XCTAssertEqual(wait.remaining(uptime: 105.1), 10)
+        XCTAssertEqual(wait.remaining(uptime: 105.1), 5) // Uncertain frame pauses.
+        for tick in 1...4 { wait.observeFace(visible: false, uptime: 105.1 + Double(tick) / 5) }
+        XCTAssertEqual(wait.remaining(uptime: 105.9), 10) // Confirmed absence resets.
         for tick in 0...20 { wait.observeFace(visible: true, uptime: 106 + Double(tick) / 4) }
         XCTAssertEqual(wait.remaining(uptime: 111), 5)
         XCTAssertEqual(wait.remaining(uptime: 112), 10) // No fresh frame.
@@ -48,6 +50,33 @@ final class AccessPolicyTests: XCTestCase {
         wait.cancel()
         wait.observeFace(visible: true, uptime: 200)
         XCTAssertNil(wait.remaining(uptime: 200))
+    }
+    func testBriefDetectionDropoutPausesWithoutEarningTimeOrResetting() {
+        var wait = UnlockWait(); wait.start(seconds: 10, uptime: 100)
+        for tick in 0...20 { wait.observeFace(visible: true, uptime: 100 + Double(tick) / 4) }
+        XCTAssertEqual(wait.visibleSeconds, 5)
+        wait.observeFace(visible: false, uptime: 105.1)
+        wait.observeFace(visible: false, uptime: 105.3)
+        XCTAssertEqual(wait.remaining(uptime: 105.3), 5)
+        wait.observeFace(visible: true, uptime: 105.4)
+        XCTAssertEqual(wait.visibleSeconds, 5) // The uncertain interval earns nothing.
+        wait.observeFace(visible: true, uptime: 105.65)
+        XCTAssertEqual(wait.visibleSeconds, 5.25)
+        wait.resetProgress() // Explicit rejection of delayed camera results.
+        XCTAssertEqual(wait.remaining(uptime: 105.7), 10)
+    }
+    func testReturningAfterConfirmedAbsenceOrStalledCaptureCannotResumeOldProgress() {
+        var wait = UnlockWait(); wait.start(seconds: 10, uptime: 0)
+        for tick in 0...16 { wait.observeFace(visible: true, uptime: Double(tick) / 4) }
+        wait.observeFace(visible: false, uptime: 4.1)
+        wait.observeFace(visible: false, uptime: 4.5)
+        wait.observeFace(visible: true, uptime: 4.9)
+        XCTAssertEqual(wait.visibleSeconds, 0)
+        wait.observeFace(visible: true, uptime: 5.1)
+        XCTAssertGreaterThan(wait.visibleSeconds, 0)
+        XCTAssertEqual(wait.remaining(uptime: 6), 10)
+        wait.observeFace(visible: true, uptime: 6)
+        XCTAssertEqual(wait.visibleSeconds, 0)
     }
     func testClockChangesDuplicateFramesAndRestartCannotEarnTime() {
         var wait = UnlockWait()

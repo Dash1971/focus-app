@@ -62,7 +62,7 @@ final class AppModel: ObservableObject {
         let now = ProcessInfo.processInfo.systemUptime
         // Ignore delayed camera results; old frames cannot complete a wait.
         guard now >= uptime, now - uptime <= UnlockWait.maximumFrameGap else {
-            unlockWait.observeFace(visible: false)
+            unlockWait.resetProgress()
             waitRemaining = unlockWait.remaining()
             return
         }

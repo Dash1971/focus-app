@@ -60,7 +60,7 @@ Set the version/build in source, commit it, merge it, and ensure `HEAD` is the e
 clean `origin/main` commit:
 
 ```sh
-python3 scripts/release.py set-version --version 0.4.2 --build 10
+python3 scripts/release.py set-version --version 0.4.3 --build 11
 ```
 
 Then run one command:
@@ -105,7 +105,7 @@ Use a harmless app. Test the oldest supported iOS version and the current releas
 - [ ] For each duration, leave LockIn, keep the unlocked app foregrounded, and measure actual automatic relock time.
 - [ ] Repeat short-grant tests after force-quitting LockIn, with screen locked, in Low Power Mode, and after reboot. A grant must not remain available indefinitely; investigate any delay.
 - [ ] Repeat across midnight, time-zone changes and manual clock changes. Reopening LockIn should expire inconsistent or elapsed grants.
-- [ ] Set each wait duration; Temporary Unlock opens a full-screen front-camera countdown. Only face visibility is checked, never gaze or pupils. Cover or remove the face to reset the countdown; stop camera frames and verify no time is credited. The None setting remains immediate. Switching apps, locking the device or leaving LockIn cancels the wait; return requires the full countdown again. The selection form appears only at zero, and access is granted only after selecting items and duration.
+- [ ] Set each wait duration; Temporary Unlock opens a full-screen front-camera countdown. Only face visibility is checked, never gaze or pupils. Open the mouth, change expression and touch the chin: detected face presence must keep earned time. Brief detector dropouts pause without earning time; confirmed absence resets. Stop camera frames and verify no time is credited. The None setting remains immediate. Switching apps, locking the device or leaving LockIn cancels the wait; return requires the full countdown again. The selection form appears only at zero, and access is granted only after selecting items and duration.
 - [ ] While restrictions are active, tap the settings gear and confirm a locked-state message appears immediately, with no settings wait. Blocked apps and the wait duration remain unavailable until temporary access is active. With no active selection, settings may open directly.
 - [ ] Confirm failed monitor registration leaves shields in place; use an injected failure/debugger if needed.
 - [ ] Lock again early, then request a new grant. Old callbacks must not remove shields or cancel a still-valid new grant.
@@ -120,12 +120,12 @@ Use a harmless app. Test the oldest supported iOS version and the current releas
 - [ ] Start, pause, resume and reset each countdown preset and a custom wheel duration. Switch sections and use fullscreen; elapsed time must remain deadline-based, fullscreen digits must be bold, and the audible completion alert must fire at 00:00 with LockIn foregrounded, backgrounded and force-quit. Verify notification sound permission and device mute/focus behavior.
 - [ ] Start, pause, resume and reset the stopwatch. Switch sections, background/foreground the app and use fullscreen; elapsed time must remain accurate.
 - [ ] Create, edit, disable, re-enable and delete one-time and repeating alarms. Verify each weekday choice, foreground Stop, background notification Stop, audible sound and supported vibration with the device locked and the app force-quit.
-- [ ] Open Mini Games from main navigation. Verify the Flappy card shows the in-game bird and the Pushup card shows the exact supplied two-person image. Allow/deny camera permission and verify denial/unavailable states. In a push-up position, calibrate the nose bridge at game start; move vertically and tilt the head separately. Bird Y must follow the nose-bridge reference smoothly without large tilt-induced movement; pupil motion must have no effect, and X stays fixed. Play until collision, restart, and return with Back.
+- [ ] Open Mini Games from main navigation. Verify the Flappy card shows the in-game bird and the Pushup card shows the exact supplied two-person image. Allow/deny camera permission and verify denial/unavailable states. In a push-up position, calibrate the eye-line at game start; move vertically and nod/roll separately. Place the bird beside the eye; bird Y must follow eye-line position smoothly, while nodding, pupil motion and gaze must not steer it. X stays fixed for the round. Play until collision, restart, and return with Back.
 - [ ] For 2, 3 and 4 players, test 5 Rounds, 10 Rounds and Endless. Verify exactly that many Ready buttons and one confirmed 1–3/SKIP card per player per round. Endless continues past round 10 until Finish is confirmed. Verify the summary per-round records, player totals, group total and comparison graph against the actual confirmed cards; unfinished turns must not count. Replay and verify records reset.
 - [ ] Verify Today's Activity shows real Unlocks, elapsed Unlock Time (including an active and early-ended grant), and total iPhone Screen Time including unrestricted apps. Recheck after a minute, after midnight and after relaunch.
 - [ ] On iOS 26.5+, verify the shield says only “This app is blocked.” and Open LockIn launches LockIn while Close app exits the blocked app. On older supported iOS, record the platform-limited Open LockIn behavior and verify Close app still exits.
 - [ ] Check widgets before/during/after access, old widget/deep links, neutral theme and new launcher icon.
-- [ ] Check small/large iPhones, large Dynamic Type, VoiceOver and long names; verify all controls remain usable, including the full Temporary Unlock title, description and buttons above the unchanged bottom navigation.
+- [ ] Check small/large iPhones, large Dynamic Type, VoiceOver and long names; verify all controls remain usable, including the lower Temporary unlock button above the unchanged bottom navigation. The redundant section heading and description must be absent; enlarged button text must remain fully visible.
 
 Device Activity callbacks are system-scheduled and can be delayed. A successful build or simulator test does not certify the requested real-time blocking behavior.
 

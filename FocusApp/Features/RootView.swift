@@ -144,51 +144,21 @@ struct RestrictionsView: View {
                     .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color.white.opacity(0.14)))
                 }
                 .padding(.top, 14)
-
-                Spacer().frame(height: 28)
-
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("Temporary Unlock").font(.title3.weight(.semibold))
-                    Text("Choose limited access after the selected camera wait. Everything else stays locked.")
-                        .font(.subheadline).foregroundStyle(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                    if !model.storageReady {
-                        Button("Retry") { model.refreshFromSharedStore() }
-                            .buttonStyle(LockInPrimaryButtonStyle())
-                    } else if !model.authorized {
-                        Button("Allow Screen Time access") {
-                            Task { await model.authorize() }
-                        }
-                        .buttonStyle(LockInPrimaryButtonStyle())
-                    } else if let grant = model.blocking.grant {
-                        HStack {
-                            Text("Temporary access")
-                                .foregroundStyle(.secondary)
-                            Spacer()
-                            Text(grant.deadline.endsAt, style: .timer)
-                                .font(.headline.monospacedDigit())
-                        }
-                        .padding(.bottom, 12)
-                        Button("Lock now") { model.lockNow() }
-                            .buttonStyle(LockInPrimaryButtonStyle())
-                    } else if !model.blocking.selection.isEmpty {
-                        Button("Temporary unlock") { showingUnlock = true }
-                            .buttonStyle(LockInPrimaryButtonStyle())
-                    } else {
-                        Button("Choose blocked apps") { showingSettings = true }
-                            .buttonStyle(LockInPrimaryButtonStyle())
-                    }
-                }
             }
             .frame(maxWidth: .infinity)
             .padding(.horizontal, 24)
-            .padding(.bottom, 36)
+            .padding(.bottom, 24)
+        }
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            accessAction
+                .padding(.horizontal, 24)
+                .padding(.top, 20)
+                .padding(.bottom, 24)
+                .background(Color.black)
         }
         // The enclosing NavigationStack can retain the full-height proposal.
         // Reserve the unchanged main navigation bar's 48-point height explicitly.
         .safeAreaPadding(.bottom, 48)
-        .defaultScrollAnchor(.bottom, for: .initialOffset)
-        .defaultScrollAnchor(.top, for: .alignment)
         .background(Color.black)
         .navigationTitle("Restrictions")
         .toolbar {
@@ -207,6 +177,37 @@ struct RestrictionsView: View {
             .environmentObject(model)
         }
         .onAppear { model.refreshFromSharedStore() }
+    }
+
+    private var accessAction: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            if !model.storageReady {
+                Button("Retry") { model.refreshFromSharedStore() }
+                    .buttonStyle(LockInPrimaryButtonStyle())
+            } else if !model.authorized {
+                Button("Allow Screen Time access") {
+                    Task { await model.authorize() }
+                }
+                .buttonStyle(LockInPrimaryButtonStyle())
+            } else if let grant = model.blocking.grant {
+                HStack {
+                    Text("Temporary access")
+                        .foregroundStyle(.secondary)
+                    Spacer()
+                    Text(grant.deadline.endsAt, style: .timer)
+                        .font(.headline.monospacedDigit())
+                }
+                .padding(.bottom, 12)
+                Button("Lock now") { model.lockNow() }
+                    .buttonStyle(LockInPrimaryButtonStyle())
+            } else if !model.blocking.selection.isEmpty {
+                Button("Temporary unlock") { showingUnlock = true }
+                    .buttonStyle(LockInPrimaryButtonStyle())
+            } else {
+                Button("Choose blocked apps") { showingSettings = true }
+                    .buttonStyle(LockInPrimaryButtonStyle())
+            }
+        }
     }
 
     private func dailyActivityFilter(at date: Date) -> DeviceActivityFilter {
@@ -237,13 +238,16 @@ private struct ActivityStat: View {
     }
 }
 
-private struct LockInPrimaryButtonStyle: ButtonStyle {
+struct LockInPrimaryButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(.headline)
             .foregroundStyle(.black)
+            .multilineTextAlignment(.center)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 14)
             .frame(maxWidth: .infinity)
-            .frame(height: 58)
+            .frame(minHeight: 58)
             .background(configuration.isPressed ? Color.white.opacity(0.82) : .white, in: RoundedRectangle(cornerRadius: 17))
     }
 }
