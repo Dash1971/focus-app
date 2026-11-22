@@ -9,7 +9,7 @@ struct UnlockView: View {
     @State private var chosen = FamilyActivitySelection()
     @State private var seconds = 300
     @State private var granting = false
-    @StateObject private var camera = NoseCameraController(mode: .facePresence)
+    @StateObject private var camera = FrontCameraController(mode: .facePresence)
 
     var body: some View {
         NavigationStack {
@@ -50,7 +50,7 @@ struct UnlockView: View {
 
     private func cameraWait(remaining: Int) -> some View {
         ZStack {
-            NoseCameraPreview(session: camera.session)
+            FrontCameraPreview(session: camera.session)
                 .ignoresSafeArea()
                 .accessibilityLabel("Live front camera preview")
             Color.black.opacity(0.25).ignoresSafeArea()
@@ -58,9 +58,9 @@ struct UnlockView: View {
                 VStack(spacing: 18) {
                     Text("\(remaining)")
                         .font(.system(size: 72, weight: .semibold)).monospacedDigit()
-                    Text(camera.status == .tracking ? "Keep your face visible" : "Show your face to begin")
+                    Text(camera.status == .tracking ? "Keep your face visible" : "Keep your face in view · countdown paused")
                         .font(.title2).multilineTextAlignment(.center)
-                    Text("Keep your face in the front camera for the entire wait. If your face disappears, the countdown resets. Leaving this screen cancels the wait.")
+                    Text("Keep your face in the front camera. Brief uncertain detection pauses the countdown without earning time. It resets when your face is gone, or if camera capture stalls. Leaving this screen cancels the wait.")
                         .multilineTextAlignment(.center)
                     if [.denied, .unavailable, .failed].contains(camera.status) {
                         Text(camera.status == .denied ? "Camera access is required for this wait." : "The front camera is unavailable. Access remains locked.")

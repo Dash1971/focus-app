@@ -77,7 +77,7 @@
 		BF596BCD1B835DBDCDF2D136 /* FlappyPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75A389E722297DAAB1FD4DB5 /* FlappyPolicyTests.swift */; };
 		C0CC81B4F300CC3B61473FA8 /* AccessPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0A7F904570EFDA1C361979E /* AccessPolicy.swift */; };
 		C18069DEFF7980478C50F8A1 /* SharedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C75E82C297FB55D368FE601D /* SharedStore.swift */; };
-		C4A76D9E06523A03F5EE307D /* NoseCamera.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1FA7E8CD1BD48FB0AFBE7B4 /* NoseCamera.swift */; };
+		C4A76D9E06523A03F5EE307D /* FrontCamera.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1FA7E8CD1BD48FB0AFBE7B4 /* FrontCamera.swift */; };
 		C9754A9240D988CAD623ED4F /* PushupGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = F696E02AA15BC969C3E9B045 /* PushupGame.swift */; };
 		CDC2C9E69BD3D00001902777 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CA54E5F1CB85ECAD6B07F83 /* Foundation.framework */; };
 		CF8027D245453BC2168E7A87 /* DeviceActivityMonitorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6855B2A5C385C1ADD874089 /* DeviceActivityMonitorExtension.swift */; };
@@ -230,7 +230,7 @@
 		ACC25C6A47B3FCB619C53696 /* RootView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RootView.swift; path = FocusApp/Features/RootView.swift; sourceTree = "<group>"; };
 		ADF8196057299A0B7D86F276 /* UnlockView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = UnlockView.swift; path = FocusApp/Features/UnlockView.swift; sourceTree = "<group>"; };
 		B1F7E8DD6B2E54E3D7FA069B /* FamilyControls.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FamilyControls.framework; path = System/Library/Frameworks/FamilyControls.framework; sourceTree = "<group>"; };
-		B1FA7E8CD1BD48FB0AFBE7B4 /* NoseCamera.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FocusApp/Features/NoseCamera.swift; sourceTree = "<group>"; };
+		B1FA7E8CD1BD48FB0AFBE7B4 /* FrontCamera.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FocusApp/Features/FrontCamera.swift; sourceTree = "<group>"; };
 		B43F8D6750B5FDF8CC29543D /* TimekeeperModels.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TimekeeperModels.swift; path = FocusApp/Core/TimekeeperModels.swift; sourceTree = "<group>"; };
 		B6855B2A5C385C1ADD874089 /* DeviceActivityMonitorExtension.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DeviceActivityMonitorExtension.swift; path = Extensions/DeviceActivityMonitor/DeviceActivityMonitorExtension.swift; sourceTree = "<group>"; };
 		C3945C56FA79B192D5FE9E4A /* TimePolicyTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TimePolicyTests.swift; path = FocusAppTests/TimePolicyTests.swift; sourceTree = "<group>"; };
@@ -392,7 +392,7 @@
 				2ECA558C79C6EAD4EADA8E72 /* TimekeeperController.swift */,
 				B43F8D6750B5FDF8CC29543D /* TimekeeperModels.swift */,
 				103D21E0736DF801C7519319 /* CalendarView.swift */,
-				B1FA7E8CD1BD48FB0AFBE7B4 /* NoseCamera.swift */,
+				B1FA7E8CD1BD48FB0AFBE7B4 /* FrontCamera.swift */,
 				4EA87C539215470199B77CDB /* HabitsView.swift */,
 				07653449606CEE09B3063329 /* MiniGamesView.swift */,
 				2121845D60CC80D1818926CF /* NotesView.swift */,
@@ -683,7 +683,7 @@
 				ED957E838DCFCACE5AD19AE9 /* TimekeeperController.swift in Sources */,
 				AC5FC8478676D71097F54B0B /* TimekeeperModels.swift in Sources */,
 				D23291E506AC5A96EFBCD8FE /* CalendarView.swift in Sources */,
-				C4A76D9E06523A03F5EE307D /* NoseCamera.swift in Sources */,
+				C4A76D9E06523A03F5EE307D /* FrontCamera.swift in Sources */,
 				3803AB6D44D6C24E9BB71DE0 /* HabitsView.swift in Sources */,
 				0A6224B18C84B143B234B88B /* MiniGamesView.swift in Sources */,
 				61990C5D4A04A39FD59199BA /* NotesView.swift in Sources */,
